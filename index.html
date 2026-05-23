@@ -69,7 +69,21 @@ input:focus,select:focus{border-color:#1D9E75}
 </style>
 </head>
 <body>
-
+<!-- ADMIN LOGIN PAGE -->
+<div id="page-admin-login" class="page">
+  <div class="wrap" style="display:flex;align-items:center;justify-content:center;min-height:100vh">
+    <div class="card" style="max-width:420px;width:100%;text-align:center">
+      <div class="logo">🔑</div>
+      <h1>Panel Admin</h1>
+      <p class="sub">Ingresá la contraseña para continuar</p>
+      <label style="text-align:left">Contraseña</label>
+      <input type="password" id="admin-pass" placeholder="••••••••" />
+      <button class="btn" onclick="verificarAdmin()">Entrar →</button>
+      <div class="err" id="admin-err"></div>
+      <button class="btn btn-out" onclick="mostrarPortal()">← Volver</button>
+    </div>
+  </div>
+</div>
 <!-- PORTAL PAGE -->
 <div id="page-portal" class="page active">
   <div class="wrap" style="display:flex;align-items:center;justify-content:center;min-height:100vh">
