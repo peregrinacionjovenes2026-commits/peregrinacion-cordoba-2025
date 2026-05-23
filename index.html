@@ -752,7 +752,9 @@ function renderCuota() {
   document.getElementById('file-name').style.display  = 'none';
   document.getElementById('cuota-file').value = '';
 
-  const disponibles = d.cuotas.filter(c => !r.confirmadas.includes(c.key) && !r.pendientes.includes(c.key));
+  const confirmadas = (r.confirmadas || []);
+const pendientes  = (r.pendientes  || []);
+const disponibles = d.cuotas.filter(c => !confirmadas.includes(c.key) && !pendientes.includes(c.key));
   const sel = document.getElementById('cuota-select');
   sel.innerHTML = disponibles.map(c => '<option value="'+c.key+'">$'+c.monto.toLocaleString('es-AR')+' — '+c.label+' (vence '+c.vencimiento+')</option>').join('');
 
