@@ -823,84 +823,24 @@ function volverEstado() {
   mostrarEstado();
 }
 
-// ── Admin ────────────────────────────────────────────────
-
-async function cargarAdmin() {
-  document.getElementById('admin-loading').style.display = 'block';
-  document.getElementById('admin-content').innerHTML = '';
-  document.getElementById('admin-stats').innerHTML = '';
-  try {
-    const res = await fetch(API + '?action=getAdmin');
-    adminData = await res.json();
-    renderAdmin();
-  } catch(e) {
-    document.getElementById('admin-loading').style.display = 'none';
-    document.getElementById('admin-content').innerHTML = '<p style="color:var(--red);text-align:center;padding:1rem">Error al cargar.</p>';
-  }
-}
-
-function filtrarAdmin(filtro) {
-  filtroActual = filtro;
-  document.getElementById('nav-pendientes').classList.toggle('active', filtro==='pendiente');
-  document.getElementById('nav-todos').classList.toggle('active', filtro==='todos');
-  if (adminData) renderAdmin();
-}
-
-function renderAdmin() {
-  if (!adminData || !adminData.ok) return;
-  const pagos = adminData.pagos;
-  const pend  = pagos.filter(p=>p.estado==='pendiente').length;
-  const conf  = pagos.filter(p=>p.estado==='confirmado').length;
-  const rec   = pagos.filter(p=>p.estado==='confirmado').reduce((a,p)=>a+(p.monto||0),0);
-
-  document.getElementById('admin-stats').innerHTML =
-    stat(adminData.totalInscriptos,'var(--green)','Inscriptos') +
-    stat(pend,'var(--amber)','Por confirmar') +
-    stat(conf,'var(--blue)','Confirmados') +
-    stat('$'+rec.toLocaleString('es-AR'),'var(--green)','Recaudado');
-
-  const filtrados = filtroActual==='pendiente' ? pagos.filter(p=>p.estado==='pendiente') : pagos;
-  document.getElementById('admin-loading').style.display = 'none';
-
-  if (!filtrados.length) {
-    document.getElementById('admin-content').innerHTML = '<p style="text-align:center;color:var(--gray-4);padding:2rem;font-size:.88rem">Sin pagos '+(filtroActual==='pendiente'?'pendientes':'registrados')+'</p>';
-    return;
-  }
-
-  document.getElementById('admin-content').innerHTML = filtrados.map(p => {
-    const isConf = p.estado==='confirmado';
-    const isPend = p.estado==='pendiente';
-    const pillBg = isConf?'var(--green-light)':isPend?'var(--amber-light)':'#fdecea';
-    const pillTc = isConf?'var(--green)':isPend?'var(--amber)':'var(--red)';
-    const btns = isPend
-      ? '<button class="btn-confirm" onclick="accion(\''+p.id+'\',\'confirmado\')">✓ Confirmar</button><button class="btn-reject" onclick="accion(\''+p.id+'\',\'rechazado\')">✗ Rechazar</button>'
-      : '<span class="status-pill" style="background:'+pillBg+';color:'+pillTc+'">'+p.estado+'</span>';
-    return '<div class="pago-item"><div class="pago-top"><div><div class="pago-person">'+p.nombre+'</div><div class="pago-meta">DNI '+p.dni+' · '+p.fecha+'</div></div><div class="pago-amount">$'+(p.monto||0).toLocaleString('es-AR')+'</div></div><div class="pago-cuota-label">'+p.cuota+'</div><div class="pago-btns">'+btns+'</div></div>';
-  }).join('');
-}
-
-function stat(val,color,label){
-  return '<div class="admin-stat"><div class="n" style="color:'+color+'">'+val+'</div><div class="l">'+label+'</div></div>';
-}
-
-async function accion(id, estado) {
-  const btn = event.target;
-  btn.disabled = true; btn.textContent = '...';
-  try {
-    const res  = await fetch(API+'?action=confirmarPago&pagoId='+encodeURIComponent(id)+'&nuevoEstado='+estado);
-    const data = await res.json();
-    if (data.ok) { await cargarAdmin(); }
-    else { btn.disabled=false; btn.textContent=estado==='confirmado'?'✓ Confirmar':'✗ Rechazar'; alert('Error: '+data.error); }
-  } catch(e) { btn.disabled=false; alert('Error de conexión.'); }
-}
-
-// ── Helpers ──────────────────────────────────────────────
-
-function showMsg(el, txt, ok) {
-  el.textContent = txt;
-  el.className   = 'msg-box ' + (ok?'ok':'er');
-  el.style.display = 'block';
-}
-</script>
-</body>
-</html>
+<!-- ADMIN -->
+<div id="page-admin" class="page">
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <div class="admin-title">Panel Admin</div>
+      <button class="btn-secondary btn-sm" onclick="mostrarPortal()">Salir</button>
+    </div>
+    <div class="admin-grid" id="admin-stats"></div>
+    <div style="display:flex;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap">
+      <button class="filter-tab active" id="nav-pendientes" onclick="filtrarAdmin('pendiente')">Por revisar</button>
+      <button class="filter-tab" id="nav-todos" onclick="filtrarAdmin('todos')">Todos</button>
+      <button class="filter-tab" id="nav-aldia" onclick="filtrarAdmin('aldia')">Al día</button>
+      <button class="filter-tab" id="nav-vencidos" onclick="filtrarAdmin('vencidos')">Sin seña</button>
+    </div>
+    <input type="text" placeholder="Buscar por nombre o DNI..." oninput="adminBusqueda=this.value;renderAdmin()" style="width:100%;padding:10px 14px;border:1.5px solid var(--gray-2);border-radius:8px;font-size:.88rem;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:.75rem">
+    <div id="admin-loading" class="loading">
+      <div class="spinner"></div><br>Cargando...
+    </div>
+    <div id="admin-content"></div>
+  </div>
+</div>
