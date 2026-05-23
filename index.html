@@ -305,7 +305,13 @@ async function registrarPago() {
       // Recargar estado
       const res2 = await fetch(API + '?action=getEstado&dni=' + encodeURIComponent(estadoData.dni));
       estadoData = await res2.json();
-      setTimeout(() => mostrarEstado(), 2000);
+      setTimeout(async () => {
+  const res2 = await fetch(API + '?action=getEstado&dni=' + encodeURIComponent(estadoData.dni));
+  const data2 = await res2.json();
+  if (data2.ok) { estadoData = data2; }
+  mostrarEstado();
+  renderEstado();
+}, 2000);
     } else {
       showMsg(msg, '❌ ' + data.error, false);
     }
