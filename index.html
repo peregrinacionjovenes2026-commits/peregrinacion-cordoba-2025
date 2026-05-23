@@ -324,27 +324,43 @@ function escapeHtml(txt) {
 
 // ── Navegación ───────────────────────────────────────────
 
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
-  document.getElementById('page-' + name).classList.add('active');
-  window.scrollTo(0,0);
-}
-function mostrarPortal() { showPage('portal'); }
-function mostrarEstado() { if (!estadoData) { mostrarPortal(); return; } showPage('estado'); renderEstado(); }
-function mostrarCuota()  { showPage('cuota'); renderCuota(); }
-function mostrarAdmin()  { showPage('admin-login'); document.getElementById('admin-pass').value=''; document.getElementById('admin-err').textContent=''; }
+async function verificarAdmin() {
+  var pass = document.getElementById('admin-pass').value.trim();
 
-function verificarAdmin() {
-  if (document.getElementById('admin-pass').value !== 'Cordoba0506') {
-    document.getElementById('admin-err').textContent = 'Contraseña incorrecta.';
+  if (!pass) {
+    document.getElementById('admin-err').textContent = 'Ingresá la contraseña.';
     return;
   }
-  showPage('admin');
-  cargarAdmin();
+
+  document.getElementById('admin-err').textContent = '';
+
+  try {
+    var res = await fetch(
+      API + '?action=loginAdmin&adminPass=' + encodeURIComponent(pass)
+    );
+
+    var data = await res.json();
+
+    if (!data.ok) {
+      document.getElementById('admin-err').textContent = data.error || 'Contraseña incorrecta.';
+      return;
+    }
+
+    adminToken = data.token;
+
+    showPage('admin');
+    cargarAdmin();
+
+  } catch(e) {
+    document.getElementById('admin-err').textContent = 'Error de conexión. Intentá de nuevo.';
+  }
 }
 
 document.getElementById('dni-input').addEventListener('keydown', function(e) { if(e.key==='Enter') buscarDNI(); });
 document.getElementById('admin-pass').addEventListener('keydown', function(e) { if(e.key==='Enter') verificarAdmin(); });
+document.getElementById('email-input').addEventListener('keydown', function(e) {
+  if(e.key === 'Enter') buscarDNI();
+});
 
 // ── Portal ───────────────────────────────────────────────
 
@@ -551,16 +567,32 @@ async function cargarAdmin() {
   document.getElementById('admin-loading').style.display = 'block';
   document.getElementById('admin-content').innerHTML = '';
   document.getElementById('admin-stats').innerHTML = '';
+
   try {
-    var res = await fetch(API + '?action=getAdmin');
+    var res = await fetch(
+      API + '?action=getAdmin&adminToken=' + encodeURIComponent(adminToken)
+    );
+
     adminData = await res.json();
+
+    document.getElementById('admin-loading').style.display = 'none';
+
+    if (!adminData.ok) {
+      document.getElementById('admin-content').innerHTML =
+        '<p style="color:var(--red);text-align:center;padding:1rem">' +
+        (adminData.error || 'No autorizado. Volvé a ingresar al panel admin.') +
+        '</p>';
+      return;
+    }
+
     renderAdmin();
+
   } catch(e) {
     document.getElementById('admin-loading').style.display = 'none';
-    document.getElementById('admin-content').innerHTML = '<p style="color:var(--red);text-align:center;padding:1rem">Error al cargar.</p>';
+    document.getElementById('admin-content').innerHTML =
+      '<p style="color:var(--red);text-align:center;padding:1rem">Error al cargar el panel admin.</p>';
   }
 }
-
 function agruparPorPersona(pagos) {
   var mapa = {};
   pagos.forEach(function(p) {
