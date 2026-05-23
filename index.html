@@ -121,6 +121,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--gray-1);min-height:100vh;
 .btn-confirm:hover{background:var(--green-mid)}
 .btn-reject{background:#fdecea;color:var(--red);border:1px solid #f5c0c0;padding:7px 16px;border-radius:var(--radius-sm);font-size:.8rem;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .15s}
 .btn-reject:hover{background:#fbd0ce}
+
+.comprobante-link{display:inline-block;margin-top:.25rem;font-size:.7rem;font-weight:700;color:var(--green);text-decoration:none}
+.comprobante-link:hover{text-decoration:underline}
+.admin-detail-row{display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding:.65rem 0;border-top:1px solid var(--gray-2)}
+.admin-detail-main{min-width:0}
+.admin-detail-title{font-size:.8rem;font-weight:700;color:var(--text)}
+.admin-detail-sub{font-size:.68rem;color:var(--text-soft);margin-top:.1rem}
+.admin-detail-actions{display:flex;gap:.4rem;flex-shrink:0}
+.btn-link{background:var(--green-light);color:var(--green);border:1px solid #b8e0cc;padding:6px 10px;border-radius:var(--radius-sm);font-size:.72rem;font-weight:700;text-decoration:none;display:inline-block}
+.btn-link:hover{background:#dcf0e8}
+@media (min-width: 780px){.admin-wrap{max-width:980px}.estado-wrap{max-width:860px}.cuota-wrap{max-width:720px}.portal-card{max-width:430px}.person-card,.progress-section,.cuotas-card{padding:1.55rem}.admin-title{font-size:2rem}.admin-stat .n{font-size:2rem}.admin-stat .l{font-size:.9rem}.pago-item{padding:1.35rem}.person-avatar{width:60px;height:60px;font-size:1.25rem}.person-name{font-size:1.25rem}.person-sub{font-size:.95rem}.amount-box .val{font-size:1.45rem}.amount-box .lbl{font-size:.85rem}.cuota-name{font-size:1.05rem}.cuota-date{font-size:.9rem}.cuota-amount{font-size:1.1rem}.badge{font-size:.78rem}.progress-legend{font-size:.9rem}.cuota-card h2{font-size:1.8rem}}
 </style>
 </head>
 <body>
@@ -260,6 +271,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--gray-1);min-height:100vh;
 <script>
 const API   = 'https://script.google.com/macros/s/AKfycbxNFRlC9tSicrNrdJc6syVrDeAzNkqmaGZfeKqaFKy0P7XZqHXEjYs7Pvdv7fRBtimGTw/exec';
 const ALIAS = 'ALIAS.PAGO';
+const CLOUDINARY_CLOUD_NAME = 'dfkm2rmuk';
+const CLOUDINARY_UPLOAD_PRESET = 'peregrinacion';
 
 var estadoData   = null;
 var adminData    = null;
@@ -270,6 +283,33 @@ const CUOTAS_ORDEN = ['sena','1ra','2da','3ra','4ta'];
 const CUOTAS_LABEL = { sena:'Seña', '1ra':'1ª', '2da':'2ª', '3ra':'3ª', '4ta':'4ª' };
 const CUOTAS_MONTO = { sena:15000, '1ra':50000, '2da':65000, '3ra':65000, '4ta':65000 };
 const TOTAL_CUOTAS = 260000;
+const CUOTAS_VENCIMIENTO = { sena:'01/06/2025', '1ra':'15/06/2025', '2da':'15/07/2025', '3ra':'15/08/2025', '4ta':'11/09/2025' };
+
+function getComprobanteUrl(p) {
+  return p && (p.comprobanteUrl || p.comprobante_url || p.comprobante || p.link || p.url || '');
+}
+
+function getVencimientoDate(key) {
+  var v = CUOTAS_VENCIMIENTO[key];
+  if (!v) return null;
+  var parts = v.split('/');
+  return new Date(parts[2], parts[1]-1, parts[0]);
+}
+
+function isCuotaVencida(key) {
+  var v = getVencimientoDate(key);
+  if (!v) return false;
+  var hoy = new Date();
+  hoy.setHours(0,0,0,0);
+  v.setHours(0,0,0,0);
+  return v <= hoy;
+}
+
+function escapeHtml(txt) {
+  return String(txt || '').replace(/[&<>'"]/g, function(c) {
+    return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c];
+  });
+}
 
 // ── Navegación ───────────────────────────────────────────
 
@@ -361,7 +401,9 @@ function renderEstado() {
     var parts = c.vencimiento.split('/');
     var venc  = new Date(parts[2], parts[1]-1, parts[0]);
     var vencLabel = est==='falta' && venc < hoy ? 'Venció ' : 'Vence ';
-    lista.innerHTML += '<div class="cuota-row"><div class="cuota-info"><div class="cuota-name">'+c.label+'</div><div class="cuota-date">'+vencLabel+c.vencimiento+'</div></div><div class="cuota-right"><span class="cuota-amount">$'+c.monto.toLocaleString('es-AR')+'</span>'+badge+'</div></div>';
+    var link = getComprobanteUrl(p);
+    var compLink = link ? '<a class="comprobante-link" href="'+link+'" target="_blank" rel="noopener">Ver comprobante</a>' : '';
+    lista.innerHTML += '<div class="cuota-row"><div class="cuota-info"><div class="cuota-name">'+c.label+'</div><div class="cuota-date">'+vencLabel+c.vencimiento+'</div>'+compLink+'</div><div class="cuota-right"><span class="cuota-amount">$'+c.monto.toLocaleString('es-AR')+'</span>'+badge+'</div></div>';
   });
 
   document.getElementById('estado-loading').style.display = 'none';
@@ -401,6 +443,25 @@ function renderCuota() {
   }
 }
 
+async function subirComprobanteACloudinary(file) {
+  var form = new FormData();
+  form.append('file', file);
+  form.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  form.append('folder', 'peregrinacion/' + estadoData.dni);
+  form.append('context', 'dni=' + estadoData.dni + '|nombre=' + estadoData.nombre);
+
+  var res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD_NAME + '/auto/upload', {
+    method: 'POST',
+    body: form
+  });
+
+  var data = await res.json();
+  if (!res.ok || !data.secure_url) {
+    throw new Error(data.error && data.error.message ? data.error.message : 'No se pudo subir el comprobante.');
+  }
+  return data.secure_url;
+}
+
 async function registrarPago() {
   var cuota = document.getElementById('cuota-select').value;
   var file  = document.getElementById('cuota-file').files[0];
@@ -408,16 +469,29 @@ async function registrarPago() {
   if (!cuota) { showMsg(msg,'Seleccioná una cuota.',false); return; }
   if (!file)  { showMsg(msg,'Adjuntá el comprobante de pago.',false); return; }
 
+  var maxMB = 10;
+  if (file.size > maxMB * 1024 * 1024) {
+    showMsg(msg,'El archivo pesa más de '+maxMB+' MB. Subí una foto más liviana o un PDF más chico.',false);
+    return;
+  }
+
   var card = document.querySelector('.cuota-card');
   card.innerHTML = '<div style="text-align:center;padding:3rem 1rem"><div class="spinner" style="margin:0 auto 1.25rem"></div><div style="font-family:\'DM Serif Display\',serif;font-size:1.3rem;margin-bottom:.5rem">Registrando tu pago...</div><p style="font-size:.85rem;color:var(--text-soft)">No cierres esta pantalla.</p></div>';
 
   try {
-    var url  = API + '?action=registrarPago&dni=' + encodeURIComponent(estadoData.dni) + '&cuota=' + cuota;
+    var comprobanteUrl = await subirComprobanteACloudinary(file);
+    var url = API + '?action=registrarPago'
+      + '&dni=' + encodeURIComponent(estadoData.dni)
+      + '&cuota=' + encodeURIComponent(cuota)
+      + '&comprobanteUrl=' + encodeURIComponent(comprobanteUrl)
+      + '&comprobanteNombre=' + encodeURIComponent(file.name)
+      + '&comprobanteTipo=' + encodeURIComponent(file.type || 'archivo');
+
     var res  = await fetch(url);
     var data = await res.json();
 
     if (data.ok) {
-      card.innerHTML = '<div style="text-align:center;padding:3rem 1rem"><div style="font-size:3rem;margin-bottom:1rem">✅</div><div style="font-family:\'DM Serif Display\',serif;font-size:1.5rem;margin-bottom:.5rem">¡Listo!</div><p style="font-size:.88rem;color:var(--text-soft);margin-bottom:1.75rem;line-height:1.5">Tu pago fue registrado. El organizador lo va a confirmar pronto y te llegará un email.</p><button class="btn-primary" onclick="volverEstado()">Ver mi estado →</button></div>';
+      card.innerHTML = '<div style="text-align:center;padding:3rem 1rem"><div style="font-size:3rem;margin-bottom:1rem">✅</div><div style="font-family:\'DM Serif Display\',serif;font-size:1.5rem;margin-bottom:.5rem">¡Listo!</div><p style="font-size:.88rem;color:var(--text-soft);margin-bottom:1.75rem;line-height:1.5">Tu pago y tu comprobante quedaron registrados. Cuando se revise, vas a ver la cuota confirmada.</p><button class="btn-primary" onclick="volverEstado()">Ver mi estado →</button></div>';
       fetch(API + '?action=getEstado&dni=' + encodeURIComponent(estadoData.dni))
         .then(function(r2) { return r2.json(); })
         .then(function(d2) { if (d2.ok) estadoData = d2; });
@@ -425,7 +499,7 @@ async function registrarPago() {
       card.innerHTML = '<div style="text-align:center;padding:3rem 1rem"><div style="font-size:3rem;margin-bottom:1rem">❌</div><div style="font-family:\'DM Serif Display\',serif;font-size:1.3rem;margin-bottom:.5rem">Algo salió mal</div><p style="font-size:.88rem;color:var(--text-soft);margin-bottom:1.75rem">'+data.error+'</p><button class="btn-primary" onclick="mostrarCuota()">Intentar de nuevo</button><button class="btn-secondary" onclick="mostrarEstado()">← Ver mi estado</button></div>';
     }
   } catch(e) {
-    card.innerHTML = '<div style="text-align:center;padding:3rem 1rem"><div style="font-size:3rem;margin-bottom:1rem">📡</div><div style="font-family:\'DM Serif Display\',serif;font-size:1.3rem;margin-bottom:.5rem">Error de conexión</div><p style="font-size:.88rem;color:var(--text-soft);margin-bottom:1.75rem">Revisá tu conexión e intentá de nuevo.</p><button class="btn-primary" onclick="mostrarCuota()">Intentar de nuevo</button></div>';
+    card.innerHTML = '<div style="text-align:center;padding:3rem 1rem"><div style="font-size:3rem;margin-bottom:1rem">📎</div><div style="font-family:\'DM Serif Display\',serif;font-size:1.3rem;margin-bottom:.5rem">No pudimos registrar el comprobante</div><p style="font-size:.88rem;color:var(--text-soft);margin-bottom:1.75rem">'+escapeHtml(e.message || 'Revisá tu conexión e intentá de nuevo.')+'</p><button class="btn-primary" onclick="mostrarCuota()">Intentar de nuevo</button></div>';
   }
 }
 
@@ -486,7 +560,8 @@ function renderAdmin() {
   } else if (filtroActual === 'aldia') {
     filtradas = personas.filter(function(p) {
       var conf = p.pagos.filter(function(x) { return x.estado==='confirmado'; }).map(function(x) { return x.cuota; });
-      return CUOTAS_ORDEN.every(function(c) { return conf.includes(c); });
+      var vencidas = CUOTAS_ORDEN.filter(function(c) { return isCuotaVencida(c); });
+      return vencidas.every(function(c) { return conf.includes(c); });
     });
   } else if (filtroActual === 'vencidos') {
     filtradas = personas.filter(function(p) {
@@ -542,13 +617,33 @@ function renderPersonaCard(persona) {
   var avatar = ((ini[0]||'?').charAt(0)+(ini[1]||'?').charAt(0)).toUpperCase();
   var border = tienePend ? '3px solid #d4820a' : '3px solid #e8f5ef';
   var nPend  = pagosPend.length;
+  var detalleId = 'detalle-' + String(persona.dni).replace(/\W/g,'');
 
-  var btns = tienePend
-    ? '<button class="btn-confirm" onclick="confirmarTodo(\''+persona.dni+'\')">✓ Confirmar todo</button><button class="btn-reject" onclick="rechazarTodo(\''+persona.dni+'\')">✗ Rechazar</button>'
-    : '';
+  var detallePagos = persona.pagos.filter(function(x) { return x.estado==='pendiente'; }).map(function(p) {
+    var link = getComprobanteUrl(p);
+    var ver = link ? '<a class="btn-link" href="'+link+'" target="_blank" rel="noopener">Ver</a>' : '<span style="font-size:.68rem;color:var(--gray-4)">Sin link</span>';
+    return '<div class="admin-detail-row">' +
+      '<div class="admin-detail-main">' +
+        '<div class="admin-detail-title">'+CUOTAS_LABEL[p.cuota]+' cuota · $'+(CUOTAS_MONTO[p.cuota]||p.monto||0).toLocaleString('es-AR')+'</div>' +
+        '<div class="admin-detail-sub">Comprobante pendiente de revisión</div>' +
+      '</div>' +
+      '<div class="admin-detail-actions">' +
+        ver +
+        '<button class="btn-confirm" style="padding:6px 10px;font-size:.72rem" onclick="accionUna(\''+p.id+'\',\'confirmado\')">Confirmar</button>' +
+        '<button class="btn-reject" style="padding:6px 10px;font-size:.72rem" onclick="accionUna(\''+p.id+'\',\'rechazado\')">Rechazar</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 
   var footer = tienePend
-    ? '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem"><span style="font-size:.72rem;color:var(--text-soft)">'+nPend+' comprobante'+(nPend>1?'s':'')+' por confirmar</span><div style="display:flex;gap:.5rem">'+btns+'</div></div>'
+    ? '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem">' +
+        '<span style="font-size:.72rem;color:var(--text-soft)">'+nPend+' comprobante'+(nPend>1?'s':'')+' por revisar</span>' +
+        '<div style="display:flex;gap:.5rem;flex-wrap:wrap">' +
+          '<button class="btn-confirm" onclick="confirmarTodo(\''+persona.dni+'\')">Confirmar todo</button>' +
+          '<button class="btn-reject" onclick="toggleDetalle(\''+detalleId+'\')">Revisar por cuota</button>' +
+        '</div>' +
+      '</div>' +
+      '<div id="'+detalleId+'" style="display:none">'+detallePagos+'</div>'
     : '<div style="font-size:.72rem;color:var(--green)">✓ Sin pendientes</div>';
 
   return '<div class="pago-item" style="border-left:'+border+'">'+
@@ -561,9 +656,19 @@ function renderPersonaCard(persona) {
     '<div style="height:4px;background:#efefef;border-radius:2px;overflow:hidden;display:flex;margin-bottom:.65rem">'+
       '<div style="height:100%;background:var(--green);width:'+pct_ok+'%"></div>'+
       '<div style="height:100%;background:var(--amber);width:'+pct_rev+'%"></div>'+
-    '</div>'+
-    footer+
+    '</div>'+ footer +
   '</div>';
+}
+
+function toggleDetalle(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+async function accionUna(id, estado) {
+  await fetch(API + '?action=confirmarPago&pagoId=' + encodeURIComponent(id) + '&nuevoEstado=' + encodeURIComponent(estado));
+  await cargarAdmin();
 }
 
 async function confirmarTodo(dni) {
