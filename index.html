@@ -189,6 +189,11 @@ function mostrarCuota() {
 }
 
 function mostrarAdmin() {
+  var pass = prompt('Ingresá la contraseña de administrador:');
+  if (pass !== 'Cordoba0506') {
+    alert('Contraseña incorrecta.');
+    return;
+  }
   showPage('admin');
   cargarAdmin();
 }
