@@ -1,1 +1,1 @@
-# peregrinacion-cordoba-2025
+# peregrinacion-cordoba-2026
