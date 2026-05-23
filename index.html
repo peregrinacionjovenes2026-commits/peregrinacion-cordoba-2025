@@ -156,13 +156,22 @@ body{font-family:'DM Sans',sans-serif;background:var(--gray-1);min-height:100vh;
 <div id="page-portal" class="page active">
   <div class="portal-card">
     <div class="portal-title">Peregrinación<br>Córdoba 2026</div>
-    <p class="portal-sub">Ingresá tu DNI para subir comprobantes y ver el estado de tus cuotas.</p>
+    <p class="portal-sub">Ingresá tu DNI y el email que usaste en la inscripción para subir comprobantes y ver tus cuotas.</p>
+
     <div class="input-group">
       <label>DNI (sin puntos)</label>
       <input type="number" id="dni-input" placeholder="Ej: 44123456" />
     </div>
+
+    <div class="input-group">
+      <label>Email usado en la inscripción</label>
+      <input type="email" id="email-input" placeholder="Ej: nombre@email.com" />
+    </div>
+
     <button class="btn-primary" onclick="buscarDNI()">Ingresar →</button>
+
     <div class="err-msg" id="portal-err"></div>
+
     <div class="portal-footer">
       <a href="#" onclick="mostrarAdmin()">Administrador</a>
     </div>
@@ -278,6 +287,8 @@ var estadoData   = null;
 var adminData    = null;
 var filtroActual = 'pendiente';
 var adminBusqueda = '';
+var adminToken = '';
+var participanteEmail = '';
 
 const CUOTAS_ORDEN = ['sena','1ra','2da','3ra','4ta'];
 const CUOTAS_LABEL = { sena:'Seña', '1ra':'1ª', '2da':'2ª', '3ra':'3ª', '4ta':'4ª' };
@@ -339,23 +350,50 @@ document.getElementById('admin-pass').addEventListener('keydown', function(e) { 
 
 async function buscarDNI() {
   var dni = document.getElementById('dni-input').value.trim();
-  if (!dni) { document.getElementById('portal-err').textContent = 'Ingresá tu DNI'; return; }
+  var email = document.getElementById('email-input').value.trim();
+
+  if (!dni) {
+    document.getElementById('portal-err').textContent = 'Ingresá tu DNI';
+    return;
+  }
+
+  if (!email) {
+    document.getElementById('portal-err').textContent = 'Ingresá el email que usaste en la inscripción';
+    return;
+  }
+
+  participanteEmail = email;
+
   document.getElementById('portal-err').textContent = '';
+
   showPage('estado');
   document.getElementById('estado-loading').style.display = 'block';
   document.getElementById('estado-content').style.display = 'none';
+
   try {
-    var res  = await fetch(API + '?action=getEstado&dni=' + encodeURIComponent(dni));
+    var res = await fetch(
+      API
+      + '?action=getEstado'
+      + '&dni=' + encodeURIComponent(dni)
+      + '&email=' + encodeURIComponent(email)
+    );
+
     var data = await res.json();
-    if (!data.ok) { showPage('portal'); document.getElementById('portal-err').textContent = data.error; return; }
+
+    if (!data.ok) {
+      showPage('portal');
+      document.getElementById('portal-err').textContent = data.error;
+      return;
+    }
+
     estadoData = data;
     renderEstado();
+
   } catch(e) {
     showPage('portal');
     document.getElementById('portal-err').textContent = 'Error de conexión. Intentá de nuevo.';
   }
 }
-
 // ── Estado ───────────────────────────────────────────────
 
 function renderEstado() {
