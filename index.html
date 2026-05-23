@@ -767,25 +767,59 @@ async function registrarPago() {
   const msg   = document.getElementById('cuota-msg');
   if (!cuota) { showMsg(msg,'Seleccioná una cuota.',false); return; }
   if (!file)  { showMsg(msg,'Adjuntá el comprobante de pago.',false); return; }
-  showMsg(msg,'Registrando...', true);
+  
+  // Mostrar pantalla de carga
+  document.getElementById('cuota-content').style.display = 'none';
+  document.getElementById('cuota-titulo').style.display = 'none';
+  document.querySelector('.btn-secondary').style.display = 'none';
+  document.querySelector('.cuota-card').innerHTML = `
+    <div style="text-align:center;padding:2.5rem 1rem">
+      <div class="spinner" style="margin:0 auto 1.25rem"></div>
+      <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:.5rem">Registrando tu pago...</div>
+      <p style="font-size:.85rem;color:var(--text-soft)">No cierres esta pantalla.</p>
+    </div>`;
+  
   try {
     const url  = API + '?action=registrarPago&dni=' + encodeURIComponent(estadoData.dni) + '&cuota=' + cuota;
     const res  = await fetch(url);
     const data = await res.json();
+    
     if (data.ok) {
-      showMsg(msg, '✅ ' + data.mensaje, true);
-      setTimeout(async () => {
-        const res2  = await fetch(API + '?action=getEstado&dni=' + encodeURIComponent(estadoData.dni));
-        const data2 = await res2.json();
-        if (data2.ok) { estadoData = data2; }
-        mostrarEstado();
-      }, 2000);
+      // Pantalla de éxito
+      document.querySelector('.cuota-card').innerHTML = `
+        <div style="text-align:center;padding:2.5rem 1rem">
+          <div style="font-size:3rem;margin-bottom:1rem">✅</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:1.4rem;margin-bottom:.5rem">¡Pago registrado!</div>
+          <p style="font-size:.85rem;color:var(--text-soft);margin-bottom:1.5rem">El organizador lo confirmará pronto y te llegará un email.</p>
+          <button class="btn-primary" onclick="volverEstado()">Ver mi estado →</button>
+        </div>`;
+      // Recargar datos en segundo plano
+      fetch(API + '?action=getEstado&dni=' + encodeURIComponent(estadoData.dni))
+        .then(r => r.json())
+        .then(d => { if (d.ok) estadoData = d; });
     } else {
-      showMsg(msg, '❌ ' + data.error, false);
+      document.querySelector('.cuota-card').innerHTML = `
+        <div style="text-align:center;padding:2.5rem 1rem">
+          <div style="font-size:3rem;margin-bottom:1rem">❌</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:.5rem">Algo salió mal</div>
+          <p style="font-size:.85rem;color:var(--text-soft);margin-bottom:1.5rem">${data.error}</p>
+          <button class="btn-primary" onclick="mostrarCuota()">Intentar de nuevo</button>
+          <button class="btn-secondary" onclick="mostrarEstado()">← Ver mi estado</button>
+        </div>`;
     }
   } catch(e) {
-    showMsg(msg,'Error de conexión. Intentá de nuevo.',false);
+    document.querySelector('.cuota-card').innerHTML = `
+      <div style="text-align:center;padding:2.5rem 1rem">
+        <div style="font-size:3rem;margin-bottom:1rem">📡</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:.5rem">Error de conexión</div>
+        <p style="font-size:.85rem;color:var(--text-soft);margin-bottom:1.5rem">Revisá tu conexión y volvé a intentar.</p>
+        <button class="btn-primary" onclick="mostrarCuota()">Intentar de nuevo</button>
+      </div>`;
   }
+}
+
+function volverEstado() {
+  mostrarEstado();
 }
 
 // ── Admin ────────────────────────────────────────────────
