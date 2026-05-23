@@ -203,9 +203,15 @@ function mostrarCuota() {
 }
 
 function mostrarAdmin() {
-  var pass = prompt('Ingresá la contraseña de administrador:');
+  showPage('admin-login');
+  document.getElementById('admin-pass').value = '';
+  document.getElementById('admin-err').textContent = '';
+}
+
+function verificarAdmin() {
+  var pass = document.getElementById('admin-pass').value;
   if (pass !== 'Cordoba0506') {
-    alert('Contraseña incorrecta.');
+    document.getElementById('admin-err').textContent = 'Contraseña incorrecta.';
     return;
   }
   showPage('admin');
@@ -223,7 +229,9 @@ function showPage(name) {
 document.getElementById('dni-input').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') buscarDNI();
 });
-
+document.getElementById('admin-pass').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') verificarAdmin();
+});
 async function buscarDNI() {
   const dni = document.getElementById('dni-input').value.trim();
   if (!dni) { document.getElementById('portal-err').textContent = 'Ingresá tu DNI'; return; }
