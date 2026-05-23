@@ -131,113 +131,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--gray-1);min-height:100vh;
 .admin-detail-actions{display:flex;gap:.4rem;flex-shrink:0}
 .btn-link{background:var(--green-light);color:var(--green);border:1px solid #b8e0cc;padding:6px 10px;border-radius:var(--radius-sm);font-size:.72rem;font-weight:700;text-decoration:none;display:inline-block}
 .btn-link:hover{background:#dcf0e8}
-@media (min-width: 780px){
-  #page-admin{
-    padding-top:1.25rem;
-  }
-
-  .admin-wrap{
-    max-width:1040px;
-  }
-
-  .admin-header{
-    margin-bottom:.75rem;
-  }
-
-  .admin-title{
-    font-size:1.7rem;
-  }
-
-  .admin-grid{
-    grid-template-columns:repeat(4,1fr);
-    gap:.5rem;
-    margin-bottom:.75rem;
-  }
-
-  .admin-stat{
-    padding:.75rem 1rem;
-    min-height:auto;
-  }
-
-  .admin-stat .n{
-    font-size:1.45rem;
-    line-height:1.1;
-  }
-
-  .admin-stat .l{
-    font-size:.72rem;
-  }
-
-  .filter-tab{
-    padding:8px 10px;
-    font-size:.78rem;
-  }
-
-  #admin-search{
-    padding:9px 12px !important;
-    margin-bottom:.65rem !important;
-  }
-
-  .pago-item{
-    padding:.9rem 1rem;
-    margin-bottom:.55rem;
-  }
-
-  .pago-item > div:first-child{
-    margin-bottom:.45rem !important;
-  }
-
-  .pago-item [style*="width:36px"]{
-    width:32px !important;
-    height:32px !important;
-    font-size:.72rem !important;
-  }
-
-  .pago-item [style*="font-weight:700;font-size:.88rem"]{
-    font-size:.86rem !important;
-  }
-
-  .pago-item [style*="font-size:.7rem;color:var(--text-soft)"]{
-    font-size:.68rem !important;
-  }
-
-  .pago-item [style*="font-size:.88rem;font-weight:700;color:var(--green)"]{
-    font-size:.86rem !important;
-  }
-
-  .pago-item [style*="display:flex;flex-wrap:wrap;gap:.3rem"]{
-    margin-bottom:.45rem !important;
-  }
-
-  .pago-item span[style*="border-radius:20px"]{
-    padding:2px 7px !important;
-    font-size:.66rem !important;
-  }
-
-  .pago-item [style*="height:4px"]{
-    height:3px !important;
-    margin-bottom:.45rem !important;
-  }
-
-  .btn-confirm,
-  .btn-reject,
-  .btn-link{
-    padding:6px 11px;
-    font-size:.72rem;
-  }
-
-  .admin-detail-row{
-    padding:.5rem 0;
-  }
-
-  .admin-detail-title{
-    font-size:.76rem;
-  }
-
-  .admin-detail-sub{
-    font-size:.64rem;
-  }
-}</style>
+@media (min-width: 780px){.admin-wrap{max-width:980px}.estado-wrap{max-width:860px}.cuota-wrap{max-width:720px}.portal-card{max-width:430px}.person-card,.progress-section,.cuotas-card{padding:1.55rem}.admin-title{font-size:2rem}.admin-stat .n{font-size:2rem}.admin-stat .l{font-size:.9rem}.pago-item{padding:1.35rem}.person-avatar{width:60px;height:60px;font-size:1.25rem}.person-name{font-size:1.25rem}.person-sub{font-size:.95rem}.amount-box .val{font-size:1.45rem}.amount-box .lbl{font-size:.85rem}.cuota-name{font-size:1.05rem}.cuota-date{font-size:.9rem}.cuota-amount{font-size:1.1rem}.badge{font-size:.78rem}.progress-legend{font-size:.9rem}.cuota-card h2{font-size:1.8rem}}
+</style>
 </head>
 <body>
 
@@ -286,6 +181,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--gray-1);min-height:100vh;
 <!-- ESTADO -->
 <div id="page-estado" class="page">
   <div class="estado-wrap">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:.75rem">
+      <button class="btn-secondary btn-sm" onclick="cerrarSesionParticipante()">Salir</button>
+    </div>
+
     <div id="estado-loading" class="loading">
       <div class="spinner"></div><br>Cargando tu estado...
     </div>
@@ -323,7 +222,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--gray-1);min-height:100vh;
         <div id="lista-cuotas"></div>
       </div>
       <button class="btn-primary" onclick="mostrarCuota()">Registrar un pago →</button>
-      <button class="btn-secondary" onclick="mostrarPortal()">← Nueva consulta</button>
+      <button class="btn-secondary" onclick="cerrarSesionParticipante()">← Nueva consulta</button>
     </div>
   </div>
 </div>
@@ -394,6 +293,7 @@ var filtroActual = 'pendiente';
 var adminBusqueda = '';
 var adminToken = '';
 var participanteEmail = '';
+var cuotaFormOriginalHtml = '';
 
 const CUOTAS_ORDEN = ['sena','1ra','2da','3ra','4ta'];
 const CUOTAS_LABEL = { sena:'Seña', '1ra':'1ª', '2da':'2ª', '3ra':'3ª', '4ta':'4ª' };
@@ -429,45 +329,41 @@ function escapeHtml(txt) {
 
 // ── Navegación ───────────────────────────────────────────
 
+cuotaFormOriginalHtml = document.getElementById('cuota-content').innerHTML;
+
 function showPage(name) {
-  document.querySelectorAll('.page').forEach(function(p) {
-    p.classList.remove('active');
-  });
-
-  var page = document.getElementById('page-' + name);
-  if (page) page.classList.add('active');
-
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('page-' + name).classList.add('active');
   window.scrollTo(0, 0);
 }
 
-function mostrarPortal() {
-  showPage('portal');
-}
+function mostrarPortal() { showPage('portal'); }
 
 function mostrarEstado() {
-  if (!estadoData) {
-    mostrarPortal();
-    return;
-  }
+  if (!estadoData) { mostrarPortal(); return; }
   showPage('estado');
   renderEstado();
 }
 
 function mostrarCuota() {
-  if (!estadoData) {
-    mostrarPortal();
-    return;
-  }
+  if (!estadoData) { mostrarPortal(); return; }
   showPage('cuota');
   renderCuota();
 }
 
 function mostrarAdmin() {
   showPage('admin-login');
-  var pass = document.getElementById('admin-pass');
-  var err = document.getElementById('admin-err');
-  if (pass) pass.value = '';
-  if (err) err.textContent = '';
+  document.getElementById('admin-pass').value = '';
+  document.getElementById('admin-err').textContent = '';
+}
+
+function cerrarSesionParticipante() {
+  estadoData = null;
+  participanteEmail = '';
+  document.getElementById('dni-input').value = '';
+  document.getElementById('email-input').value = '';
+  document.getElementById('portal-err').textContent = '';
+  mostrarPortal();
 }
 
 async function verificarAdmin() {
@@ -621,8 +517,15 @@ function onFileChange(input) {
 
 function renderCuota() {
   if (!estadoData) { mostrarPortal(); return; }
+
+  var content = document.getElementById('cuota-content');
+  if (!document.getElementById('cuota-select')) {
+    content.innerHTML = cuotaFormOriginalHtml;
+  }
+
   var d = estadoData;
-  var r = d.resumen;
+  var r = d.resumen || {};
+
   document.getElementById('cuota-titulo').textContent = 'Registrar pago';
   document.getElementById('cuota-alias').textContent  = ALIAS;
   document.getElementById('cuota-msg').style.display  = 'none';
@@ -631,17 +534,41 @@ function renderCuota() {
 
   var confirmadas = (r.confirmadas || []);
   var pendientes  = (r.pendientes  || []);
-  var disponibles = d.cuotas.filter(function(c) { return !confirmadas.includes(c.key) && !pendientes.includes(c.key); });
+  var disponibles = d.cuotas.filter(function(c) {
+    return !confirmadas.includes(c.key) && !pendientes.includes(c.key);
+  });
+
+  if (disponibles.length === 0) {
+    var mensaje = '';
+
+    if (pendientes.length > 0) {
+      mensaje =
+        '<p style="color:var(--text-soft);text-align:center;padding:1.5rem 0;font-size:.9rem;line-height:1.5">' +
+        'Ya tenés comprobantes cargados para todas las cuotas disponibles.<br>' +
+        'Cuando la organización los revise, vas a ver el estado actualizado.' +
+        '</p>';
+    } else if (confirmadas.length === d.cuotas.length) {
+      mensaje =
+        '<p style="color:var(--text-soft);text-align:center;padding:1.5rem 0;font-size:.9rem;line-height:1.5">' +
+        'Todas tus cuotas están confirmadas.' +
+        '</p>';
+    } else {
+      mensaje =
+        '<p style="color:var(--text-soft);text-align:center;padding:1.5rem 0;font-size:.9rem;line-height:1.5">' +
+        'No hay cuotas disponibles para cargar en este momento.' +
+        '</p>';
+    }
+
+    content.innerHTML = mensaje;
+    return;
+  }
 
   var sel = document.getElementById('cuota-select');
   sel.innerHTML = disponibles.map(function(c) {
     return '<option value="'+c.key+'">$'+c.monto.toLocaleString('es-AR')+' — '+c.label+' (vence '+c.vencimiento+')</option>';
   }).join('');
-
-  if (disponibles.length === 0) {
-    document.getElementById('cuota-content').innerHTML = '<p style="color:var(--text-soft);text-align:center;padding:1.5rem 0;font-size:.9rem">✅ Todas las cuotas están registradas.</p>';
-  }
 }
+
 
 async function subirComprobanteACloudinary(file) {
   var form = new FormData();
@@ -886,13 +813,7 @@ function toggleDetalle(id) {
 }
 
 async function accionUna(id, estado) {
-  await fetch(
-    API
-    + '?action=confirmarPago'
-    + '&pagoId=' + encodeURIComponent(id)
-    + '&nuevoEstado=' + encodeURIComponent(estado)
-    + '&adminToken=' + encodeURIComponent(adminToken)
-  );
+  await fetch(API + '?action=confirmarPago&pagoId=' + encodeURIComponent(id) + '&nuevoEstado=' + encodeURIComponent(estado) + '&adminToken=' + encodeURIComponent(adminToken));
   await cargarAdmin();
 }
 
