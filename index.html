@@ -744,10 +744,74 @@ async function cargarAdmin() {
 function agruparPorPersona(pagos) {
   var mapa = {};
   pagos.forEach(function(p) {
-    if (!mapa[p.dni]) mapa[p.dni] = { dni: p.dni, nombre: p.nombre, pagos: [] };
+    if (!mapa[p.dni]) {
+      mapa[p.dni] = {
+        dni: p.dni,
+        nombre: p.nombre,
+        telefono: p.telefono || '',
+        whatsapp: p.whatsapp || '',
+        avisoWhatsapp: p.avisoWhatsapp || '',
+        fechaAvisoWhatsapp: p.fechaAvisoWhatsapp || '',
+        pagos: []
+      };
+    }
+    if (!mapa[p.dni].telefono && p.telefono) mapa[p.dni].telefono = p.telefono;
+    if (!mapa[p.dni].whatsapp && p.whatsapp) mapa[p.dni].whatsapp = p.whatsapp;
+    if (!mapa[p.dni].avisoWhatsapp && p.avisoWhatsapp) mapa[p.dni].avisoWhatsapp = p.avisoWhatsapp;
+    if (!mapa[p.dni].fechaAvisoWhatsapp && p.fechaAvisoWhatsapp) mapa[p.dni].fechaAvisoWhatsapp = p.fechaAvisoWhatsapp;
     mapa[p.dni].pagos.push(p);
   });
   return Object.values(mapa);
+}
+
+function getPersonaByDni(dni) {
+  var personas = agruparPorPersona((adminData && adminData.pagos) ? adminData.pagos : []);
+  return personas.find(function(p) { return String(p.dni) === String(dni); });
+}
+
+function getPortalLink() {
+  return window.location.origin + window.location.pathname;
+}
+
+function primerNombre(nombre) {
+  return String(nombre || '').trim().split(/\s+/)[0] || '';
+}
+
+function crearMensajeWhatsApp(persona, tipo) {
+  var nombre = primerNombre(persona.nombre);
+  var portal = getPortalLink();
+
+  if (tipo === 'rechazo') {
+    return 'Hola, ' + nombre + '. No pudimos confirmar uno de los comprobantes cargados para la Peregrinación Córdoba 2026. Podés ingresar al portal para revisar el estado y volver a cargar el comprobante si corresponde: ' + portal;
+  }
+
+  if (tipo === 'recordatorio') {
+    return 'Hola, ' + nombre + '. Te recordamos que podés ingresar al portal de pagos de la Peregrinación Córdoba 2026 para cargar comprobantes y consultar cuotas pendientes: ' + portal;
+  }
+
+  if (tipo === 'sena') {
+    return 'Hola, ' + nombre + '. Confirmamos que recibimos la seña para la Peregrinación Córdoba 2026. Tu cupo queda reservado. Podés consultar el estado de tus cuotas desde el portal de pagos: ' + portal;
+  }
+
+  return 'Hola, ' + nombre + '. Te escribimos por la Peregrinación Córdoba 2026. Podés consultar el estado de tus cuotas y cargar comprobantes desde el portal de pagos: ' + portal;
+}
+
+function abrirWhatsApp(dni, tipo) {
+  var persona = getPersonaByDni(dni);
+  if (!persona || !persona.whatsapp) {
+    alert('Esta persona no tiene un teléfono WhatsApp válido cargado en la planilla.');
+    return;
+  }
+
+  var mensaje = crearMensajeWhatsApp(persona, tipo || 'general');
+  var url = 'https://wa.me/' + persona.whatsapp + '?text=' + encodeURIComponent(mensaje);
+  window.open(url, '_blank');
+}
+
+async function marcarAvisoWhatsApp(dni) {
+  if (!adminToken) return;
+  await fetch(API + '?action=marcarAvisoWhatsApp&dni=' + encodeURIComponent(dni) + '&adminToken=' + encodeURIComponent(adminToken));
+  await cargarAdmin();
 }
 
 function filtrarAdmin(filtro) {
@@ -868,19 +932,37 @@ function renderPersonaCard(persona) {
     detallePagos = '<div style="font-size:.78rem;color:var(--gray-4);padding:.75rem 0;border-top:1px solid var(--gray-2)">Todavía no hay comprobantes cargados para esta persona.</div>';
   }
 
+  var safeDni = String(persona.dni).replace(/'/g, '&#39;');
+  var tieneTelefono = !!persona.whatsapp;
+  var whatsappInfo = tieneTelefono
+    ? 'WhatsApp ' + persona.whatsapp + (persona.fechaAvisoWhatsapp ? ' · último aviso ' + persona.fechaAvisoWhatsapp : '')
+    : 'Sin teléfono WhatsApp válido';
+
+  var whatsappActions = tieneTelefono
+    ? '<button class="btn-link" onclick="abrirWhatsApp(\''+safeDni+'\',\'general\')">WhatsApp</button>' +
+      '<button class="btn-link" onclick="abrirWhatsApp(\''+safeDni+'\',\'recordatorio\')">Recordar pago</button>' +
+      (tieneRech ? '<button class="btn-link" onclick="abrirWhatsApp(\''+safeDni+'\',\'rechazo\')">Avisar rechazo</button>' : '') +
+      (pagosConf.includes('sena') ? '<button class="btn-link" onclick="abrirWhatsApp(\''+safeDni+'\',\'sena\')">Avisar seña</button>' : '') +
+      '<button class="btn-secondary btn-sm" onclick="marcarAvisoWhatsApp(\''+safeDni+'\')">Marcar avisado</button>'
+    : '<span style="font-size:.72rem;color:var(--gray-4)">Sin WhatsApp</span>';
+
   var footer = '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem">' +
       '<span style="font-size:.72rem;color:var(--text-soft)">'+(tienePend ? nPend+' comprobante'+(nPend>1?'s':'')+' por revisar' : tieneRech ? 'Tiene comprobantes rechazados' : 'Sin pendientes')+'</span>' +
       '<div style="display:flex;gap:.5rem;flex-wrap:wrap">' +
-        (tienePend ? '<button class="btn-confirm" onclick="confirmarTodo(\''+persona.dni+'\')">Confirmar todo</button>' : '') +
+        (tienePend ? '<button class="btn-confirm" onclick="confirmarTodo(\''+safeDni+'\')">Confirmar todo</button>' : '') +
         '<button class="btn-secondary btn-sm" onclick="toggleDetalle(\''+detalleId+'\')">Ver detalle</button>' +
       '</div>' +
+    '</div>' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;border-top:1px solid var(--gray-2);padding-top:.65rem;margin-top:.65rem">' +
+      '<span style="font-size:.72rem;color:var(--text-soft)">'+whatsappInfo+'</span>' +
+      '<div style="display:flex;gap:.4rem;flex-wrap:wrap">'+whatsappActions+'</div>' +
     '</div>' +
     '<div id="'+detalleId+'" style="display:none">'+detallePagos+'</div>';
 
   return '<div class="pago-item" style="border-left:'+border+'">'+
     '<div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.65rem">'+
       '<div style="width:36px;height:36px;border-radius:50%;background:var(--green);color:white;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;flex-shrink:0">'+avatar+'</div>'+
-      '<button onclick="toggleDetalle(\''+detalleId+'\')" title="Ver detalle de comprobantes" style="flex:1;min-width:0;text-align:left;background:none;border:none;padding:0;cursor:pointer;font-family:\'DM Sans\',sans-serif;color:var(--text)"><div style="font-weight:700;font-size:.88rem;text-decoration:underline;text-underline-offset:3px">'+persona.nombre+'</div><div style="font-size:.7rem;color:var(--text-soft)">DNI '+persona.dni+' · tocar para ver comprobantes</div></button>'+
+      '<button onclick="toggleDetalle(\''+detalleId+'\')" title="Ver detalle de comprobantes" style="flex:1;min-width:0;text-align:left;background:none;border:none;padding:0;cursor:pointer;font-family:\'DM Sans\',sans-serif;color:var(--text)"><div style="font-weight:700;font-size:.88rem;text-decoration:underline;text-underline-offset:3px">'+persona.nombre+'</div><div style="font-size:.7rem;color:var(--text-soft)">DNI '+persona.dni+' · '+(persona.whatsapp ? 'WhatsApp cargado' : 'sin WhatsApp')+' · tocar para ver comprobantes</div></button>'+
       '<div style="text-align:right;flex-shrink:0"><div style="font-size:.88rem;font-weight:700;color:var(--green)">$'+totalPagado.toLocaleString('es-AR')+'</div><div style="font-size:.65rem;color:var(--text-soft)">de $'+TOTAL_CUOTAS.toLocaleString('es-AR')+'</div></div>'+
     '</div>'+
     '<div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.65rem">'+chips+'</div>'+
