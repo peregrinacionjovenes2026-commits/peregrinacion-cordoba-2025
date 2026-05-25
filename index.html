@@ -472,9 +472,11 @@ async function verificarAdmin(){
   }catch(e){$$('admin-err').textContent='Error de conexión.';}
 }
 
-$$('dni-input').addEventListener('keydown',function(e){if(e.key==='Enter')buscarDNI();});
-$$('email-input').addEventListener('keydown',function(e){if(e.key==='Enter')buscarDNI();});
-$$('admin-pass').addEventListener('keydown',function(e){if(e.key==='Enter')verificarAdmin();});
+document.addEventListener('DOMContentLoaded', function(){
+  $$('dni-input').addEventListener('keydown',function(e){if(e.key==='Enter')buscarDNI();});
+  $$('email-input').addEventListener('keydown',function(e){if(e.key==='Enter')buscarDNI();});
+  $$('admin-pass').addEventListener('keydown',function(e){if(e.key==='Enter')verificarAdmin();});
+});
 
 // ── Portal ───────────────────────────────────────────────
 async function buscarDNI(){
