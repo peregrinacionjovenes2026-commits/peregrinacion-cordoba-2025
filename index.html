@@ -820,7 +820,7 @@ function renderPersonaCard(persona){
   var subInfo=tienePend?pagosPend.length+' comprobante'+(pagosPend.length>1?'s':'')+' por revisar':tieneRech?'Tiene comprobantes no validados':'Sin pendientes';
 
   // WhatsApp footer — solo recordatorio (los de confirmación/rechazo aparecen en contexto)
-  var waRec=wa?'<a class="bwa2" href="https://wa.me/'+wa+'?text='+encodeURIComponent('Hola '+pn+', te recordamos que podés ver y cargar comprobantes de tus cuotas en: '+PORTAL_URL)+'" target="whatsapp_tab">Recordar pago</a>':'';
+  var waRec=wa?'<a class="bwa2" href="https://web.whatsapp.com/send?phone='+wa+'&text='+encodeURIComponent('Hola '+pn+', te recordamos que podés ver y cargar comprobantes de tus cuotas en: '+PORTAL_URL)+'" target="whatsapp_tab">Recordar pago</a>':'';
   var waInfo=wa?'WA '+wa+(persona.fechaAvisoWhatsapp?' · avisado '+persona.fechaAvisoWhatsapp:''):'Sin WhatsApp';
 
   return '<div class="pcard3" style="'+border+'">'+
