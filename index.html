@@ -892,7 +892,7 @@ function botonWhatsappPago(tipo, p, sd, texto){
   if (!wa) return '<span style="font-size:.7rem;color:var(--g4)">Sin WA</span>';
   var msg = mensajeWhatsappPago(tipo, p, sd);
   var label = (p.whatsappEnviado === 'si' && p.tipoWhatsapp === tipo) ? texto.replace('Avisar','Reenviar') : texto;
-  return '<a class="bwa2" href="https://wa.me/'+wa+'?text='+encodeURIComponent(msg)+'" target="whatsapp_tab" onclick="marcarAvisoWAPago(\''+p.id+'\',\''+tipo+'\',\''+sd+'\')">'+label+'</a>';
+  return '<a class="bwa2" href="web.whatsapp.com/send?phone='+wa+'&text='+encodeURIComponent(msg)+'" target="whatsapp_tab" onclick="marcarAvisoWAPago(\''+p.id+'\',\''+tipo+'\',\''+sd+'\')">'+label+'</a>';
 }
 
 function buildCompRow(p,sd){
