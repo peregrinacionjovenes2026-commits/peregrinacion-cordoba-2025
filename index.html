@@ -1114,7 +1114,7 @@ function cerrarMenus(){document.querySelectorAll('.menu-drop.open').forEach(func
 document.addEventListener('click',function(e){if(!e.target.closest('.menu-wrap')) cerrarMenus();});
 
 function abrirWA(wa,pn){
-  window.open('https://wa.me/'+wa+'?text='+encodeURIComponent('Hola '+pn+', te escribimos por la Peregrinación Córdoba 2026.'),'whatsapp_tab');
+  window.open('https://web.whatsapp.com/send?phone='+wa+'&text='+encodeURIComponent('Hola '+pn+', te escribimos por la Peregrinación Córdoba 2026.'),'whatsapp_tab');
 }
 
 function mensajeInfoSena(pn){
