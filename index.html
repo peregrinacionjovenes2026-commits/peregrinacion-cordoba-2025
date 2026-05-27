@@ -845,7 +845,7 @@ function renderPersonaCard(persona){
   var subInfo=tienePend?pagosPend.length+' comprobante'+(pagosPend.length>1?'s':'')+' por revisar':tieneRech?'Tiene comprobantes no validados':'Sin pendientes';
 
   // WhatsApp footer — solo recordatorio (los de confirmación/rechazo aparecen en contexto)
-  var waRec=wa?'<a class="bwa2" href="https://web.whatsapp.com/send?phone='+wa+'&text='+encodeURIComponent('Hola '+pn+', te recordamos que podés ver y cargar comprobantes de tus cuotas en: '+PORTAL_URL)+'" target="whatsapp_tab">Recordar pago</a>':'';
+  var waRec=wa?'<a class="bwa2" href="#" onclick="abrirWATab('https://wa.me/'+wa+'?text='+encodeURIComponent('Hola '+pn+', te recordamos que podés ver y cargar comprobantes de tus cuotas en: '+PORTAL_URL)+'" ');return false;">Recordar pago</a>':'';
   var waInfo=wa?'WA '+wa+(persona.fechaAvisoWhatsapp?' · avisado '+persona.fechaAvisoWhatsapp:''):'Sin WhatsApp';
 
   return '<div class="pcard3" style="'+border+'">'+
@@ -925,8 +925,7 @@ function botonWhatsappPago(tipo, p, sd, texto){
   if (!wa) return '<span style="font-size:.7rem;color:var(--g4)">Sin WA</span>';
   var msg = mensajeWhatsappPago(tipo, p, sd);
   var label = (p.whatsappEnviado === 'si' && p.tipoWhatsapp === tipo) ? texto.replace('Avisar','Reenviar') : texto;
-  return '<a class="bwa2" href="web.whatsapp.com/send?phone='+wa+'&text='+encodeURIComponent(msg)+'" target="whatsapp_tab" onclick="marcarAvisoWAPago(\''+p.id+'\',\''+tipo+'\',\''+sd+'\')">'+label+'</a>';
-}
+  return '<button class="bwa2" onclick="abrirWATab(\'https://wa.me/'+wa+'?text=\'+encodeURIComponent(msg)); marcarAvisoWAPago(\''+p.id+'\',\''+tipo+'\',\''+sd+'\')">'+label+'</button>';
 
 function buildCompRow(p,sd){
   var hasComp=p.comprobanteUrl&&p.comprobanteUrl!=='(adjunto pendiente)';
@@ -1146,8 +1145,13 @@ function toggleMenu(id){
 function cerrarMenus(){document.querySelectorAll('.menu-drop.open').forEach(function(m){m.classList.remove('open');});}
 document.addEventListener('click',function(e){if(!e.target.closest('.menu-wrap')) cerrarMenus();});
 
-function abrirWA(wa,pn){
-  window.open('https://web.whatsapp.com/send?phone='+wa+'&text='+encodeURIComponent('Hola '+pn+', te escribimos por la Peregrinación Córdoba 2026.'),'whatsapp_tab');
+function abrirWATab(url){
+  if(!window._waTab || window._waTab.closed){
+    window._waTab = window.open(url, 'whatsapp_tab');
+  } else {
+    window._waTab.location.href = url;
+    window._waTab.focus();
+  }
 }
 
 function mensajeInfoSena(pn){
@@ -1171,7 +1175,7 @@ function mensajeInfoSena(pn){
 var ventanaWhatsappSena = null;
 
 function abrirWhatsappWebMismaPestana(wa,msg){
-  var url='https://web.whatsapp.com/send?phone='+wa+'&text='+encodeURIComponent(msg);
+  var url='https://wa.me/'+wa+'?text='+encodeURIComponent(msg);
 
   try{
     if(ventanaWhatsappSena && !ventanaWhatsappSena.closed){
