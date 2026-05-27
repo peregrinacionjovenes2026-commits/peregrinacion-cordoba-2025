@@ -374,10 +374,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--g1);min-height:100vh;colo
           <option value="orden">Por orden de inscripción</option>
           <option value="nombre">Por nombre</option>
           <option value="reciente">Más recientes primero</option>
-        </select>
-        <input type="text" id="ins-search" class="ins-search" placeholder="Buscar..." oninput="renderInscriptos()">
-      </div>
-      <!-- Resumen de grupo + copiar -->
+       </select>
+<input type="text" id="ins-search" class="ins-search" placeholder="Buscar..." oninput="renderInscriptos()">
+<button class="bs bsm" onclick="abrirDifusionFiltrados()">Enviar mensaje a filtrados</button>
+</div>
+<!-- Resumen de grupo + copiar -->
       <div class="ins-summary" id="ins-summary">
         <span id="ins-summary-text"></span>
         <button class="bs bsm" onclick="copiarResumen()" style="flex-shrink:0">📋 Copiar resumen</button>
@@ -418,7 +419,30 @@ body{font-family:'DM Sans',sans-serif;background:var(--g1);min-height:100vh;colo
     </div>
   </div>
 </div>
+<!-- MODAL DIFUSIÓN WHATSAPP -->
+<div class="overlay" id="modal-difusion" style="display:none" onclick="if(event.target===this)cerrarModalDifusion()">
+  <div class="modal" style="max-width:560px">
+    <h3>Enviar mensaje a filtrados</h3>
+    <p id="difusion-count">Se va a preparar el mensaje para las personas filtradas.</p>
 
+    <div class="ig">
+      <label>Mensaje</label>
+      <textarea id="difusion-template" rows="8" style="resize:vertical"></textarea>
+    </div>
+
+    <p style="font-size:.76rem;color:var(--s);margin-top:.4rem">
+      Podés usar {nombre}, {dni} y {portal}. El sistema va a abrir WhatsApp Web uno por uno.
+    </p>
+
+    <div id="difusion-progreso" style="font-size:.78rem;color:var(--s);margin-top:.6rem"></div>
+
+    <div class="modal-btns">
+      <button class="bp" style="width:auto;margin-top:0" onclick="iniciarDifusion()">Empezar</button>
+      <button class="bp" id="difusion-btn-siguiente" style="width:auto;margin-top:0;display:none" onclick="enviarSiguienteDifusion()">Abrir siguiente</button>
+      <button class="bgr" onclick="cerrarModalDifusion()">Cerrar</button>
+    </div>
+  </div>
+</div>
 <script>
 const API          = 'https://script.google.com/macros/s/AKfycbxNFRlC9tSicrNrdJc6syVrDeAzNkqmaGZfeKqaFKy0P7XZqHXEjYs7Pvdv7fRBtimGTw/exec';
 const ALIAS        = 'aixa.romero82';
@@ -433,6 +457,9 @@ var filtroActual='pendiente', adminBusqueda='', adminToken='', adminRole='', pEm
 var modalPagoId=null, modalPagoDni=null, bajaDni=null;
 var vistaActual='pagos';
 var adminUltimaVisita=null; // para badge "nuevos"
+var difusionLista=[];
+var difusionIndex=0;
+var difusionTemplate='';
 var cuotaCardOriginalHtml='';
 
 const CQ=['sena','1ra','2da','3ra','4ta'];
@@ -1169,7 +1196,119 @@ async function avisarSenaWA(wa,pn,dni){
     renderInscriptos();
   }
 }
+function obtenerInscriptosFiltradosParaDifusion(){
+  if(!inscriptosData || !inscriptosData.ok) return [];
 
+  var lista = inscriptosData.inscriptos.slice();
+
+  var fe = $$('ins-fe').value;
+  var fr = $$('ins-fr').value;
+  var fp = $$('ins-fp').value;
+  var fc = $$('ins-fc').value;
+  var busq = ($$('ins-search').value || '').toLowerCase();
+
+  if(fe) lista = lista.filter(function(i){ return i.estado === fe; });
+  if(fr) lista = lista.filter(function(i){ return i.rol === fr; });
+  if(fp) lista = lista.filter(function(i){ return i.parroquia === fp; });
+  if(fc) lista = lista.filter(function(i){ return i.comunidad === fc; });
+
+  if(busq){
+    lista = lista.filter(function(i){
+      return (i.nombre || '').toLowerCase().includes(busq)
+        || String(i.dni || '').includes(busq)
+        || (i.parroquia || '').toLowerCase().includes(busq)
+        || (i.comunidad || '').toLowerCase().includes(busq);
+    });
+  }
+
+  return lista;
+}
+
+function abrirDifusionFiltrados(){
+  if(!esAdminEdicion()){
+    alert('Esta acción requiere clave de edición.');
+    return;
+  }
+
+  var lista = obtenerInscriptosFiltradosParaDifusion();
+
+  difusionLista = lista.filter(function(p){
+    return p.whatsapp
+      && p.estadoCupo !== 'lista_espera'
+      && p.estadoCupo !== 'baja';
+  });
+
+  difusionIndex = 0;
+
+  if(!difusionLista.length){
+    alert('No hay personas con WhatsApp en el filtro actual.');
+    return;
+  }
+
+  $$('difusion-count').textContent = 'Se va a preparar el mensaje para ' + difusionLista.length + ' persona' + (difusionLista.length === 1 ? '' : 's') + '.';
+
+  $$('difusion-template').value =
+    'Hola {nombre}! Te hago una aclaración sobre el comprobante de la seña: cuando hagas la transferencia, por favor subí al portal una foto o PDF del *comprobante completo*, donde se vean los datos de quien realiza la transferencia —origen del pago—.\n\n' +
+    'Esto nos ayuda a identificar correctamente el pago. ¡Gracias!';
+
+  $$('difusion-progreso').textContent = '';
+  $$('difusion-btn-siguiente').style.display = 'none';
+  $$('modal-difusion').style.display = 'flex';
+}
+
+function cerrarModalDifusion(){
+  $$('modal-difusion').style.display = 'none';
+  difusionLista = [];
+  difusionIndex = 0;
+  difusionTemplate = '';
+}
+
+function iniciarDifusion(){
+  difusionTemplate = $$('difusion-template').value.trim();
+
+  if(!difusionTemplate){
+    alert('Escribí el mensaje que querés enviar.');
+    return;
+  }
+
+  difusionIndex = 0;
+  $$('difusion-btn-siguiente').style.display = 'inline-flex';
+  enviarSiguienteDifusion();
+}
+
+function enviarSiguienteDifusion(){
+  var p = difusionLista[difusionIndex];
+
+  if(!p){
+    $$('difusion-progreso').textContent = 'Difusión terminada.';
+    $$('difusion-btn-siguiente').style.display = 'none';
+    return;
+  }
+
+  var msg = armarMensajeDifusion(difusionTemplate, p);
+  var wa = limpiarWhatsappDifusion(p.whatsapp);
+
+  abrirWhatsappWebMismaPestana(wa, msg);
+
+  difusionIndex++;
+
+  $$('difusion-progreso').textContent =
+    'Abierto ' + difusionIndex + ' de ' + difusionLista.length + ': ' + (p.nombre || '');
+}
+
+function armarMensajeDifusion(template, p){
+  var nombre = (p.nombre || '').trim().split(' ')[0];
+
+  return template
+    .replaceAll('{nombre}', nombre)
+    .replaceAll('{dni}', p.dni || '')
+    .replaceAll('{portal}', PORTAL_URL);
+}
+
+function limpiarWhatsappDifusion(wa){
+  return String(wa || '').replace(/[^0-9]/g, '');
+}
+  
 function copiarResumen(){
   var txt=$$('ins-summary-text').textContent;
   navigator.clipboard.writeText(txt).then(function(){
