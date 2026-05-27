@@ -760,13 +760,11 @@ function renderAdmin(){
 
   var filtradas=personas;
   if(filtroActual==='pendiente') filtradas=personas.filter(function(p){return p.pagos.some(function(x){return x.estado==='pendiente';});});
-  else if(filtroActual==='aldia'){
-    filtradas=personas.filter(function(p){
-      var conf=p.pagos.filter(function(x){return x.estado==='confirmado';}).flatMap(function(x){return (x.cuotas||'').split(',').map(function(s){return s.trim();});});
-      var venc=CQ.filter(function(c){return vencida(c);});
-      return venc.every(function(c){return conf.includes(c);});
-    });
-  } else if(filtroActual==='rechazados'){
+else if(filtroActual==='aldia'){
+  filtradas=personas.filter(function(p){
+    return personaTieneCuotasConfirmadas(p, cuotasExigiblesHoy());
+  });
+} else if(filtroActual==='rechazados'){
     filtradas=personas.filter(function(p){return p.pagos.some(function(x){return x.estado==='rechazado';});});
   }
   if(adminBusqueda){var q=adminBusqueda.toLowerCase();filtradas=filtradas.filter(function(p){return p.nombre.toLowerCase().includes(q)||String(p.dni).includes(q);});}
@@ -1199,13 +1197,11 @@ function obtenerPersonasPagosFiltradas(){
   var personas=agruparPorPersona(pagos);
   var filtradas=personas;
   if(filtroActual==='pendiente') filtradas=personas.filter(function(p){return p.pagos.some(function(x){return x.estado==='pendiente';});});
-  else if(filtroActual==='aldia'){
-    filtradas=personas.filter(function(p){
-      var conf=p.pagos.filter(function(x){return x.estado==='confirmado';}).flatMap(function(x){return (x.cuotas||'').split(',').map(function(s){return s.trim();});});
-      var venc=CQ.filter(function(c){return vencida(c);});
-      return venc.every(function(c){return conf.includes(c);});
-    });
-  } else if(filtroActual==='rechazados'){
+ else if(filtroActual==='aldia'){
+  filtradas=personas.filter(function(p){
+    return personaTieneCuotasConfirmadas(p, cuotasExigiblesHoy());
+  });
+} else if(filtroActual==='rechazados'){
     filtradas=personas.filter(function(p){return p.pagos.some(function(x){return x.estado==='rechazado';});});
   }
   if(adminBusqueda){var q=adminBusqueda.toLowerCase();filtradas=filtradas.filter(function(p){return p.nombre.toLowerCase().includes(q)||String(p.dni).includes(q);});}
