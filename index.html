@@ -400,7 +400,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--g1);min-height:100vh;colo
           <option value="reciente">Más recientes primero</option>
        </select>
 <input type="text" id="ins-search" class="ins-search" placeholder="Buscar..." oninput="renderInscriptos()">
+<div style="width:100%;display:flex;justify-content:flex-end;gap:.5rem;margin-top:.4rem">
 <button class="bs bsm" onclick="abrirDifusionFiltrados()">Enviar mensaje a filtrados</button>
+<button class="bs bsm" onclick="abrirNuevaCampana()">+ Nueva campaña</button>
+</div>
 </div>
 <!-- Resumen de grupo + copiar -->
       <div class="ins-summary" id="ins-summary">
