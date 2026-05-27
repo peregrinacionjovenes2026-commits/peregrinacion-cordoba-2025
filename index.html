@@ -1175,18 +1175,18 @@ function mensajeInfoSena(pn){
 var ventanaWhatsappSena = null;
 
 function abrirWhatsappWebMismaPestana(wa,msg){
-  var url='https://wa.me/'+wa+'?text='+encodeURIComponent(msg);
-
-  try{
-    if(ventanaWhatsappSena && !ventanaWhatsappSena.closed){
+  var url='https://web.whatsapp.com/send?phone='+wa+'&text='+encodeURIComponent(msg);
+  if(!ventanaWhatsappSena || ventanaWhatsappSena.closed){
+    ventanaWhatsappSena = window.open('https://web.whatsapp.com','whatsapp_peregrinacion');
+  }
+  setTimeout(function(){
+    try{
       ventanaWhatsappSena.location.href = url;
       ventanaWhatsappSena.focus();
-      return;
+    }catch(e){
+      ventanaWhatsappSena = window.open(url,'whatsapp_peregrinacion');
     }
-  }catch(e){}
-
-  ventanaWhatsappSena = window.open(url,'whatsapp_peregrinacion');
-  if(ventanaWhatsappSena) ventanaWhatsappSena.focus();
+  }, ventanaWhatsappSena && !ventanaWhatsappSena.closed ? 0 : 1500);
 }
 
 async function avisarSenaWA(wa,pn,dni){
