@@ -1,0 +1,2519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Peregrinación Córdoba 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#1a7a56;--gl:#e8f5ef;--gm:#2d9e6e;
+  --a:#d4820a;--al:#fef3dc;
+  --b:#1a5fa8;--bl:#e8f0fc;
+  --r:#b83232;--rl:#fdecea;
+  --g1:#f7f8f7;--g2:#efefef;--g3:#c8ccc8;--g4:#888f88;
+  --t:#1a1f1a;--s:#5a635a;--w:#fff;
+  --rr:14px;--rs:8px;--sh:0 2px 16px rgba(0,0,0,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--g1);min-height:100vh;color:var(--t);font-size:15px;line-height:1.5}
+.page{display:none!important}.page.active{display:block!important}
+#pp.active,#pal.active{display:flex!important}
+
+/* Shared */
+.ig{margin-bottom:.85rem}
+.ig label{display:block;font-size:.78rem;font-weight:600;color:var(--s);margin-bottom:.3rem;letter-spacing:.02em}
+.ig input,.ig select,.ig textarea{width:100%;padding:10px 13px;border:1.5px solid var(--g2);border-radius:var(--rs);font-size:.92rem;font-family:'DM Sans',sans-serif;color:var(--t);background:var(--w);outline:none;transition:border-color .15s}
+.ig input:focus,.ig select:focus{border-color:var(--gm)}
+.bp{display:block;width:100%;padding:12px;background:var(--g);color:#fff;border:none;border-radius:var(--rs);font-size:.92rem;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:center;transition:background .15s,transform .1s;margin-top:.25rem}
+.bp:hover{background:var(--gm)}.bp:active{transform:scale(.98)}
+.bs{display:block;width:100%;padding:10px;background:transparent;color:var(--g);border:1.5px solid var(--gl);border-radius:var(--rs);font-size:.88rem;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:center;margin-top:.5rem;transition:background .15s}
+.bs:hover{background:var(--gl)}
+.bsm{padding:5px 12px;font-size:.76rem;width:auto;display:inline-block;margin-top:0}
+.err{font-size:.78rem;color:var(--r);margin-top:.5rem;text-align:center;min-height:1em}
+.spin{display:inline-block;width:24px;height:24px;border:2.5px solid var(--g2);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load{text-align:center;padding:2.5rem 1rem;color:var(--g4);display:flex;flex-direction:column;align-items:center;gap:.6rem;font-size:.85rem}
+.badge{padding:2px 8px;border-radius:20px;font-size:.65rem;font-weight:700;white-space:nowrap}
+.bok{background:var(--gl);color:var(--g)}
+.bpend{background:var(--al);color:var(--a)}
+.bfalta{background:var(--g2);color:var(--g4)}
+.brech{background:var(--rl);color:var(--r)}
+
+/* Portal */
+#pp{min-height:100vh;align-items:center;justify-content:center;padding:1.5rem;background:var(--g1)}
+.pcard{background:var(--w);border-radius:20px;padding:2.5rem 2rem;max-width:400px;width:100%;box-shadow:var(--sh);border:1px solid var(--g2)}
+.ptitle{font-family:'DM Serif Display',serif;font-size:1.85rem;line-height:1.15;margin-bottom:.45rem}
+.psub{font-size:.85rem;color:var(--s);margin-bottom:1.6rem;line-height:1.5}
+.pfoot{margin-top:1.5rem;text-align:center}
+.pfoot a{font-size:.7rem;color:var(--g3);text-decoration:none}
+
+/* Estado */
+#pe{padding:1rem;padding-bottom:2rem}
+.ewrap{max-width:520px;margin:0 auto}
+.hcard{background:var(--w);border-radius:var(--rr);padding:1.1rem 1.2rem;margin-bottom:.65rem;box-shadow:var(--sh);display:flex;align-items:center;gap:.9rem;border:1px solid var(--g2)}
+.av{width:44px;height:44px;border-radius:50%;background:var(--g);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.95rem;font-weight:700;flex-shrink:0}
+.hname{font-weight:700;font-size:.92rem;margin-bottom:.08rem}
+.hsub{font-size:.7rem;color:var(--s)}
+.abanner{background:var(--al);border:1px solid #f0c060;border-radius:var(--rs);padding:.7rem 1rem;font-size:.78rem;color:var(--a);margin-bottom:.65rem;display:flex;gap:.45rem;align-items:flex-start}
+.psec{background:var(--w);border-radius:var(--rr);padding:1.1rem 1.2rem;margin-bottom:.65rem;box-shadow:var(--sh);border:1px solid var(--g2)}
+.plbl{font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--s);margin-bottom:.65rem}
+.pbar{height:7px;background:var(--g2);border-radius:4px;overflow:hidden;margin-bottom:.4rem;display:flex}
+.pbar-ok{height:100%;background:var(--g);transition:width .4s}
+.pbar-rv{height:100%;background:var(--a);transition:width .4s}
+.pleg{display:flex;justify-content:space-between;font-size:.66rem;color:var(--s)}
+.agrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.45rem;margin-bottom:.65rem}
+.abox{background:var(--w);border-radius:var(--rs);padding:.8rem .6rem;text-align:center;box-shadow:var(--sh);border:1px solid var(--g2)}
+.abox .v{font-size:.92rem;font-weight:700;margin-bottom:.1rem}
+.abox .l{font-size:.6rem;color:var(--s);font-weight:500}
+.ccard{background:var(--w);border-radius:var(--rr);padding:1.1rem 1.2rem;margin-bottom:.65rem;box-shadow:var(--sh);border:1px solid var(--g2)}
+.crow{display:flex;align-items:flex-start;justify-content:space-between;padding:.55rem 0;border-bottom:1px solid var(--g2);gap:.5rem}
+.crow:last-child{border-bottom:none}
+.cname{font-size:.83rem;font-weight:600;margin-bottom:.06rem}
+.cdate{font-size:.68rem;color:var(--s)}
+.clink{font-size:.68rem;color:var(--b);font-weight:600;text-decoration:none;display:inline-block;margin-top:.15rem}
+.clink:hover{text-decoration:underline}
+
+/* Cuota */
+#pc{padding:1rem;padding-bottom:2rem}
+.cwrap{max-width:500px;margin:0 auto}
+.ccard2{background:var(--w);border-radius:var(--rr);padding:1.5rem;box-shadow:var(--sh);border:1px solid var(--g2)}
+.ccard2 h2{font-family:'DM Serif Display',serif;font-size:1.25rem;margin-bottom:1.1rem}
+.abox2{background:var(--gl);border-radius:var(--rs);padding:.9rem;margin-bottom:1.1rem}
+.alab{font-size:.68rem;font-weight:600;color:var(--g);margin-bottom:.22rem}
+.aval{font-size:1.05rem;font-weight:700;font-family:monospace;color:var(--g);letter-spacing:.04em}
+.ahint{font-size:.72rem;color:var(--g);margin-top:.22rem;opacity:.85}
+.cuotas-check{display:flex;flex-direction:column;gap:.45rem;margin:.4rem 0 .9rem}
+.copt{display:flex;align-items:center;gap:.7rem;padding:.7rem .9rem;border:1.5px solid var(--g2);border-radius:var(--rs);cursor:pointer;transition:border-color .15s,background .15s;user-select:none}
+.copt:hover{border-color:var(--gm);background:var(--gl)}
+.copt.sel{border-color:var(--g);background:var(--gl)}
+.copt input[type=checkbox]{width:15px;height:15px;accent-color:var(--g);flex-shrink:0}
+.copt-info{flex:1}
+.copt-label{font-size:.85rem;font-weight:600}
+.copt-monto{font-size:.75rem;color:var(--s)}
+.ctotal{background:var(--g2);border-radius:var(--rs);padding:.7rem .9rem;margin-bottom:.9rem;display:flex;justify-content:space-between;align-items:center}
+.ctotal-l{font-size:.8rem;color:var(--s);font-weight:600}
+.ctotal-v{font-size:.95rem;font-weight:700;color:var(--g)}
+.fwrap{border:1.5px dashed var(--g3);border-radius:var(--rs);padding:1.1rem;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;position:relative;margin-top:.2rem}
+.fwrap:hover{border-color:var(--gm);background:var(--gl)}
+.fwrap input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.fwrap .fi{font-size:1.3rem;margin-bottom:.3rem}
+.fwrap .ft{font-size:.78rem;color:var(--s)}
+.fname{font-size:.75rem;color:var(--g);margin-top:.4rem;font-weight:600}
+.mbox{padding:.75rem .9rem;border-radius:var(--rs);font-size:.8rem;margin-top:.65rem;display:none}
+.mok{background:var(--gl);color:var(--g)}.mer{background:var(--rl);color:var(--r)}
+
+/* Admin login */
+#pal{min-height:100vh;align-items:center;justify-content:center;padding:1.5rem}
+
+/* Admin */
+#pa{padding:1.1rem;padding-bottom:3rem}
+.awrap{max-width:960px;margin:0 auto}
+.ahead{display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem;gap:1rem;flex-wrap:wrap}
+.atitle{font-family:'DM Serif Display',serif;font-size:1.45rem}
+.ahead-r{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.anew-badge{background:var(--al);color:var(--a);padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700}
+.arole-badge{background:var(--g2);color:var(--s);padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700}
+.astats{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:.9rem}
+.astat{background:var(--w);border-radius:var(--rs);padding:.8rem .9rem;text-align:center;box-shadow:var(--sh);border:1px solid var(--g2)}
+.astat .n{font-size:1.25rem;font-weight:700;margin-bottom:.08rem}
+.astat .l{font-size:.66rem;color:var(--s);font-weight:500}
+.atabs{display:flex;gap:.35rem;margin-bottom:.7rem;flex-wrap:wrap}
+.atab{padding:6px 14px;border:1.5px solid var(--g2);border-radius:20px;background:var(--w);font-size:.76rem;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;color:var(--s);white-space:nowrap}
+.atab.active{background:var(--g);color:#fff;border-color:var(--g)}
+.asearch{width:100%;padding:8px 12px;border:1.5px solid var(--g2);border-radius:var(--rs);font-size:.83rem;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:.7rem;background:var(--w)}
+
+/* Persona card pagos */
+.pcard3{background:var(--w);border-radius:var(--rr);box-shadow:var(--sh);border:1px solid var(--g2);margin-bottom:.55rem;overflow:hidden}
+.ph{display:flex;align-items:center;gap:.65rem;padding:.8rem 1rem;cursor:pointer;transition:background .1s;user-select:none}
+.ph:hover{background:var(--g1)}
+.pav2{width:34px;height:34px;border-radius:50%;background:var(--g);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}
+.pn{font-weight:700;font-size:.85rem}
+.ps{font-size:.68rem;color:var(--s);margin-top:.05rem}
+.pm{text-align:right;flex-shrink:0}
+.pmv{font-size:.82rem;font-weight:700;color:var(--g)}
+.pml{font-size:.6rem;color:var(--s)}
+.pchips{display:flex;flex-wrap:wrap;gap:.25rem;padding:0 1rem .6rem}
+.chip{padding:2px 8px;border-radius:20px;font-size:.66rem;font-weight:600;white-space:nowrap;border:1px solid transparent}
+.cok{background:var(--gl);color:var(--g);border-color:#b8e0cc}
+.cpend{background:var(--al);color:var(--a);border-color:#f0c060}
+.crech{background:var(--rl);color:var(--r);border-color:#f5c0c0}
+.cnone{background:var(--g2);color:var(--g4)}
+.pbar2{height:3px;background:var(--g2);display:flex;margin:0 1rem .6rem}
+
+/* Comprobantes */
+.pcomps{border-top:1px solid var(--g2)}
+.comprow{display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;border-bottom:1px solid var(--g2)}
+.comprow:last-child{border-bottom:none}
+.comp-info{flex:1;min-width:0}
+.comp-lab{font-size:.8rem;font-weight:700}
+.comp-sub{font-size:.66rem;color:var(--s);margin-top:.05rem}
+.comp-acc{display:flex;gap:.35rem;align-items:center;flex-shrink:0;flex-wrap:wrap}
+
+/* Botones comprobante — compactos */
+.bver{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px;min-height:30px;background:var(--b);color:#fff;border:none;border-radius:var(--rs);font-size:.72rem;font-weight:700;cursor:pointer;text-decoration:none;transition:opacity .15s;flex-shrink:0;white-space:nowrap}
+.bver:hover{opacity:.8}
+.bconf2{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;background:var(--g);color:#fff;border:none;border-radius:var(--rs);font-size:.85rem;cursor:pointer;transition:background .15s;flex-shrink:0}
+.bconf2:hover{background:var(--gm)}
+.bnval2{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;background:var(--rl);color:var(--r);border:1.5px solid #f5c0c0;border-radius:var(--rs);font-size:.85rem;cursor:pointer;transition:background .15s;flex-shrink:0}
+.bnval2:hover{background:#fbd0ce}
+.brev2{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px;min-height:30px;background:var(--g2);color:var(--s);border:none;border-radius:var(--rs);font-size:.72rem;font-weight:700;cursor:pointer;transition:background .15s;flex-shrink:0;white-space:nowrap}
+.brev2:hover{background:var(--g3)}
+.bwa2{display:inline-flex;align-items:center;gap:.3rem;padding:5px 10px;background:var(--w);color:#128C7E;border:1.5px solid #b8e8c8;border-radius:var(--rs);font-size:.74rem;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;text-decoration:none;transition:background .15s;white-space:nowrap}
+.bwa2:hover{background:#f0fdf4}
+.estbadge{padding:3px 8px;border-radius:20px;font-size:.68rem;font-weight:700;white-space:nowrap}
+.econf{background:var(--gl);color:var(--g)}
+.erech{background:var(--rl);color:var(--r)}
+
+.wa-sent{display:inline-block;margin-top:.16rem;font-size:.66rem;color:#128C7E;font-weight:700}
+.dup-warn{display:inline-block;margin-left:.35rem;font-size:.64rem;color:var(--a);font-weight:700}
+/* Footer card pagos */
+.pfoot2{padding:.6rem 1rem;border-top:1px solid var(--g2);background:var(--g1);display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
+.winfo{font-size:.68rem;color:var(--s)}
+.wacts{display:flex;gap:.3rem;flex-wrap:wrap}
+
+/* Vista inscriptos */
+.ins-toolbar{display:flex;gap:.4rem;margin-bottom:.7rem;flex-wrap:wrap;align-items:center}
+.ins-sel{padding:7px 11px;border:1.5px solid var(--g2);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:.78rem;background:var(--w);outline:none;color:var(--t)}
+.ins-sel:focus{border-color:var(--g)}
+.ins-search{padding:7px 11px;border:1.5px solid var(--g2);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:.78rem;background:var(--w);outline:none;flex:1;min-width:120px}
+.ins-summary{background:var(--gl);border-radius:var(--rs);padding:.6rem 1rem;margin-bottom:.7rem;font-size:.78rem;color:var(--g);display:none;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
+.ins-summary.show{display:flex}
+.itable{width:100%;border-collapse:collapse;background:var(--w);border-radius:var(--rr);overflow:hidden;box-shadow:var(--sh);font-size:.78rem}
+.itable th{background:var(--g);color:#fff;padding:8px 10px;text-align:left;font-weight:600;font-size:.72rem;white-space:nowrap}
+.itable td{padding:7px 10px;border-bottom:1px solid var(--g2);vertical-align:middle}
+.itable tr:last-child td{border-bottom:none}
+.itable tr:hover td{background:var(--g1)}
+.epill{padding:2px 7px;border-radius:20px;font-size:.62rem;font-weight:700;white-space:nowrap}
+
+/* Menú 3 puntos inscriptos */
+.menu-wrap{position:relative;display:inline-block}
+.menu-btn{background:none;border:1.5px solid var(--g2);border-radius:var(--rs);padding:4px 8px;cursor:pointer;font-size:.82rem;color:var(--s);transition:background .1s}
+.menu-btn:hover{background:var(--g2)}
+.menu-drop{position:absolute;right:0;top:110%;background:var(--w);border:1px solid var(--g2);border-radius:var(--rs);box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:50;min-width:160px;display:none}
+.menu-drop.open{display:block}
+.menu-item{display:block;width:100%;padding:8px 14px;font-size:.8rem;font-family:'DM Sans',sans-serif;background:none;border:none;text-align:left;cursor:pointer;color:var(--t);transition:background .1s}
+.menu-item:hover{background:var(--g1)}
+.menu-item.danger{color:var(--r)}
+.menu-item.danger:hover{background:var(--rl)}
+
+/* Modales */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.modal{background:var(--w);border-radius:var(--rr);padding:1.6rem;max-width:420px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.15);max-height:calc(100vh - 2rem);overflow-y:auto;margin:auto 0}
+.modal h3{font-family:'DM Serif Display',serif;font-size:1.15rem;margin-bottom:.65rem}
+.modal p{font-size:.82rem;color:var(--s);margin-bottom:1rem;line-height:1.5}
+.modal-btns{display:flex;gap:.5rem;margin-top:.75rem}
+.brd{display:inline-flex;align-items:center;padding:8px 16px;background:var(--rl);color:var(--r);border:1.5px solid #f5c0c0;border-radius:var(--rs);font-size:.82rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .15s}
+.brd:hover{background:#fbd0ce}
+.bgr{display:inline-flex;align-items:center;padding:8px 16px;background:var(--g2);color:var(--s);border:none;border-radius:var(--rs);font-size:.82rem;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .15s}
+.bgr:hover{background:var(--g3)}
+
+
+/* Campañas */
+.camp-lista{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem}
+.camp-card{background:var(--w);border-radius:var(--rs);border:1px solid var(--g2);padding:.9rem 1rem;display:flex;align-items:center;gap:.75rem;box-shadow:var(--sh);cursor:pointer;transition:background .1s}
+.camp-card:hover{background:var(--g1)}
+.camp-card.activa{border-left:3px solid var(--g)}
+.camp-card.archivada{border-left:3px solid var(--g3);opacity:.7}
+.camp-info{flex:1;min-width:0}
+.camp-nombre{font-weight:700;font-size:.88rem}
+.camp-meta{font-size:.7rem;color:var(--s);margin-top:.1rem}
+.camp-progreso-wrap{width:80px;flex-shrink:0;text-align:right}
+.camp-progreso-bar{height:5px;background:var(--g2);border-radius:3px;overflow:hidden;margin-bottom:.2rem}
+.camp-progreso-fill{height:100%;background:var(--g);transition:width .3s}
+.camp-progreso-txt{font-size:.68rem;color:var(--s)}
+.camp-dest{background:var(--w);border-radius:var(--rs);border:1px solid var(--g2);margin-bottom:.4rem;padding:.7rem 1rem;display:flex;align-items:center;gap:.75rem}
+.camp-dest-info{flex:1;min-width:0}
+.camp-dest-nombre{font-size:.85rem;font-weight:600}
+.camp-dest-sub{font-size:.68rem;color:var(--s);margin-top:.05rem}
+.camp-dest.enviado{opacity:.6}
+.camp-dest.enviado .camp-dest-nombre{text-decoration:line-through}
+.badge-enviado{background:var(--gl);color:var(--g);padding:2px 8px;border-radius:20px;font-size:.65rem;font-weight:700}
+.badge-pendiente{background:var(--g2);color:var(--g4);padding:2px 8px;border-radius:20px;font-size:.65rem;font-weight:700}
+
+
+/* Filtros campañas / cuotas */
+.camp-builder{background:var(--w);border:1px solid var(--g2);box-shadow:var(--sh);border-radius:var(--rr);padding:.9rem 1rem;margin-bottom:1rem}
+.camp-builder-title{font-size:.82rem;font-weight:800;margin-bottom:.55rem}
+.camp-builder-grid{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center}
+.camp-builder-count{font-size:.74rem;color:var(--s);margin-top:.55rem}
+
+/* Tooltip */
+[title]{position:relative}
+
+
+/* Contabilidad */
+.cont-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:.9rem}
+.cont-card{background:var(--w);border-radius:var(--rs);padding:.8rem .9rem;box-shadow:var(--sh);border:1px solid var(--g2)}
+.cont-card .n{font-size:1.12rem;font-weight:800;margin-bottom:.08rem}
+.cont-card .l{font-size:.66rem;color:var(--s);font-weight:600}
+.cont-section{background:var(--w);border-radius:var(--rr);padding:1rem;margin-bottom:.8rem;box-shadow:var(--sh);border:1px solid var(--g2)}
+.cont-head{display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.7rem}
+.cont-title{font-weight:800;font-size:.95rem}
+.cont-list{display:flex;flex-direction:column;gap:.45rem}
+.cont-row{display:flex;align-items:center;gap:.75rem;padding:.65rem .75rem;border:1px solid var(--g2);border-radius:var(--rs);background:var(--g1)}
+.cont-row-info{flex:1;min-width:0}
+.cont-row-title{font-size:.84rem;font-weight:700}
+.cont-row-sub{font-size:.68rem;color:var(--s);margin-top:.05rem}
+.cont-row-amount{font-weight:800;font-size:.86rem;text-align:right;white-space:nowrap}
+.cont-empty{text-align:center;color:var(--g4);font-size:.82rem;padding:1.2rem}
+
+/* Contabilidad — tarjetas agrupadas por categoría */
+.catc-card{background:var(--w);border-radius:var(--rr);box-shadow:var(--sh);border:1px solid var(--g2);margin-bottom:.55rem;overflow:hidden}
+.catc-head{display:flex;align-items:center;gap:.75rem;padding:.85rem 1rem;cursor:pointer;transition:background .1s;user-select:none}
+.catc-head:hover{background:var(--g1)}
+.catc-info{flex:1;min-width:0}
+.catc-titlerow{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem;flex-wrap:wrap}
+.catc-name{font-weight:700;font-size:.88rem}
+.catc-badge{padding:2px 9px;border-radius:20px;font-size:.65rem;font-weight:700;white-space:nowrap}
+.catc-badge-ok{background:var(--gl);color:var(--g)}
+.catc-badge-parcial{background:var(--al);color:var(--a)}
+.catc-badge-sin{background:var(--g2);color:var(--g4)}
+.catc-bar{height:6px;background:var(--g2);border-radius:4px;overflow:hidden}
+.catc-bar-fill{height:100%;background:var(--g);transition:width .3s}
+.catc-amounts{text-align:right;flex-shrink:0}
+.catc-amv{font-size:.85rem;font-weight:700}
+.catc-aml{font-size:.66rem;color:var(--s);margin-top:.1rem}
+.catc-chev{font-size:.7rem;color:var(--g4);flex-shrink:0;transition:transform .15s}
+.catc-card.open .catc-chev{transform:rotate(180deg)}
+.catc-body{border-top:1px solid var(--g2);padding:.7rem 1rem}
+.catc-subhead{font-size:.66rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g4);margin:.5rem 0 .35rem}
+.catc-subhead:first-child{margin-top:0}
+.catc-actions{display:flex;gap:.4rem;flex-wrap:wrap;padding-top:.6rem;margin-top:.3rem;border-top:1px solid var(--g2)}
+@media(max-width:600px){.cont-grid{grid-template-columns:1fr 1fr}.cont-row{align-items:flex-start;flex-direction:column}.cont-row-amount{text-align:left}
+.catc-head{flex-wrap:wrap}.catc-amounts{text-align:left}}
+
+@media(max-width:600px){
+  .astats{grid-template-columns:1fr 1fr}
+  .comprow{flex-wrap:wrap}
+  .ins-toolbar{flex-direction:column;align-items:stretch}
+}
+</style>
+</head>
+<body>
+
+<!-- ADMIN LOGIN -->
+<div id="pal" class="page" style="display:none">
+  <div style="background:var(--w);border-radius:20px;padding:2.5rem 2rem;max-width:380px;width:100%;box-shadow:var(--sh);border:1px solid var(--g2)">
+    <div style="font-size:1.7rem;margin-bottom:1rem">🔑</div>
+    <div style="font-family:'DM Serif Display',serif;font-size:1.45rem;margin-bottom:.35rem">Panel Admin</div>
+    <p style="font-size:.82rem;color:var(--s);margin-bottom:1.4rem">Ingresá la contraseña para continuar</p>
+    <div class="ig"><label>Contraseña</label><input type="password" id="admin-pass" placeholder="••••••••"/></div>
+    <button class="bp" onclick="verificarAdmin()">Entrar →</button>
+    <div class="err" id="admin-err"></div>
+    <button class="bs" onclick="mostrarPortal()">← Volver</button>
+  </div>
+</div>
+
+<!-- PORTAL -->
+<div id="pp" class="page active">
+  <div class="pcard">
+    <div class="ptitle">Peregrinación<br>Córdoba 2026</div>
+    <p class="psub"> Ingresá el DNI y el email que cargaste en el formulario de inscripción.</p>
+    <div class="ig"><label>DNI (sin puntos)</label><input type="number" id="dni-input" placeholder="Ej: 44123456"/></div>
+    <div class="ig"><label>Email de inscripción</label><input type="email" id="email-input" placeholder="nombre@email.com"/></div>
+    <button class="bp" onclick="buscarDNI()">Ingresar →</button>
+    <div class="err" id="portal-err"></div>
+    <div class="pfoot"><a href="#" onclick="mostrarAdmin()">Administrador</a></div>
+  </div>
+</div>
+
+<!-- ESTADO -->
+<div id="pe" class="page">
+  <div class="ewrap">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:.65rem">
+      <button class="bs bsm" onclick="cerrarSesion()">Salir</button>
+    </div>
+    <div id="est-load" class="load"><div class="spin"></div><span>Cargando...</span></div>
+    <div id="est-content" style="display:none">
+      <div class="hcard">
+        <div class="av" id="est-ini"></div>
+        <div><div class="hname" id="est-nom"></div><div class="hsub" id="est-inf"></div></div>
+      </div>
+      <div id="est-alert" style="display:none" class="abanner"><span>⚠️</span><span id="est-altext"></span></div>
+      <div class="psec">
+        <div class="plbl">Progreso de pago</div>
+        <div class="pbar"><div class="pbar-ok" id="bar-ok"></div><div class="pbar-rv" id="bar-rv"></div></div>
+        <div class="pleg"><span id="leg-ok">0%</span><span id="leg-rv">0%</span><span id="leg-falta">100%</span></div>
+      </div>
+      <div class="agrid">
+        <div class="abox"><div class="v" style="color:var(--g)" id="est-pag">$0</div><div class="l">Confirmado</div></div>
+        <div class="abox"><div class="v" style="color:var(--a)" id="est-rev">$0</div><div class="l">En revisión</div></div>
+        <div class="abox"><div class="v" style="color:var(--b)" id="est-fal">$0</div><div class="l">Restante</div></div>
+      </div>
+      <div class="ccard"><div class="plbl">Detalle de cuotas</div><div id="lista-cuotas"></div></div>
+      <button class="bp" id="btn-reg-pago" onclick="mostrarCuota()">Registrar comprobante →</button>
+      <button class="bs" onclick="cerrarSesion()">← Nueva consulta</button>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTRAR PAGO -->
+<div id="pc" class="page">
+  <div class="cwrap">
+    <div class="ccard2">
+      <h2>Registrar comprobante</h2>
+      <div id="cuota-content">
+        <div class="abox2">
+          <div class="alab">Alias de pago</div>
+          <div class="aval" id="c-alias">aixa.romero82</div>
+          <div class="ahint" id="c-datos-transferencia">CVU: 0000003100005417093126<br>Cuenta a nombre de: Aixa Pamela Romero</div>
+          <div class="ahint">Seleccioná la cuota que pagaste y adjuntá el comprobante correspondiente.</div>
+        </div>
+        <div class="ig"><label>Seleccioná las cuotas pagadas</label>
+          <div class="cuotas-check" id="cuotas-check"></div>
+          <div class="ctotal" id="cuota-total" style="display:none">
+            <span class="ctotal-l">Total informado</span>
+            <span class="ctotal-v" id="cuota-total-val">$0</span>
+          </div>
+        </div>
+        <div class="ig"><label>Adjuntá el comprobante</label>
+          <div class="fwrap"><input type="file" id="cuota-file" accept="image/*,.pdf" onchange="onFileChange(this)"/>
+            <div class="fi">📎</div><div class="ft">Subí una foto o PDF del comprobante completo de la transferencia, donde se vean los datos de quien transfiere.</div>
+          </div>
+          <div class="fname" id="fname" style="display:none"></div>
+        </div>
+        <div class="mbox" id="cuota-msg"></div>
+        <button class="bp" onclick="registrarPago()">Registrar comprobante</button>
+      </div>
+      <button class="bs" onclick="mostrarEstado()">← Ver mi estado</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="pa" class="page">
+  <div class="awrap">
+    <div class="ahead">
+      <div style="display:flex;align-items:center;gap:.75rem">
+        <div class="atitle">Panel Admin</div>
+        <span class="anew-badge" id="new-badge" style="display:none"></span>
+        <span class="arole-badge" id="role-badge" style="display:none"></span>
+      </div>
+      <div class="ahead-r">
+        <button class="bs bsm" onclick="exportarCSV()">⬇ Exportar</button>
+        <button class="bs bsm" onclick="abrirModalPagoManual()">+ Registrar pago recibido</button>
+        <button class="bs bsm" onclick="refrescarAdmin()">↺ Actualizar</button>
+        <button class="bs bsm" onclick="mostrarPortal()">Salir</button>
+      </div>
+    </div>
+    <div class="astats" id="admin-stats"></div>
+    <div id="admin-medios-summary" style="display:none;background:var(--w);border:1px solid var(--g2);box-shadow:var(--sh);border-radius:var(--rs);padding:.65rem .9rem;margin:-.25rem 0 .9rem;font-size:.78rem;color:var(--s);gap:.75rem;flex-wrap:wrap"></div>
+    <div class="atabs">
+      <button class="atab active" id="tab-pagos" onclick="cambiarVista('pagos')">Pagos</button>
+      <button class="atab" id="tab-inscriptos" onclick="cambiarVista('inscriptos')">Inscriptos</button>
+      <button class="atab" id="tab-campanas" onclick="cambiarVista('campanas')">Campañas <span id="camp-badge" style="display:none;background:var(--a);color:#fff;border-radius:20px;padding:1px 6px;font-size:.65rem;font-weight:700;margin-left:3px"></span></button>
+      <button class="atab" id="tab-contabilidad" onclick="cambiarVista('contabilidad')">Contabilidad</button>
+    </div>
+
+    <!-- Vista pagos -->
+    <div id="vista-pagos">
+      <div class="atabs" id="pagos-tabs">
+        <button class="atab active" id="nav-pendientes" onclick="filtrarAdmin('pendiente')">Por revisar</button>
+        <button class="atab" id="nav-todos" onclick="filtrarAdmin('todos')">Todos</button>
+        <button class="atab" id="nav-aldia" onclick="filtrarAdmin('aldia')">Al día</button>
+        <button class="atab" id="nav-rechazados" onclick="filtrarAdmin('rechazados')">No validados</button>
+      </div>
+      <input type="text" id="admin-search" class="asearch" placeholder="Buscar por nombre o DNI..." oninput="adminBusqueda=this.value;renderAdmin()">
+      <div id="admin-load" class="load" style="display:none"><div class="spin"></div><span>Cargando...</span></div>
+      <div id="admin-content"></div>
+    </div>
+
+    <!-- Vista inscriptos -->
+    <div id="vista-inscriptos" style="display:none">
+      <div class="ins-toolbar">
+        <select id="ins-fe" class="ins-sel" onchange="renderInscriptos()">
+          <option value="">Todos los estados</option>
+          <option value="sin_pagos">Sin pagos</option>
+          <option value="en_revision">En revisión</option>
+          <option value="al_dia">Al día</option>
+          <option value="debe_vencidas">Debe vencidas</option>
+          <option value="pago_completo">Pago completo</option>
+          <option value="comprobante_rechazado">Comp. no validado</option>
+          <option value="lista_espera">Lista de espera</option>
+          <option value="baja">Bajas</option>
+        </select>
+        <select id="ins-fq" class="ins-sel" onchange="renderInscriptos()" title="Filtrar por cuotas confirmadas">
+          <option value="">Todas las cuotas</option>
+          <option value="sin_sena">No pagaron seña</option>
+          <option value="solo_sena">Solo seña confirmada</option>
+          <option value="sena_debe_1ra">Pagó seña y debe 1ª</option>
+          <option value="sin_1ra">Sin 1ª confirmada</option>
+          <option value="hasta_1ra_debe_2da">Pagó hasta 1ª, debe 2ª</option>
+          <option value="hasta_2da_debe_3ra">Pagó hasta 2ª, debe 3ª</option>
+          <option value="hasta_3ra_debe_4ta">Pagó hasta 3ª, debe 4ª</option>
+          <option value="pago_completo">Pago completo</option>
+        </select>
+        <select id="ins-fr" class="ins-sel" onchange="renderInscriptos()">
+          <option value="">Todos los roles</option>
+          <option value="Catequista">Catequistas</option>
+          <option value="Participante">Jóvenes</option>
+          <option value="Sacerdote">Sacerdotes</option>
+          <option value="Cocinero">Cocineros</option>
+        </select>
+        <select id="ins-fp" class="ins-sel" onchange="renderInscriptos()">
+          <option value="">Todas las parroquias</option>
+        </select>
+        <select id="ins-fc" class="ins-sel" onchange="renderInscriptos()">
+          <option value="">Todas las comunidades</option>
+        </select>
+        <select id="ins-ord" class="ins-sel" onchange="renderInscriptos()">
+          <option value="orden">Por orden de inscripción</option>
+          <option value="nombre">Por nombre</option>
+          <option value="reciente">Más recientes primero</option>
+        </select>
+        <input type="text" id="ins-search" class="ins-search" placeholder="Buscar..." oninput="renderInscriptos()">
+        <div style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-top:.4rem;flex-wrap:wrap">
+          <button class="bp bsm" style="margin-top:0" onclick="abrirModalAltaManual()">+ Agregar sacerdote / cocinero</button>
+          <button class="bs bsm" onclick="abrirNuevaCampana()">+ Nueva campaña con filtrados</button>
+        </div>
+      </div>
+      <div class="ins-summary show" id="ins-roles-summary" style="background:var(--w);border:1px solid var(--g2);box-shadow:var(--sh);color:var(--s)"></div>
+      <!-- Resumen de grupo + copiar -->
+      <div class="ins-summary" id="ins-summary">
+        <span id="ins-summary-text"></span>
+        <button class="bs bsm" onclick="copiarResumen()" style="flex-shrink:0">📋 Copiar resumen</button>
+      </div>
+      <div id="ins-load" class="load" style="display:none"><div class="spin"></div><span>Cargando...</span></div>
+      <div style="overflow-x:auto">
+        <table class="itable">
+          <thead><tr><th>#</th><th>Nombre</th><th>DNI</th><th>Parroquia</th><th>Comunidad</th><th>Rol</th><th>Inscripción</th><th>Cupo</th><th>Estado</th><th>Confirmado</th><th></th></tr></thead>
+          <tbody id="ins-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Vista campañas -->
+    <div id="vista-campanas" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem">
+        <div style="font-size:.82rem;color:var(--s)">Mensajes masivos con seguimiento por persona</div>
+        <button class="bp bsm" style="margin-top:0" onclick="abrirNuevaCampana()">+ Nueva campaña</button>
+      </div>
+      <div class="camp-builder">
+        <div class="camp-builder-title">Armar campaña por cuotas pagadas</div>
+        <div class="camp-builder-grid">
+          <select id="camp-fq" class="ins-sel" onchange="actualizarPreviewCampana()">
+            <option value="">Todas las cuotas</option>
+            <option value="sin_sena">No pagaron seña</option>
+            <option value="solo_sena">Solo seña confirmada</option>
+            <option value="sena_debe_1ra">Pagó seña y debe 1ª</option>
+            <option value="sin_1ra">Sin 1ª confirmada</option>
+            <option value="hasta_1ra_debe_2da">Pagó hasta 1ª, debe 2ª</option>
+            <option value="hasta_2da_debe_3ra">Pagó hasta 2ª, debe 3ª</option>
+            <option value="hasta_3ra_debe_4ta">Pagó hasta 3ª, debe 4ª</option>
+            <option value="pago_completo">Pago completo</option>
+          </select>
+          <select id="camp-fr" class="ins-sel" onchange="actualizarPreviewCampana()">
+            <option value="">Todos los roles</option>
+            <option value="Catequista">Catequistas</option>
+            <option value="Participante">Jóvenes</option>
+            <option value="Sacerdote">Sacerdotes</option>
+            <option value="Cocinero">Cocineros</option>
+          </select>
+          <select id="camp-fp" class="ins-sel" onchange="actualizarPreviewCampana()"><option value="">Todas las parroquias</option></select>
+          <select id="camp-fc" class="ins-sel" onchange="actualizarPreviewCampana()"><option value="">Todas las comunidades</option></select>
+          <input type="text" id="camp-search" class="ins-search" placeholder="Buscar nombre o DNI..." oninput="actualizarPreviewCampana()">
+          <button class="bp bsm" style="margin-top:0" onclick="abrirNuevaCampana()">Crear con este filtro</button>
+        </div>
+        <div class="camp-builder-count" id="camp-preview">Elegí un filtro para ver cuántas personas entran.</div>
+      </div>
+
+      <!-- Lista de campañas activas -->
+      <div id="camp-activas-wrap">
+        <div class="plbl" style="margin-bottom:.5rem">Activas</div>
+        <div id="camp-activas" class="camp-lista"></div>
+      </div>
+
+      <!-- Lista de campañas archivadas -->
+      <div id="camp-archivadas-wrap" style="margin-top:1rem;display:none">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;cursor:pointer" onclick="toggleArchivadas()">
+          <div class="plbl" style="margin:0">Archivadas</div>
+          <span id="camp-arch-toggle" style="font-size:.72rem;color:var(--s)">▶ mostrar</span>
+        </div>
+        <div id="camp-archivadas" class="camp-lista" style="display:none"></div>
+      </div>
+
+      <!-- Detalle de campaña -->
+      <div id="camp-detalle" style="display:none;margin-top:1rem">
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;flex-wrap:wrap">
+          <button class="bs bsm" onclick="volverListaCampanas()">← Volver</button>
+          <div style="font-weight:700;font-size:1rem" id="camp-detalle-nombre"></div>
+          <span id="camp-detalle-progreso" style="font-size:.78rem;color:var(--s)"></span>
+        </div>
+        <div style="background:var(--g1);border-radius:var(--rs);padding:.75rem 1rem;margin-bottom:.75rem;font-size:.82rem;color:var(--s)" id="camp-detalle-msg"></div>
+        <div id="camp-detalle-lista"></div>
+      </div>
+    </div>
+
+    <!-- Vista contabilidad -->
+    <div id="vista-contabilidad" style="display:none">
+      <div class="cont-head">
+        <div style="font-size:.82rem;color:var(--s)">Control interno de ingresos, gastos y compromisos de la organización</div>
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+          <button class="bp bsm" style="margin-top:0" onclick="abrirModalCompromiso()">+ Compromiso</button>
+          <button class="bp bsm" style="margin-top:0" onclick="abrirModalPagoOrg()">+ Pago organización</button>
+        </div>
+      </div>
+      <div id="cont-load" class="load" style="display:none"><div class="spin"></div><span>Cargando contabilidad...</span></div>
+      <div id="cont-content"></div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- MODAL PAGO MANUAL / EFECTIVO -->
+<div class="overlay" id="modal-pago-manual" style="display:none" onclick="if(event.target===this)cerrarModalPagoManual()">
+  <div class="modal" style="max-width:520px">
+    <h3>Registrar pago recibido</h3>
+    <p>Usalo solo para pagos recibidos por fuera del portal, por ejemplo efectivo o una transferencia que cargás desde Admin.</p>
+
+    <div class="ig">
+      <label>DNI del participante</label>
+      <input type="text" id="manual-dni" placeholder="Ej: 44123456"/>
+    </div>
+
+    <div class="ig">
+      <label>Cuotas pagadas</label>
+      <div class="cuotas-check" id="manual-cuotas-check"></div>
+    </div>
+
+    <div class="ig">
+      <label>Monto</label>
+      <input type="number" id="manual-monto" placeholder="Se completa según las cuotas"/>
+    </div>
+
+    <div class="ig">
+      <label>Medio de pago</label>
+      <select id="manual-medio" onchange="actualizarManualMedio()">
+        <option value="Efectivo">Efectivo</option>
+        <option value="Transferencia">Transferencia</option>
+      </select>
+    </div>
+
+    <div class="ig">
+      <label>Recibido por</label>
+      <input type="text" id="manual-recibido" placeholder="Nombre de quien recibió el dinero"/>
+    </div>
+
+    <div class="ig">
+      <label>Observación interna</label>
+      <textarea id="manual-obs" rows="3" placeholder="Opcional. Ej: Lo entregó la mamá en efectivo."></textarea>
+    </div>
+
+    <div class="mbox" id="manual-msg"></div>
+
+    <div class="modal-btns">
+      <button class="bp" style="width:auto;margin-top:0" onclick="registrarPagoManualAdmin()">Registrar pago</button>
+      <button class="bgr" onclick="cerrarModalPagoManual()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL COMPROMISO -->
+<div class="overlay" id="modal-compromiso" style="display:none" onclick="if(event.target===this)cerrarModalCompromiso()">
+  <div class="modal" style="max-width:520px">
+    <h3>Registrar compromiso</h3>
+    <p>Usalo para cargar gastos previstos o comprometidos, aunque todavía no estén pagados del todo.</p>
+    <div class="ig"><label>Categoría</label><input type="text" id="comp-categoria" list="lista-categorias" placeholder="Ej: Micros, Alojamiento, Comidas"/></div>
+    <div class="ig"><label>Concepto</label><input type="text" id="comp-concepto" placeholder="Ej: 2 micros larga distancia"/></div>
+    <div class="ig"><label>Tipo de costo</label>
+      <select id="comp-tipo">
+        <option value="Fijo">Fijo</option>
+        <option value="Por persona">Por persona</option>
+        <option value="A definir">A definir</option>
+        <option value="Saldo disponible">Saldo disponible</option>
+      </select>
+    </div>
+    <div class="ig"><label>Total estimado / comprometido</label><input type="number" id="comp-total" placeholder="Ej: 15000000. Dejar vacío si no está definido."/></div>
+    <div class="ig"><label>Estado</label>
+      <select id="comp-estado"><option value="Abierto">Abierto</option><option value="Cerrado">Cerrado</option><option value="A definir">A definir</option></select>
+    </div>
+    <div class="ig"><label>Observación</label><textarea id="comp-obs" rows="3" placeholder="Opcional"></textarea></div>
+    <div class="mbox" id="comp-msg"></div>
+    <div class="modal-btns">
+      <button class="bp" style="width:auto;margin-top:0" onclick="registrarCompromisoAdmin()">Registrar</button>
+      <button class="bgr" onclick="cerrarModalCompromiso()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PAGO ORGANIZACIÓN -->
+<div class="overlay" id="modal-pago-org" style="display:none" onclick="if(event.target===this)cerrarModalPagoOrg()">
+  <div class="modal" style="max-width:560px">
+    <h3>Registrar pago de organización</h3>
+    <p>Usalo para registrar plata que sale: pagos parciales a proveedores, señas, compras o gastos.</p>
+    <div class="ig"><label>Fecha de pago</label><input type="date" id="org-fecha"/></div>
+    <div class="ig"><label>Categoría</label><input type="text" id="org-categoria" list="lista-categorias" placeholder="Ej: Micros, Alojamiento, Comidas"/></div>
+    <datalist id="lista-categorias"></datalist>
+    <div class="ig"><label>Concepto</label><input type="text" id="org-concepto" placeholder="Ej: Seña alojamiento Los Reartes"/></div>
+    <div class="ig"><label>Monto</label><input type="number" id="org-monto" placeholder="Ej: 250000"/></div>
+    <div class="ig"><label>Medio de pago</label>
+      <select id="org-medio"><option value="Transferencia">Transferencia</option><option value="Efectivo">Efectivo</option><option value="Otro">Otro</option></select>
+    </div>
+    <div class="ig"><label>Pagado por</label><input type="text" id="org-pagado-por" placeholder="Ej: Aixa, Victoria, cuenta peregrinación"/></div>
+    <div class="ig"><label>Responsable del pago</label><input type="text" id="org-responsable" placeholder="Quién tiene que rendir o responder por ese pago"/></div>
+    <div class="ig"><label>Comprobante</label>
+      <div class="fwrap"><input type="file" id="org-comp-file" accept="image/*,.pdf" onchange="onFileChangeOrg(this)"/>
+        <div class="fi">📎</div><div class="ft">Subí captura, PDF, ticket o comprobante de transferencia.</div>
+      </div>
+      <div class="fname" id="org-comp-name" style="display:none"></div>
+    </div>
+    <div class="ig"><label>Observación</label><textarea id="org-obs" rows="3" placeholder="Opcional"></textarea></div>
+    <div class="mbox" id="org-msg"></div>
+    <div class="modal-btns">
+      <button class="bp" style="width:auto;margin-top:0" onclick="registrarPagoOrgAdmin()">Registrar pago</button>
+      <button class="bgr" onclick="cerrarModalPagoOrg()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ALTA MANUAL (SACERDOTE / COCINERO) -->
+<div class="overlay" id="modal-alta-manual" style="display:none" onclick="if(event.target===this)cerrarModalAltaManual()">
+  <div class="modal" style="max-width:480px">
+    <h3>Agregar sacerdote o cocinero</h3>
+    <p>Usalo para sacerdotes y ayudantes de cocina, que no se inscriben por el formulario. Catequistas y jóvenes siguen entrando por ahí.</p>
+    <div class="ig"><label>Rol</label>
+      <select id="alta-rol" onchange="actualizarInfoAltaManual()">
+        <option value="Sacerdote">Sacerdote (sin cargo)</option>
+        <option value="Cocinero">Cocinero (alojamiento $53.000 + comidas $65.000)</option>
+      </select>
+    </div>
+    <div class="ig"><label>Nombre</label><input type="text" id="alta-nombre" placeholder="Ej: Juan"/></div>
+    <div class="ig"><label>Apellido</label><input type="text" id="alta-apellido" placeholder="Ej: Pérez"/></div>
+    <div class="ig"><label>DNI</label><input type="text" id="alta-dni" placeholder="Ej: 30123456"/></div>
+    <div class="ig"><label>Celular (opcional)</label><input type="text" id="alta-celular" placeholder="Ej: 2211234567"/></div>
+    <div class="ig"><label>Email (opcional, para que pueda entrar al portal)</label><input type="email" id="alta-email" placeholder="nombre@email.com"/></div>
+    <div class="ig"><label>Parroquia (opcional)</label><input type="text" id="alta-parroquia" placeholder="Opcional"/></div>
+    <div class="ig"><label>Comunidad (opcional)</label><input type="text" id="alta-comunidad" placeholder="Opcional"/></div>
+    <div class="ig"><label>Observación</label><textarea id="alta-obs" rows="2" placeholder="Opcional"></textarea></div>
+    <div id="alta-info" style="font-size:.78rem;color:var(--g);background:var(--gl);border-radius:var(--rs);padding:.6rem .8rem;margin-bottom:.4rem"></div>
+    <div class="mbox" id="alta-msg"></div>
+    <div class="modal-btns">
+      <button class="bp" style="width:auto;margin-top:0" onclick="registrarAltaManualInscripto()">Agregar</button>
+      <button class="bgr" onclick="cerrarModalAltaManual()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NUEVA CAMPAÑA -->
+<div class="overlay" id="modal-nueva-campana" style="display:none" onclick="if(event.target===this)cerrarModalNuevaCampana()">
+  <div class="modal" style="max-width:520px">
+    <h3>Nueva campaña</h3>
+    <p id="nueva-camp-count" style="font-size:.82rem;color:var(--s);margin-bottom:1rem"></p>
+    <div class="ig">
+      <label>Nombre de la campaña</label>
+      <input type="text" id="nueva-camp-nombre" placeholder="Ej: Recordatorio seña junio"/>
+    </div>
+    <div class="ig">
+      <label>Mensaje</label>
+      <textarea id="nueva-camp-msg" rows="7" style="resize:vertical;width:100%;padding:10px 13px;border:1.5px solid var(--g2);border-radius:var(--rs);font-size:.88rem;font-family:'DM Sans',sans-serif;outline:none"></textarea>
+    </div>
+    <p style="font-size:.74rem;color:var(--s);margin-bottom:.75rem">Podés usar {nombre}, {dni} y {portal}.</p>
+    <div class="modal-btns">
+      <button class="bp" style="width:auto;margin-top:0" onclick="crearCampana()">Crear campaña</button>
+      <button class="bgr" onclick="cerrarModalNuevaCampana()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RECHAZO -->
+<div class="overlay" id="modal-rechazo" style="display:none" onclick="if(event.target===this)cerrarModalR()">
+  <div class="modal">
+    <h3>No validar comprobante</h3>
+    <p>La persona va a poder cargar un nuevo comprobante para esta cuota. Después vas a poder avisarle por WhatsApp desde la misma card.</p>
+    <div class="modal-btns">
+      <button class="brd" onclick="confirmarRechazo()">No validar</button>
+      <button class="bgr" onclick="cerrarModalR()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL BAJA -->
+<div class="overlay" id="modal-baja" style="display:none" onclick="if(event.target===this)cerrarModalB()">
+  <div class="modal">
+    <h3>Dar de baja</h3>
+    <p>Sus pagos quedan en el historial. Va a dejar de aparecer en los filtros activos.</p>
+    <div class="ig"><label>Nota (opcional)</label><input type="text" id="baja-nota" placeholder="Ej: Se comunicó el 15/06 para cancelar"/></div>
+    <div class="ig"><label>DNI del reemplazo (opcional)</label><input type="text" id="baja-dni" placeholder="Ej: 44123456"/></div>
+    <div class="modal-btns">
+      <button class="brd" onclick="confirmarBaja()">Dar de baja</button>
+      <button class="bgr" onclick="cerrarModalB()">Cancelar</button>
+    </div>
+  </div>
+</div>
+<script>
+const API          = 'https://script.google.com/macros/s/AKfycbxNFRlC9tSicrNrdJc6syVrDeAzNkqmaGZfeKqaFKy0P7XZqHXEjYs7Pvdv7fRBtimGTw/exec';
+const ALIAS        = 'aixa.romero82';
+const CVU          = '0000003100005417093126';
+const TITULAR      = 'Aixa Pamela Romero';
+const CLD_CLOUD    = 'dfkm2rmuk';
+const CLD_PRESET   = 'peregrinacion';
+const PORTAL_URL   = window.location.origin + window.location.pathname;
+const CAMPANAS_KEY = 'peregrinacion_campanas_v1';
+
+var estadoData=null, adminData=null, inscriptosData=null, contabilidadData=null;
+var filtroActual='pendiente', adminBusqueda='', adminToken='', adminRole='', pEmail='';
+var modalPagoId=null, modalPagoDni=null, bajaDni=null;
+var vistaActual='pagos';
+var adminUltimaVisita=null; // para badge "nuevos"
+var campanasFiltradosCache=[];
+var cuotaCardOriginalHtml='';
+
+const CQ=['sena','1ra','2da','3ra','ajuste_ago','4ta','ajuste_sep'];
+const CL={sena:'Seña','1ra':'1ª cuota','2da':'2ª cuota','3ra':'3ª cuota','4ta':'4ª cuota',ajuste_ago:'Actualización cuota agosto',ajuste_sep:'Actualización cuota septiembre'};
+const CM={sena:15000,'1ra':50000,'2da':65000,'3ra':65000,'4ta':65000,ajuste_ago:15000,ajuste_sep:15000};
+const TOTAL=260000;
+const VENC={sena:'01/06/2026','1ra':'15/06/2026','2da':'15/07/2026','3ra':'15/08/2026','4ta':'11/09/2026',ajuste_ago:'15/08/2026',ajuste_sep:'11/09/2026'};
+const ELABEL={sin_pagos:'Sin pagos',en_revision:'En revisión',al_dia:'Al día',debe_vencidas:'Debe vencidas',pago_completo:'Pago completo',comprobante_rechazado:'Comp. no validado',lista_espera:'Lista espera',baja:'Baja',sin_cargo:'Sin cargo'};
+const ECOLOR={sin_pagos:'var(--g4)',en_revision:'var(--a)',al_dia:'var(--g)',debe_vencidas:'var(--r)',pago_completo:'var(--g)',comprobante_rechazado:'var(--r)',lista_espera:'var(--b)',baja:'var(--g4)',sin_cargo:'var(--b)'};
+const EBG={sin_pagos:'var(--g2)',en_revision:'var(--al)',al_dia:'var(--gl)',debe_vencidas:'var(--rl)',pago_completo:'var(--gl)',comprobante_rechazado:'var(--rl)',lista_espera:'var(--bl)',baja:'var(--g2)',sin_cargo:'var(--bl)'};
+
+// Planes de pago por rol — deben coincidir con los del Apps Script (Code.gs)
+const PLAN_ESTANDAR={keys:CQ,labels:CL,montos:CM,total:TOTAL}; // Participante / Catequista
+const PLAN_COCINA={keys:['alojamiento','comida'],labels:{alojamiento:'Alojamiento',comida:'Comidas'},montos:{alojamiento:53000,comida:65000},total:118000};
+const PLAN_SACERDOTE={keys:[],labels:{},montos:{},total:0};
+function planParaRol(rol){
+  if(rol==='Cocinero') return PLAN_COCINA;
+  if(rol==='Sacerdote') return PLAN_SACERDOTE;
+  return PLAN_ESTANDAR;
+}
+
+function vencida(k){var p=VENC[k].split('/');var d=new Date(p[2],p[1]-1,p[0]);var h=new Date();h.setHours(0,0,0,0);d.setHours(0,0,0,0);return d<=h;}
+function $$(id){return document.getElementById(id);}
+function esAdminEdicion(){return adminRole==='edit';}
+
+// ── Nav ──────────────────────────────────────────────────
+function sp(n){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});$$(n).classList.add('active');window.scrollTo(0,0);}
+function mostrarPortal(){sp('pp');}
+function mostrarEstado(){if(!estadoData){mostrarPortal();return;}sp('pe');renderEstado();}
+function mostrarCuota(){sp('pc');renderCuota();}
+function mostrarAdmin(){sp('pal');$$('admin-pass').value='';$$('admin-err').textContent='';}
+function cerrarSesion(){estadoData=null;pEmail='';$$('dni-input').value='';$$('email-input').value='';$$('portal-err').textContent='';mostrarPortal();}
+
+async function verificarAdmin(){
+  var pass=$$('admin-pass').value.trim();
+  if(!pass){$$('admin-err').textContent='Ingresá la contraseña.';return;}
+  $$('admin-err').textContent='';
+  try{
+    var res=await fetch(API+'?action=loginAdmin&adminPass='+encodeURIComponent(pass));
+    var data=await res.json();
+    if(!data.ok){$$('admin-err').textContent=data.error||'Contraseña incorrecta.';return;}
+    adminToken=data.token;
+    adminRole=data.role || 'view';
+    var rb=$$('role-badge');
+    if(rb){rb.textContent=adminRole==='edit'?'Modo edición':'Modo vista';rb.style.display='inline-block';}
+    adminUltimaVisita=new Date();
+    sp('pa');
+    cargarAdmin(true);
+  }catch(e){$$('admin-err').textContent='Error de conexión.';}
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  var cuotaCard=document.querySelector('.ccard2');
+  if(cuotaCard) cuotaCardOriginalHtml=cuotaCard.innerHTML;
+  $$('dni-input').addEventListener('keydown',function(e){if(e.key==='Enter')buscarDNI();});
+  $$('email-input').addEventListener('keydown',function(e){if(e.key==='Enter')buscarDNI();});
+  $$('admin-pass').addEventListener('keydown',function(e){if(e.key==='Enter')verificarAdmin();});
+});
+
+// ── Portal ───────────────────────────────────────────────
+async function buscarDNI(){
+  var dni=$$('dni-input').value.trim(), email=$$('email-input').value.trim();
+  if(!dni){$$('portal-err').textContent='Ingresá tu DNI';return;}
+  if(!email){$$('portal-err').textContent='Ingresá tu email';return;}
+  pEmail=email; $$('portal-err').textContent='';
+  sp('pe'); $$('est-load').style.display='flex'; $$('est-content').style.display='none';
+  try{
+    var res=await fetch(API+'?action=getEstado&dni='+encodeURIComponent(dni)+'&email='+encodeURIComponent(email));
+    var data=await res.json();
+    if(!data.ok){sp('pp');$$('portal-err').textContent=data.error;return;}
+    estadoData=data;renderEstado();
+  }catch(e){sp('pp');$$('portal-err').textContent='Error de conexión. Intentá de nuevo.';}
+}
+
+// ── Estado ───────────────────────────────────────────────
+function renderEstado(){
+  var d=estadoData,r=d.resumen;
+  var partes=d.nombre.trim().split(' ');
+  $$('est-ini').textContent=((partes[0]||'?').charAt(0)+(partes[1]||'?').charAt(0)).toUpperCase();
+  $$('est-nom').textContent=d.nombre;
+  $$('est-inf').textContent='DNI ···'+String(d.dni).slice(-4)+' · '+d.parroquia;
+
+  if(!d.total){
+    // Sin cargo (Sacerdote): no hay cuotas que mostrar ni pagos que registrar.
+    $$('est-pag').textContent='$0'; $$('est-rev').textContent='$0'; $$('est-fal').textContent='$0';
+    $$('bar-ok').style.width='0%'; $$('bar-rv').style.width='0%';
+    $$('leg-ok').textContent=''; $$('leg-rv').textContent=''; $$('leg-falta').textContent='Sin cargo';
+    $$('lista-cuotas').innerHTML='<p style="color:var(--s);text-align:center;padding:1rem 0;font-size:.85rem">No corresponde ningún pago para tu inscripción.</p>';
+    var ael0=$$('est-alert'); ael0.style.display='none';
+    var btnReg0=$$('btn-reg-pago'); if(btnReg0) btnReg0.style.display='none';
+    $$('est-load').style.display='none'; $$('est-content').style.display='block';
+    return;
+  }
+
+  var falt=d.total-r.totalPagado-r.totalPendConf;
+  var pok=Math.round(r.totalPagado/d.total*100);
+  var prv=Math.round(r.totalPendConf/d.total*100);
+  $$('est-pag').textContent='$'+r.totalPagado.toLocaleString('es-AR');
+  $$('est-rev').textContent='$'+r.totalPendConf.toLocaleString('es-AR');
+  $$('est-fal').textContent='$'+falt.toLocaleString('es-AR');
+  $$('bar-ok').style.width=pok+'%'; $$('bar-rv').style.width=prv+'%';
+  $$('leg-ok').textContent=pok+'% confirmado';
+  $$('leg-rv').textContent=prv+'% en revisión';
+  $$('leg-falta').textContent=(100-pok-prv)+'% pendiente';
+
+  var enrev=d.pagos.filter(function(p){return p.estado==='pendiente';}).length;
+  var ael=$$('est-alert');
+  if(enrev>0){$$('est-altext').textContent='Tenés '+enrev+' pago'+(enrev>1?'s':'')+' en revisión.';ael.style.display='flex';}
+  else ael.style.display='none';
+
+  // Lista espera
+  var btnReg=$$('btn-reg-pago');
+  if(d.estadoCupo==='lista_espera'){
+    if(btnReg) btnReg.style.display='none';
+    ael.style.display='flex';
+    $$('est-altext').textContent='Estás en lista de espera. Por ahora no hace falta que cargues la seña. Si se libera un lugar, te vamos a avisar.';
+  } else {
+    if(btnReg) btnReg.style.display='block';
+  }
+
+  var lista=$$('lista-cuotas'); lista.innerHTML='';
+  var hoy=new Date();
+  d.cuotas.forEach(function(c){
+    var pagosc=d.pagos.filter(function(x){return (x.cuotas||'').split(',').map(function(s){return s.trim();}).includes(c.key);});
+    var p=pagosc.find(function(x){return x.estado!=='rechazado';});
+    var rech=!p?pagosc.find(function(x){return x.estado==='rechazado';}):null;
+    var est=p?(p.estado==='confirmado'?'ok':'pend'):(rech?'rech':'falta');
+    var badge=est==='ok'?'<span class="badge bok">✓ Confirmado</span>':est==='pend'?'<span class="badge bpend">⏳ En revisión</span>':est==='rech'?'<span class="badge brech">No validado</span>':'<span class="badge bfalta">Pendiente</span>';
+    var pr=c.vencimiento.split('/');var vd=new Date(pr[2],pr[1]-1,pr[0]);
+    var vl=est==='falta'&&vd<hoy?'Venció ':'Vence ';
+    var act=p||rech;
+    var lnk=act&&act.comprobanteUrl&&act.comprobanteUrl!=='(adjunto pendiente)'&&/^https?:\/\//.test(act.comprobanteUrl)?'<a class="clink" href="'+act.comprobanteUrl+'" target="_blank">ver comprobante →</a>':'';
+    var rt=est==='rech'?'<div class="cdate" style="color:var(--r);margin-top:.15rem">Podés volver a cargarlo.</div>':'';
+    lista.innerHTML+='<div class="crow"><div style="flex:1"><div class="cname">'+c.label+'</div><div class="cdate">'+vl+c.vencimiento+'</div>'+lnk+rt+'</div><div style="display:flex;align-items:center;gap:.4rem;flex-shrink:0"><span style="font-size:.78rem;font-weight:600;color:var(--s)">$'+c.monto.toLocaleString('es-AR')+'</span>'+badge+'</div></div>';
+  });
+  $$('est-load').style.display='none'; $$('est-content').style.display='block';
+}
+
+// ── Cuota ────────────────────────────────────────────────
+function onFileChange(inp){var f=inp.files[0];var el=$$('fname');if(f){el.textContent='✓ '+f.name;el.style.display='block';}else el.style.display='none';}
+
+function renderCuota(){
+  if(!estadoData){mostrarPortal();return;}
+  var card=document.querySelector('.ccard2');
+  if(card && cuotaCardOriginalHtml && !$$('cuotas-check')){
+    card.innerHTML=cuotaCardOriginalHtml;
+  }
+  var d=estadoData,r=d.resumen||{};
+  $$('c-alias').textContent=ALIAS;
+  var dt=$$('c-datos-transferencia');
+  if(dt) dt.innerHTML='CVU: '+CVU+'<br>Cuenta a nombre de: '+TITULAR;
+  $$('cuota-msg').style.display='none'; $$('fname').style.display='none';
+  $$('cuota-file').value='';
+  var conf=(r.confirmadas||[]),pend=(r.pendientes||[]);
+  var disp=d.cuotas.filter(function(c){return !conf.includes(c.key)&&!pend.includes(c.key);});
+  var chk=$$('cuotas-check'); chk.innerHTML='';
+  if(disp.length===0){$$('cuota-content').innerHTML='<p style="color:var(--s);text-align:center;padding:1.5rem 0;font-size:.88rem">Todas las cuotas disponibles ya tienen comprobante registrado.</p>';return;}
+  disp.forEach(function(c){
+    var lbl=document.createElement('label');
+    lbl.className='copt';
+    lbl.innerHTML='<input type="checkbox" value="'+c.key+'"><div class="copt-info"><div class="copt-label">'+c.label+'</div><div class="copt-monto">$'+c.monto.toLocaleString('es-AR')+' · vence '+c.vencimiento+'</div></div>';
+    lbl.querySelector('input').addEventListener('change',function(){lbl.classList.toggle('sel',this.checked);actualizarTotal();});
+    chk.appendChild(lbl);
+  });
+  actualizarTotal();
+}
+
+function actualizarTotal(){
+  var checks=document.querySelectorAll('#cuotas-check input:checked');
+  var montos={};
+  (estadoData&&estadoData.cuotas||[]).forEach(function(c){montos[c.key]=c.monto;});
+  var total=0; checks.forEach(function(c){total+=montos[c.value]||0;});
+  var el=$$('cuota-total'),elv=$$('cuota-total-val');
+  if(total>0){el.style.display='flex';elv.textContent='$'+total.toLocaleString('es-AR');}else el.style.display='none';
+}
+
+async function subirACloudinary(file){
+  var form=new FormData();
+  form.append('file',file);form.append('upload_preset',CLD_PRESET);
+  form.append('folder','peregrinacion/'+estadoData.dni);
+  var res=await fetch('https://api.cloudinary.com/v1_1/'+CLD_CLOUD+'/auto/upload',{method:'POST',body:form});
+  var data=await res.json();
+  if(!res.ok||!data.secure_url) throw new Error(data.error&&data.error.message?data.error.message:'No se pudo subir el comprobante.');
+  return data.secure_url;
+}
+
+async function registrarPago(){
+  var checks=Array.from(document.querySelectorAll('#cuotas-check input:checked')).map(function(c){return c.value;});
+  var file=$$('cuota-file').files[0];
+  var msg=$$('cuota-msg');
+  if(!checks.length){showMsg(msg,'Seleccioná al menos una cuota.',false);return;}
+  if(!file){showMsg(msg,'Adjuntá el comprobante de pago.',false);return;}
+  if(file.size>10*1024*1024){showMsg(msg,'El archivo es muy grande. Máximo 10 MB.',false);return;}
+  var card=document.querySelector('.ccard2');
+  card.innerHTML='<div style="text-align:center;padding:3rem 1rem"><div class="spin" style="margin:0 auto 1.1rem;width:32px;height:32px"></div><div style="font-family:\'DM Serif Display\',serif;font-size:1.2rem;margin-bottom:.4rem">Subiendo comprobante...</div><p style="font-size:.82rem;color:var(--s)">No cierres esta pantalla.</p></div>';
+  try{
+    var url=await subirACloudinary(file);
+    var apiUrl=API+'?action=registrarPago&dni='+encodeURIComponent(estadoData.dni)+'&email='+encodeURIComponent(pEmail)+'&cuotas='+encodeURIComponent(checks.join(','))+'&comprobanteUrl='+encodeURIComponent(url)+'&comprobanteNombre='+encodeURIComponent(file.name)+'&comprobanteTipo='+encodeURIComponent(file.type||'');
+    var res=await fetch(apiUrl);var data=await res.json();
+    if(data.ok){
+      card.innerHTML='<div style="text-align:center;padding:3rem 1rem"><div style="font-size:2.5rem;margin-bottom:.9rem">✅</div><div style="font-family:\'DM Serif Display\',serif;font-size:1.4rem;margin-bottom:.4rem">¡Listo!</div><p style="font-size:.85rem;color:var(--s);margin-bottom:1.6rem;line-height:1.5">Tu comprobante quedó registrado. Cuando se revise vas a ver el estado actualizado.</p><button class="bp" onclick="volverEstado()">Ver mi estado →</button></div>';
+      fetch(API+'?action=getEstado&dni='+encodeURIComponent(estadoData.dni)+'&email='+encodeURIComponent(pEmail)).then(function(r2){return r2.json();}).then(function(d2){if(d2.ok)estadoData=d2;});
+    }else{
+      card.innerHTML='<div style="text-align:center;padding:3rem 1rem"><div style="font-size:2.5rem;margin-bottom:.9rem">❌</div><div style="font-family:\'DM Serif Display\',serif;font-size:1.2rem;margin-bottom:.4rem">Algo salió mal</div><p style="font-size:.85rem;color:var(--s);margin-bottom:1.5rem">'+data.error+'</p><button class="bp" onclick="mostrarCuota()">Intentar de nuevo</button><button class="bs" onclick="mostrarEstado()">← Ver mi estado</button></div>';
+    }
+  }catch(e){
+    card.innerHTML='<div style="text-align:center;padding:3rem 1rem"><div style="font-size:2.5rem;margin-bottom:.9rem">📎</div><div style="font-family:\'DM Serif Display\',serif;font-size:1.2rem;margin-bottom:.4rem">No se pudo subir</div><p style="font-size:.85rem;color:var(--s);margin-bottom:1.5rem">'+e.message+'</p><button class="bp" onclick="mostrarCuota()">Intentar de nuevo</button></div>';
+  }
+}
+
+async function volverEstado(){
+  if(!estadoData){mostrarPortal();return;}
+  sp('pe'); $$('est-load').style.display='flex'; $$('est-content').style.display='none';
+  try{var res=await fetch(API+'?action=getEstado&dni='+encodeURIComponent(estadoData.dni)+'&email='+encodeURIComponent(pEmail));var data=await res.json();if(data.ok){estadoData=data;renderEstado();}else mostrarPortal();}
+  catch(e){mostrarPortal();}
+}
+
+// ── Admin ─────────────────────────────────────────────────
+function cambiarVista(v){
+  vistaActual=v;
+  $$('tab-pagos').classList.toggle('active',v==='pagos');
+  $$('tab-inscriptos').classList.toggle('active',v==='inscriptos');
+  $$('tab-campanas').classList.toggle('active',v==='campanas');
+  var tabCont=$$('tab-contabilidad'); if(tabCont) tabCont.classList.toggle('active',v==='contabilidad');
+  $$('vista-pagos').style.display=v==='pagos'?'block':'none';
+  $$('vista-inscriptos').style.display=v==='inscriptos'?'block':'none';
+  $$('vista-campanas').style.display=v==='campanas'?'block':'none';
+  var vistaCont=$$('vista-contabilidad'); if(vistaCont) vistaCont.style.display=v==='contabilidad'?'block':'none';
+  if(v==='inscriptos'&&!inscriptosData) cargarInscriptos();
+  if(v==='campanas'&&!inscriptosData) cargarInscriptos();
+  if(v==='campanas'){ renderCampanas(); actualizarPreviewCampana(); }
+  if(v==='contabilidad') cargarContabilidad();
+}
+
+// Carga con caché — solo recarga si force=true
+async function cargarAdmin(force){
+  if(adminData&&!force){renderAdmin();return;}
+  $$('admin-load').style.display='flex';
+  $$('admin-content').innerHTML='';
+  $$('admin-stats').innerHTML='';
+  try{
+    var res=await fetch(API+'?action=getAdmin&adminToken='+encodeURIComponent(adminToken));
+    var data=await res.json();
+    $$('admin-load').style.display='none';
+    if(!data.ok){$$('admin-content').innerHTML='<p style="color:var(--r);text-align:center;padding:1rem">'+(data.error||'No autorizado.')+'</p>';return;}
+    // Badge "nuevos hoy"
+    if(adminUltimaVisita&&data.pagos){
+      var hoy=new Date().toLocaleDateString('es-AR');
+      var nuevosHoy=data.pagos.filter(function(p){return p.fecha===hoy&&p.estado==='pendiente';}).length;
+      if(nuevosHoy>0){var nb=$$('new-badge');nb.textContent=nuevosHoy+' comprobante'+(nuevosHoy>1?'s':'')+' nuevo'+(nuevosHoy>1?'s':'')+' hoy';nb.style.display='inline-block';}
+    }
+    adminData=data;
+    renderAdmin();
+    actualizarBadgeCampanas();
+  }catch(e){$$('admin-load').style.display='none';$$('admin-content').innerHTML='<p style="color:var(--r);text-align:center;padding:1rem">Error al cargar.</p>';}
+}
+
+async function refrescarAdmin(){
+  adminData=null; inscriptosData=null; contabilidadData=null;
+  await cargarAdmin(true);
+  if(vistaActual==='inscriptos') await cargarInscriptos();
+  if(vistaActual==='contabilidad') await cargarContabilidad(true);
+}
+
+async function cargarInscriptos(){
+  if(inscriptosData){renderInscriptos();return;}
+  $$('ins-load').style.display='flex';
+  try{
+    var res=await fetch(API+'?action=getInscriptos&adminToken='+encodeURIComponent(adminToken));
+    inscriptosData=await res.json();
+    $$('ins-load').style.display='none';
+    if(!inscriptosData.ok){$$('ins-tbody').innerHTML='<tr><td colspan="11" style="text-align:center;color:var(--r);padding:1rem">Error al cargar</td></tr>';return;}
+    // Poblar filtros de parroquia y comunidad
+    var parroquias=[...new Set(inscriptosData.inscriptos.map(function(i){return i.parroquia;}).filter(Boolean))].sort();
+    var comunidades=[...new Set(inscriptosData.inscriptos.map(function(i){return i.comunidad;}).filter(Boolean))].sort();
+    var fp=$$('ins-fp'),fc=$$('ins-fc');
+    fp.innerHTML='<option value="">Todas las parroquias</option>';
+    fc.innerHTML='<option value="">Todas las comunidades</option>';
+    parroquias.forEach(function(p){var o=document.createElement('option');o.value=p;o.textContent=p;fp.appendChild(o);});
+    comunidades.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;fc.appendChild(o);});
+
+    // También poblar filtros de la vista Campañas, si existen
+    var cfp=$$('camp-fp'), cfc=$$('camp-fc');
+    if(cfp && cfc){
+      cfp.innerHTML='<option value="">Todas las parroquias</option>';
+      cfc.innerHTML='<option value="">Todas las comunidades</option>';
+      parroquias.forEach(function(p){var o=document.createElement('option');o.value=p;o.textContent=p;cfp.appendChild(o);});
+      comunidades.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;cfc.appendChild(o);});
+      actualizarPreviewCampana();
+    }
+
+    renderInscriptos();
+  }catch(e){$$('ins-load').style.display='none';}
+}
+
+function agruparPorPersona(pagos){
+  var m={};
+  pagos.forEach(function(p){
+    if(!m[p.dni]) m[p.dni]={dni:p.dni,nombre:p.nombre,whatsapp:p.whatsapp||'',fechaAvisoWhatsapp:p.fechaAvisoWhatsapp||'',rol:p.rol||'Participante',cuotasPlan:p.cuotasPlan||CQ.map(function(k){return {key:k,label:CL[k],monto:CM[k]};}),totalPlan:(p.totalPlan!=null?p.totalPlan:TOTAL),pagos:[]};
+    if(!m[p.dni].whatsapp&&p.whatsapp) m[p.dni].whatsapp=p.whatsapp;
+    m[p.dni].pagos.push(p);
+  });
+  return Object.values(m);
+}
+
+function actualizarTabsPagos(){
+  document.querySelectorAll('#pagos-tabs .atab').forEach(function(t){t.classList.remove('active');});
+  var ids={pendiente:'nav-pendientes',todos:'nav-todos',aldia:'nav-aldia',rechazados:'nav-rechazados'};
+  if(ids[filtroActual]) $$(ids[filtroActual]).classList.add('active');
+}
+
+function cuotasKeysDesdePagos(pagos, planKeys){
+  var seen={};
+  pagos.forEach(function(p){
+    (p.cuotas||'').split(',').map(function(s){return s.trim();}).filter(Boolean).forEach(function(k){seen[k]=true;});
+  });
+  var keys=planKeys||CQ;
+  return keys.filter(function(k){return !!seen[k];});
+}
+
+function totalDesdeKeys(keys, montos){
+  var m=montos||CM;
+  return keys.reduce(function(a,k){return a+(m[k]||0);},0);
+}
+
+function totalConfirmadoPersona(persona){
+  var plan=persona.cuotasPlan||PLAN_ESTANDAR.keys.map(function(k){return {key:k,label:CL[k],monto:CM[k]};});
+  var planKeys=plan.map(function(c){return c.key;});
+  var montos={}; plan.forEach(function(c){montos[c.key]=c.monto;});
+  return totalDesdeKeys(cuotasKeysDesdePagos(persona.pagos.filter(function(x){return x.estado==='confirmado';}),planKeys),montos);
+}
+
+function cuotasExigiblesHoy(){
+  var exigibles=CQ.filter(function(k){return vencida(k);});
+  if(!exigibles.length) exigibles=['sena'];
+  return exigibles;
+}
+
+function personaTieneCuotasConfirmadas(persona,keys){
+  // Sacerdotes (sin cargo) siempre están al día. Cocineros: se guían por su propio plan, no por el estándar.
+  if(persona.rol==='Sacerdote') return true;
+  if(persona.rol==='Cocinero'){
+    var planKeys=(persona.cuotasPlan||[]).map(function(c){return c.key;});
+    var conf=cuotasKeysDesdePagos(persona.pagos.filter(function(x){return x.estado==='confirmado';}),planKeys);
+    return planKeys.every(function(k){return conf.includes(k);});
+  }
+  var conf=cuotasKeysDesdePagos(persona.pagos.filter(function(x){return x.estado==='confirmado';}));
+  return keys.every(function(k){return conf.includes(k);});
+}
+
+function pendientesDePagoCantidad(personas){
+  var exigibles=cuotasExigiblesHoy();
+  var alDia=personas.filter(function(p){return personaTieneCuotasConfirmadas(p,exigibles);}).length;
+  return Math.max(0,(adminData.totalInscriptos||0)-alDia);
+}
+
+function tieneDuplicadosCuota(persona){
+  var counts={};
+  persona.pagos.forEach(function(p){
+    (p.cuotas||'').split(',').map(function(s){return s.trim();}).filter(Boolean).forEach(function(k){counts[k]=(counts[k]||0)+1;});
+  });
+  return Object.keys(counts).some(function(k){return counts[k]>1;});
+}
+
+function filtrarAdmin(f){
+  filtroActual=f;
+  actualizarTabsPagos();
+  if(adminData) renderAdmin();
+}
+
+function renderAdmin(){
+  if(!adminData||!adminData.ok) return;
+  var pagos=adminData.pagos, personas=agruparPorPersona(pagos);
+  var porRevisar=pagos.filter(function(p){return p.estado==='pendiente';}).length;
+  var recaudado=personas.reduce(function(a,p){return a+totalConfirmadoPersona(p);},0);
+  var totalTransferencia=pagos.filter(function(p){return p.estado==='confirmado' && (p.medioPago||'Transferencia')!=='Efectivo';}).reduce(function(a,p){return a+Number(p.monto||0);},0);
+  var totalEfectivo=pagos.filter(function(p){return p.estado==='confirmado' && (p.medioPago||'Transferencia')==='Efectivo';}).reduce(function(a,p){return a+Number(p.monto||0);},0);
+  var efectivoPorResponsable={};
+  pagos.filter(function(p){return p.estado==='confirmado' && (p.medioPago||'Transferencia')==='Efectivo';}).forEach(function(p){
+    var r=p.recibidoPor||'Sin responsable';
+    efectivoPorResponsable[r]=(efectivoPorResponsable[r]||0)+Number(p.monto||0);
+  });
+  var pendientesPago=pendientesDePagoCantidad(personas);
+  $$('admin-stats').innerHTML=
+    stat(adminData.totalInscriptos,'var(--b)','Inscriptos')+
+    stat(porRevisar,'var(--a)','Por revisar')+
+    stat('$'+recaudado.toLocaleString('es-AR'),'var(--g)','Recaudado')+
+    stat(pendientesPago,'var(--r)','Pendientes de pago');
+  var medioSummary=$$('admin-medios-summary');
+  if(medioSummary){
+    var responsables=Object.keys(efectivoPorResponsable).map(function(k){return k+': $'+efectivoPorResponsable[k].toLocaleString('es-AR');}).join(' · ');
+    medioSummary.innerHTML='<strong>Medios confirmados:</strong> Transferencia $'+totalTransferencia.toLocaleString('es-AR')+' · Efectivo $'+totalEfectivo.toLocaleString('es-AR')+(responsables?' <br><span style="font-size:.74rem">Efectivo por responsable: '+responsables+'</span>':'');
+    medioSummary.style.display='flex';
+  }
+
+  var filtradas=personas;
+  if(filtroActual==='pendiente') filtradas=personas.filter(function(p){return p.pagos.some(function(x){return x.estado==='pendiente';});});
+else if(filtroActual==='aldia'){
+  filtradas=personas.filter(function(p){
+    return personaTieneCuotasConfirmadas(p, cuotasExigiblesHoy());
+  });
+} else if(filtroActual==='rechazados'){
+    filtradas=personas.filter(function(p){return p.pagos.some(function(x){return x.estado==='rechazado';});});
+  }
+  if(adminBusqueda){var q=adminBusqueda.toLowerCase();filtradas=filtradas.filter(function(p){return p.nombre.toLowerCase().includes(q)||String(p.dni).includes(q);});}
+  filtradas.sort(function(a,b){
+    var ap=a.pagos.some(function(x){return x.estado==='pendiente';})?0:1;
+    var bp=b.pagos.some(function(x){return x.estado==='pendiente';})?0:1;
+    if(ap!==bp) return ap-bp;
+    // Pendientes: más recientes primero
+    var af=a.pagos.filter(function(x){return x.estado==='pendiente';});
+    var bf=b.pagos.filter(function(x){return x.estado==='pendiente';});
+    if(af.length&&bf.length) return (bf[0].fecha||'').localeCompare(af[0].fecha||'');
+    return 0;
+  });
+  if(!filtradas.length){$$('admin-content').innerHTML='<p style="text-align:center;color:var(--g4);padding:2rem;font-size:.85rem">Sin resultados</p>';return;}
+  $$('admin-content').innerHTML=filtradas.map(renderPersonaCard).join('');
+}
+
+function renderPersonaCard(persona){
+  var plan=persona.cuotasPlan||PLAN_ESTANDAR.keys.map(function(k){return {key:k,label:CL[k],monto:CM[k]};});
+  var planKeys=plan.map(function(c){return c.key;});
+  var planLabels={}; plan.forEach(function(c){planLabels[c.key]=c.label;});
+  var planTotal=(persona.totalPlan!=null?persona.totalPlan:TOTAL);
+  var pagosConf=persona.pagos.filter(function(x){return x.estado==='confirmado';});
+  var pagosPend=persona.pagos.filter(function(x){return x.estado==='pendiente';});
+  var pagosRech=persona.pagos.filter(function(x){return x.estado==='rechazado';});
+  var confKeys=cuotasKeysDesdePagos(pagosConf,planKeys);
+  var pendKeys=cuotasKeysDesdePagos(pagosPend,planKeys);
+  var rechKeys=cuotasKeysDesdePagos(pagosRech,planKeys);
+  var montosPlan={}; plan.forEach(function(c){montosPlan[c.key]=c.monto;});
+  var totalPag=totalDesdeKeys(confKeys,montosPlan);
+  var totalPend=totalDesdeKeys(pendKeys,montosPlan);
+  var pok=planTotal?Math.round(totalPag/planTotal*100):0,prv=planTotal?Math.round(totalPend/planTotal*100):0;
+  var tienePend=pagosPend.length>0,tieneRech=pagosRech.length>0;
+  var border=tienePend?'border-left:3px solid var(--a)':tieneRech?'border-left:3px solid var(--r)':'border-left:3px solid var(--gl)';
+  var ini=persona.nombre.trim().split(' ');
+  var av=((ini[0]||'?').charAt(0)+(ini[1]||'?').charAt(0)).toUpperCase();
+  var sd=String(persona.dni).replace(/[^0-9]/g,'');
+  var did='det-'+sd;
+  var rolTag=persona.rol&&persona.rol!=='Participante'?' · '+persona.rol:'';
+
+  var chips=!planKeys.length
+    ? '<span class="chip cok">Sin cargo</span>'
+    : planKeys.map(function(c){
+        var conf=confKeys.includes(c),pend=pendKeys.includes(c),rech=rechKeys.includes(c);
+        var cls=conf?'cok':pend?'cpend':rech?'crech':'cnone';
+        var icon=conf?'✓ ':pend?'⏳ ':rech?'✕ ':'';
+        return '<span class="chip '+cls+'">'+icon+(planLabels[c]||c).replace(' cuota','')+'</span>';
+      }).join('');
+
+  // Solo pendientes y rechazados expandidos por defecto
+  var compActivos=persona.pagos.filter(function(p){return p.estado==='pendiente'||p.estado==='rechazado';});
+  var compRows=compActivos.map(function(p){
+    return buildCompRow(p,sd);
+  }).join('');
+
+  var detDisplay=compActivos.length>0?'block':'none';
+  var wa=persona.whatsapp||'';
+  var pn=persona.nombre.trim().split(' ')[0];
+  var subInfo=tienePend?pagosPend.length+' comprobante'+(pagosPend.length>1?'s':'')+' por revisar':tieneRech?'Tiene comprobantes no validados':'Sin pendientes';
+
+  // WhatsApp footer — solo recordatorio (los de confirmación/rechazo aparecen en contexto)
+  var waRec=wa?'<a class="bwa2" href="https://wa.me/'+wa+'?text='+encodeURIComponent('Hola '+pn+', te recordamos que podés ver y cargar comprobantes de tus cuotas en: '+PORTAL_URL)+'" target="whatsapp_tab">Recordar pago</a>':'';
+  var waInfo=wa?'WA '+wa+(persona.fechaAvisoWhatsapp?' · avisado '+persona.fechaAvisoWhatsapp:''):'Sin WhatsApp';
+
+  return '<div class="pcard3" style="'+border+'">'+
+    '<div class="ph" onclick="toggleDet(\''+did+'\',\''+sd+'\')">'+
+      '<div class="pav2">'+av+'</div>'+
+      '<div style="flex:1;min-width:0"><div class="pn">'+persona.nombre+rolTag+(tieneDuplicadosCuota(persona)?'<span class="dup-warn">comprobantes duplicados</span>':'')+'</div><div class="ps">DNI '+persona.dni+' · '+subInfo+'</div></div>'+ 
+      '<div class="pm"><div class="pmv">$'+totalPag.toLocaleString('es-AR')+'</div><div class="pml">de $'+planTotal.toLocaleString('es-AR')+'</div></div>'+
+    '</div>'+
+    '<div class="pchips">'+chips+'</div>'+
+    '<div class="pbar2"><div style="height:100%;background:var(--g);width:'+pok+'%"></div><div style="height:100%;background:var(--a);width:'+prv+'%"></div></div>'+
+    '<div id="'+did+'" style="display:'+detDisplay+'"><div class="pcomps">'+compRows+'</div></div>'+
+    '<div class="pfoot2">'+
+      '<span class="winfo">'+waInfo+'</span>'+
+      '<div class="wacts">'+waRec+
+        (esAdminEdicion()?'<button class="bgr" style="padding:4px 10px;font-size:.72rem" onclick="abrirModalB(\''+sd+'\')">Dar de baja</button>':'')+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+function nombreCortoPersona(nombre){
+  return (nombre || '').toString().trim().split(' ')[0] || '';
+}
+
+function cuotasLabelPago(p, sep){
+  sep = sep || ' + ';
+  var planLabels={};
+  (p.cuotasPlan||[]).forEach(function(c){planLabels[c.key]=c.label;});
+  return (p.cuotas || '').split(',').map(function(k){
+    k=k.trim();
+    return planLabels[k] || CL[k] || k;
+  }).filter(Boolean).join(sep);
+}
+
+function personaPorDni(sd){
+  if (!adminData || !adminData.pagos) return null;
+  return agruparPorPersona(adminData.pagos).find(function(per){
+    return String(per.dni).replace(/[^0-9]/g,'') === String(sd).replace(/[^0-9]/g,'');
+  }) || null;
+}
+
+function getWhatsappPago(p, sd){
+  if (p && p.whatsapp) return p.whatsapp;
+  var per = personaPorDni(sd);
+  return per && per.whatsapp ? per.whatsapp : '';
+}
+
+function montoARS(n){
+  return '$' + Number(n || 0).toLocaleString('es-AR');
+}
+
+function mensajeWhatsappPago(tipo, p, sd){
+  var per = personaPorDni(sd) || {};
+  var nombre = nombreCortoPersona(per.nombre || p.nombre || '');
+  var cuotas = cuotasLabelPago(p, ' y ');
+  var monto = montoARS(p.monto || 0);
+
+if (tipo === 'confirmacion') {
+  var esSoloSena = (p.cuotas || '').split(',').map(function(k){
+    return k.trim();
+  }).filter(Boolean).length === 1 && (p.cuotas || '').includes('sena');
+
+  if (esSoloSena) {
+    return '¡Hola, ' + nombre + '! ¡Tu inscripción para la *Peregrinación Córdoba 2026* ya está confirmada! ✅\n\nRegistramos correctamente el pago de tu seña por *$15.000*.\n\nYa podés consultar el cronograma de tus próximas cuotas y vencimientos acá: ' + PORTAL_URL;
+  }
+
+  return 'Hola ' + nombre + ', confirmamos que recibimos el pago de tu ' + cuotas + ' para la Peregrinación Córdoba 2026, por el monto de ' + monto + '. Podés ver todo el detalle de cuotas y vencimientos en ' + PORTAL_URL;
+}
+
+  if (tipo === 'rechazo') {
+    return 'Hola ' + nombre + '. No pudimos validar el comprobante cargado para ' + cuotas + ' de la Peregrinación Córdoba 2026. Necesitamos que te pongas en contacto para revisarlo.';
+  }
+
+  return 'Hola ' + nombre + ', te recordamos que podés ver y cargar comprobantes de tus cuotas en: ' + PORTAL_URL;
+}
+
+function botonWhatsappPago(tipo, p, sd, texto){
+  if(!esAdminEdicion()) return '';
+  var wa = getWhatsappPago(p, sd);
+  if (!wa) return '<span style="font-size:.7rem;color:var(--g4)">Sin WA</span>';
+  var msg = mensajeWhatsappPago(tipo, p, sd);
+  var label = (p.whatsappEnviado === 'si' && p.tipoWhatsapp === tipo) ? texto.replace('Avisar','Reenviar') : texto;
+  return '<a class="bwa2" href="https://wa.me/'+wa+'?text='+encodeURIComponent(msg)+'" target="whatsapp_tab" onclick="marcarAvisoWAPago(\''+p.id+'\',\''+tipo+'\',\''+sd+'\')">'+label+'</a>';
+}
+
+function buildCompRow(p,sd){
+  var medioPago=p.medioPago||'Transferencia';
+  var hasComp=p.comprobanteUrl&&p.comprobanteUrl!=='(adjunto pendiente)'&&/^https?:\/\//.test(p.comprobanteUrl);
+  var cuotasLabel=cuotasLabelPago(p, ' + ');
+  var verBtn=hasComp?'<a class="bver" href="'+p.comprobanteUrl+'" target="_blank">Ver comprobante</a>':(p.comprobanteUrl&&p.comprobanteUrl.indexOf('Pago registrado manualmente')===0?'<span style="font-size:.68rem;color:var(--g4)">Pago manual</span>':'<span style="font-size:.68rem;color:var(--g4)">Sin comprobante</span>');
+  var estado = (p.estado || '').toString();
+  var tipoWA = estado === 'confirmado' ? 'confirmacion' : estado === 'rechazado' ? 'rechazo' : '';
+  var waLinea = (p.whatsappEnviado === 'si' && p.fechaWhatsapp)
+    ? '<div class="wa-sent">WhatsApp '+(p.tipoWhatsapp==='rechazo'?'de rechazo':'de confirmación')+' enviado '+p.fechaWhatsapp+'</div>'
+    : '';
+
+  var acciones = '';
+  if (estado === 'pendiente') {
+    acciones = esAdminEdicion()
+      ? '<button class="bconf2" title="Confirmar" onclick="accionUna(\''+p.id+'\',\'confirmado\',\''+sd+'\')">✓</button>' +
+        '<button class="bnval2" title="No validar" onclick="abrirModalR(\''+p.id+'\',\''+sd+'\')">✕</button>'
+      : '<span class="estbadge">En revisión</span>';
+  } else if (estado === 'confirmado') {
+    acciones =
+      '<span class="estbadge econf">✓ Confirmado</span>' +
+      botonWhatsappPago('confirmacion', p, sd, 'Avisar confirmación');
+  } else if (estado === 'rechazado') {
+    acciones =
+      '<span class="estbadge erech">Comprobante no validado</span>' +
+      (esAdminEdicion()?'<button class="brev2" onclick="volverRevision(\''+p.id+'\')">Revisar otra vez</button>':'') +
+      botonWhatsappPago('rechazo', p, sd, 'Avisar rechazo');
+  } else {
+    acciones = '<span class="estbadge">'+estado+'</span>';
+  }
+
+  var medioTxt=' · '+medioPago+(medioPago==='Efectivo'&&p.recibidoPor?' · Recibido por '+p.recibidoPor:'');
+  return '<div class="comprow" id="comprow-'+p.id+'"><div class="comp-info"><div class="comp-lab">'+cuotasLabel+'</div><div class="comp-sub">'+(p.fecha||'')+medioTxt+'</div>'+waLinea+'</div><div class="comp-acc">'+verBtn+acciones+'</div></div>';
+}
+
+function toggleDet(did,sd){
+  var el=$$(did); if(!el) return;
+  if(el.style.display==='none'){
+    var persona=personaPorDni(sd);
+    if(persona){
+      var todos=persona.pagos.map(function(p){ return buildCompRow(p,sd); }).join('');
+      el.innerHTML='<div class="pcomps">'+todos+'</div>';
+    }
+    el.style.display='block';
+  } else {
+    el.style.display='none';
+  }
+}
+
+// Acciones comprobante
+function abrirModalR(id,dni){if(!esAdminEdicion()){alert('Esta acción requiere clave de edición.');return;}modalPagoId=id;modalPagoDni=dni;$$('modal-rechazo').style.display='flex';}
+function cerrarModalR(){$$('modal-rechazo').style.display='none';modalPagoId=null;modalPagoDni=null;}
+async function confirmarRechazo(){
+  var id = modalPagoId;
+  var dni = modalPagoDni;
+  cerrarModalR();
+  await accionUna(id,'rechazado',dni);
+}
+
+function abrirModalB(dni){if(!esAdminEdicion()){alert('Esta acción requiere clave de edición.');return;}bajaDni=dni;$$('baja-nota').value='';$$('baja-dni').value='';$$('modal-baja').style.display='flex';}
+function cerrarModalB(){$$('modal-baja').style.display='none';bajaDni=null;}
+async function confirmarBaja(){
+  if(!esAdminEdicion()){alert('Esta acción requiere clave de edición.');return;}
+  var nota=$$('baja-nota').value, rep=$$('baja-dni').value;
+  cerrarModalB();
+  try{
+    await fetch(API+'?action=marcarBaja&dni='+encodeURIComponent(bajaDni)+'&nota='+encodeURIComponent(nota)+'&reemplazo='+encodeURIComponent(rep)+'&adminToken='+encodeURIComponent(adminToken));
+    bajaDni=null; adminData=null; inscriptosData=null; contabilidadData=null; await cargarAdmin(true);
+  }catch(e){alert('Error al dar de baja.');}
+}
+
+function pagoPorId(id){
+  if(!adminData || !adminData.pagos) return null;
+  return adminData.pagos.find(function(p){return String(p.id)===String(id);}) || null;
+}
+
+function actualizarFilaPago(id,dni){
+  var p = pagoPorId(id);
+  var row = $$('comprow-'+id);
+  if(p && row){
+    row.outerHTML = buildCompRow(p, dni);
+  }
+  renderAdminStats();
+}
+
+async function accionUna(id,estado,dni,motivo){
+  if(!esAdminEdicion()){alert('Esta acción requiere clave de edición.');return;}
+  try{
+    var url=API+'?action=confirmarPago&pagoId='+encodeURIComponent(id)+'&nuevoEstado='+encodeURIComponent(estado)+'&adminToken='+encodeURIComponent(adminToken);
+    if(motivo) url+='&motivo='+encodeURIComponent(motivo);
+    var res = await fetch(url);
+    var data = await res.json().catch(function(){ return {ok:true}; });
+    if(data && data.ok === false){
+      alert(data.error || 'No se pudo actualizar el pago.');
+      return;
+    }
+
+    var p = pagoPorId(id);
+    if(p){
+      p.estado = estado;
+      if(estado !== 'rechazado') p.motivoRechazo = '';
+      p.whatsappEnviado = '';
+      p.fechaWhatsapp = '';
+      p.tipoWhatsapp = '';
+    }
+    actualizarFilaPago(id,dni);
+  }catch(e){alert('Error de conexión.');}
+}
+
+function renderAdminStats(){
+  if(!adminData) return;
+  var pagos=adminData.pagos;
+  var personas=agruparPorPersona(pagos);
+  var porRevisar=pagos.filter(function(p){return p.estado==='pendiente';}).length;
+  var recaudado=personas.reduce(function(a,p){return a+totalConfirmadoPersona(p);},0);
+  var totalTransferencia=pagos.filter(function(p){return p.estado==='confirmado' && (p.medioPago||'Transferencia')!=='Efectivo';}).reduce(function(a,p){return a+Number(p.monto||0);},0);
+  var totalEfectivo=pagos.filter(function(p){return p.estado==='confirmado' && (p.medioPago||'Transferencia')==='Efectivo';}).reduce(function(a,p){return a+Number(p.monto||0);},0);
+  var efectivoPorResponsable={};
+  pagos.filter(function(p){return p.estado==='confirmado' && (p.medioPago||'Transferencia')==='Efectivo';}).forEach(function(p){
+    var r=p.recibidoPor||'Sin responsable';
+    efectivoPorResponsable[r]=(efectivoPorResponsable[r]||0)+Number(p.monto||0);
+  });
+  var pendientesPago=pendientesDePagoCantidad(personas);
+  $$('admin-stats').innerHTML=
+    stat(adminData.totalInscriptos,'var(--b)','Inscriptos')+
+    stat(porRevisar,'var(--a)','Por revisar')+
+    stat('$'+recaudado.toLocaleString('es-AR'),'var(--g)','Recaudado')+
+    stat(pendientesPago,'var(--r)','Pendientes de pago');
+  var medioSummary=$$('admin-medios-summary');
+  if(medioSummary){
+    var responsables=Object.keys(efectivoPorResponsable).map(function(k){return k+': $'+efectivoPorResponsable[k].toLocaleString('es-AR');}).join(' · ');
+    medioSummary.innerHTML='<strong>Medios confirmados:</strong> Transferencia $'+totalTransferencia.toLocaleString('es-AR')+' · Efectivo $'+totalEfectivo.toLocaleString('es-AR')+(responsables?' <br><span style="font-size:.74rem">Efectivo por responsable: '+responsables+'</span>':'');
+    medioSummary.style.display='flex';
+  }
+}
+
+async function marcarAvisoWA(dni){
+  if(!esAdminEdicion()) return;
+  try{await fetch(API+'?action=marcarAvisoWA&dni='+encodeURIComponent(dni)+'&adminToken='+encodeURIComponent(adminToken));}catch(e){}
+}
+
+async function marcarAvisoWAPago(id,tipo,dni){
+  if(!esAdminEdicion()) return;
+  try{
+    await fetch(API+'?action=marcarAvisoWAPago&pagoId='+encodeURIComponent(id)+'&tipo='+encodeURIComponent(tipo)+'&adminToken='+encodeURIComponent(adminToken));
+    var p = pagoPorId(id);
+    if(p){
+      p.whatsappEnviado = 'si';
+      p.tipoWhatsapp = tipo;
+      p.fechaWhatsapp = new Date().toLocaleDateString('es-AR');
+    }
+    setTimeout(function(){ actualizarFilaPago(id,dni); }, 300);
+  }catch(e){}
+}
+
+async function volverRevision(id){
+  if(!esAdminEdicion()){alert('Esta acción requiere clave de edición.');return;}
+  try{
+    var p = pagoPorId(id);
+    var dni = p ? String(p.dni).replace(/[^0-9]/g,'') : '';
+    await fetch(API+'?action=confirmarPago&pagoId='+encodeURIComponent(id)+'&nuevoEstado=pendiente&adminToken='+encodeURIComponent(adminToken));
+    if(p){p.estado='pendiente';p.whatsappEnviado='';p.fechaWhatsapp='';p.tipoWhatsapp='';}
+    if(dni) actualizarFilaPago(id,dni); else {adminData=null; await cargarAdmin(true);}
+  }catch(e){alert('Error de conexión.');}
+}
+
+// Vista inscriptos
+
+function cuotasConfirmadasInscripto(ins){
+  var r = ins.resumen || {};
+  if(Array.isArray(r.confirmadas)) return r.confirmadas.map(function(k){return String(k).trim();});
+  if(Array.isArray(ins.confirmadas)) return ins.confirmadas.map(function(k){return String(k).trim();});
+  if(typeof ins.cuotasConfirmadas === 'string') return ins.cuotasConfirmadas.split(',').map(function(k){return k.trim();}).filter(Boolean);
+
+  // Respaldo por monto confirmado, por si la API solo devuelve totalPagado.
+  var total = Number(r.totalPagado || ins.totalPagado || 0);
+  var keys = [];
+  var acum = 0;
+  for(var i=0;i<CQ.length;i++){
+    acum += CM[CQ[i]] || 0;
+    if(total >= acum) keys.push(CQ[i]);
+  }
+  return keys;
+}
+
+function aplicaFiltroCuotasInscripto(ins, fq){
+  if(!fq) return true;
+  // Este filtro está pensado para el plan estándar (Jóvenes/Catequistas).
+  // Sacerdotes y cocineros tienen otro esquema de pago, así que quedan afuera de estos filtros específicos.
+  if(ins.rol==='Sacerdote'||ins.rol==='Cocinero') return false;
+  var q = cuotasConfirmadasInscripto(ins);
+  var tiene = function(k){ return q.indexOf(k) >= 0; };
+  if(fq === 'sin_sena') return !tiene('sena');
+  if(fq === 'solo_sena') return tiene('sena') && !tiene('1ra') && !tiene('2da') && !tiene('3ra') && !tiene('4ta');
+  if(fq === 'sena_debe_1ra') return tiene('sena') && !tiene('1ra');
+  if(fq === 'sin_1ra') return !tiene('1ra');
+  if(fq === 'hasta_1ra_debe_2da') return tiene('sena') && tiene('1ra') && !tiene('2da');
+  if(fq === 'hasta_2da_debe_3ra') return tiene('sena') && tiene('1ra') && tiene('2da') && !tiene('3ra');
+  if(fq === 'hasta_3ra_debe_4ta') return tiene('sena') && tiene('1ra') && tiene('2da') && tiene('3ra') && !tiene('4ta');
+  if(fq === 'pago_completo') return ins.estado === 'pago_completo';
+  return true;
+}
+
+function descripcionFiltroCuotas(fq){
+  var m={
+    sin_sena:'No pagaron seña',
+    solo_sena:'Solo seña confirmada',
+    sena_debe_1ra:'Pagó seña y debe 1ª',
+    sin_1ra:'Sin 1ª confirmada',
+    hasta_1ra_debe_2da:'Pagó hasta 1ª, debe 2ª',
+    hasta_2da_debe_3ra:'Pagó hasta 2ª, debe 3ª',
+    hasta_3ra_debe_4ta:'Pagó hasta 3ª, debe 4ª',
+    pago_completo:'Pago completo'
+  };
+  return m[fq] || 'Todas las cuotas';
+}
+
+function renderInscriptos(){
+  if(!inscriptosData||!inscriptosData.ok) return;
+  var lista=inscriptosData.inscriptos;
+  var fe=$$('ins-fe').value, fr=$$('ins-fr').value;
+  var fq=$$('ins-fq') ? $$('ins-fq').value : '';
+  var fp=$$('ins-fp').value, fc=$$('ins-fc').value;
+  var ord=$$('ins-ord').value;
+  var busq=($$('ins-search').value||'').toLowerCase();
+  if(fe) lista=lista.filter(function(i){return i.estado===fe;});
+  if(fq) lista=lista.filter(function(i){return aplicaFiltroCuotasInscripto(i,fq);});
+  if(fr) lista=lista.filter(function(i){return i.rol===fr;});
+  if(fp) lista=lista.filter(function(i){return i.parroquia===fp;});
+  if(fc) lista=lista.filter(function(i){return i.comunidad===fc;});
+  if(busq) lista=lista.filter(function(i){return i.nombre.toLowerCase().includes(busq)||String(i.dni).includes(busq)||i.parroquia.toLowerCase().includes(busq)||i.comunidad.toLowerCase().includes(busq);});
+  if(ord==='nombre') lista=lista.slice().sort(function(a,b){return a.nombre.localeCompare(b.nombre);});
+  else if(ord==='reciente') lista=lista.slice().sort(function(a,b){return b.orden-a.orden;});
+
+  // Resumen de grupo cuando hay filtro de parroquia o comunidad
+  var summary=$$('ins-summary');
+  if(fp||fc||fq){
+    var total=lista.length;
+    var alDia=lista.filter(function(i){return i.estado==='al_dia'||i.estado==='pago_completo';}).length;
+    var deben=lista.filter(function(i){return i.estado==='debe_vencidas'||i.estado==='sin_pagos';}).length;
+    var espera=lista.filter(function(i){return i.estadoCupo==='lista_espera';}).length;
+    var grupo=fp||fc||descripcionFiltroCuotas(fq);
+    $$('ins-summary-text').textContent=grupo+' · '+total+' personas · '+alDia+' al día · '+deben+' deben · '+espera+' en espera';
+    summary.classList.add('show');
+  } else {
+    summary.classList.remove('show');
+  }
+
+  var tbody=$$('ins-tbody');
+
+  // Resumen logístico por rol (para dormir/comer/colectivo) — sobre el total, no solo lo filtrado
+  var rs=$$('ins-roles-summary');
+  if(rs){
+    var activos=inscriptosData.inscriptos.filter(function(i){return i.estadoCupo!=='baja';});
+    var jovenes=activos.filter(function(i){return i.rol==='Participante'||i.rol==='Catequista';}).length;
+    var sacerdotes=activos.filter(function(i){return i.rol==='Sacerdote';}).length;
+    var cocineros=activos.filter(function(i){return i.rol==='Cocinero';}).length;
+    var enMicro=activos.filter(function(i){return i.rol!=='Cocinero'&&i.estadoCupo!=='lista_espera';}).length;
+    var espera=activos.filter(function(i){return i.estadoCupo==='lista_espera';}).length;
+    rs.innerHTML='<span><strong>Logística:</strong> '+jovenes+' jóvenes/catequistas (duermen, comen, colectivo) · '+sacerdotes+' sacerdotes (duermen, comen, colectivo, sin cargo) · '+cocineros+' cocineros (duermen, comen, sin colectivo, por sus medios) · <strong>'+enMicro+'/117</strong> lugares del micro ocupados'+(espera?' · '+espera+' en lista de espera':'')+'</span>';
+  }
+
+  if(!lista.length){tbody.innerHTML='<tr><td colspan="11" style="text-align:center;color:var(--g4);padding:1.5rem">Sin resultados</td></tr>';return;}
+  tbody.innerHTML=lista.map(function(ins){
+    var ec=ECOLOR[ins.estado]||'var(--g4)',eb=EBG[ins.estado]||'var(--g2)',el=ELABEL[ins.estado]||ins.estado;
+    var cupo=ins.estadoCupo==='con_cupo'?'<span class="epill" style="background:var(--gl);color:var(--g)">Con cupo</span>':ins.estadoCupo==='lista_espera'?'<span class="epill" style="background:var(--bl);color:var(--b)">Espera</span>':ins.estadoCupo==='baja'?'<span class="epill" style="background:var(--g2);color:var(--g4)">Baja</span>':'<span class="epill" style="background:var(--al);color:var(--a)">'+ins.estadoCupo+'</span>';
+    var safeDni=String(ins.dni).replace(/[^0-9]/g,'');
+    var menuId='menu-'+safeDni;
+    var menuItems='';
+    var primerNombre = (ins.nombre || '').trim().split(' ')[0];
+    var nombreCompleto = (ins.nombre || '').replace(/'/g,"\\'");
+    var avisoSena = ins.fechaAvisoSena ? '<div style="font-size:.66rem;color:#128C7E;font-weight:700;margin-top:.12rem">Info seña enviada '+ins.fechaAvisoSena+'</div>' : '';
+    if(esAdminEdicion() && ins.whatsapp) menuItems += '<button class="menu-item" onclick="avisarSenaWA(\'' + ins.whatsapp + '\',\'' + primerNombre.replace(/'/g,"\\'") + '\',\'' + safeDni + '\');cerrarMenus()">Avisar seña</button>';
+    if(esAdminEdicion() && ins.whatsapp) menuItems += '<button class="menu-item" onclick="abrirWA(\'' + ins.whatsapp + '\',\'' + primerNombre.replace(/'/g,"\\'") + '\');cerrarMenus()">WhatsApp libre</button>';
+    if(esAdminEdicion()) menuItems += '<button class="menu-item" onclick="abrirModalPagoManual(\''+safeDni+'\');cerrarMenus()">Registrar pago recibido</button>';
+    if(esAdminEdicion() && ins.estadoCupo==='con_cupo') menuItems+='<button class="menu-item danger" onclick="liberarCupo(\''+safeDni+'\');cerrarMenus()">Liberar cupo</button>';
+    if(esAdminEdicion() && ins.estadoCupo!=='baja') menuItems+='<button class="menu-item danger" onclick="abrirModalB(\''+safeDni+'\');cerrarMenus()">Dar de baja</button>';
+    return '<tr>'+
+      '<td style="color:var(--s)">'+ins.orden+'</td>'+
+      '<td style="font-weight:600">'+ins.nombre+avisoSena+'</td>'+
+      '<td>'+ins.dni+'</td>'+
+      '<td>'+ins.parroquia+'</td>'+
+      '<td>'+ins.comunidad+'</td>'+
+      '<td>'+ins.rol+'</td>'+
+      '<td style="color:var(--s);white-space:nowrap;font-size:.72rem">'+ins.fechaInscripcion+' '+ins.horaInscripcion+'</td>'+
+      '<td>'+cupo+'</td>'+
+      '<td><span class="epill" style="background:'+eb+';color:'+ec+'">'+el+'</span></td>'+
+      '<td style="font-weight:600;color:var(--g)">$'+ins.resumen.totalPagado.toLocaleString('es-AR')+'</td>'+
+      '<td>'+(menuItems?'<div class="menu-wrap"><button class="menu-btn" onclick="toggleMenu(\''+menuId+'\')">···</button><div class="menu-drop" id="'+menuId+'">'+menuItems+'</div></div>':'<span style="color:var(--g4)">—</span>')+'</td>'+
+    '</tr>';
+  }).join('');
+}
+
+function toggleMenu(id){
+  cerrarMenus();
+  var m=$$(id); if(m) m.classList.toggle('open');
+}
+function cerrarMenus(){document.querySelectorAll('.menu-drop.open').forEach(function(m){m.classList.remove('open');});}
+document.addEventListener('click',function(e){if(!e.target.closest('.menu-wrap')) cerrarMenus();});
+
+function abrirWATab(url){
+  if(!window._waTab || window._waTab.closed){
+    window._waTab = window.open(url, 'whatsapp_tab');
+  } else {
+    window._waTab.location.href = url;
+    window._waTab.focus();
+  }
+}
+
+function mensajeInfoSena(pn){
+  return 'Hola *'+pn+'*! Recibimos tu inscripción para la *Peregrinación a Córdoba 2026*.\n\n'+
+    '🗓️ *Días de la peregrinación:* Del 18 al 21 de septiembre.\n\n'+
+    'Para asegurar tu lugar, el siguiente paso es transferir la seña y registrar este pago inicial.\n\n'+
+    '📌 *1. Datos para transferir*\n'+
+    '• *Monto de la SEÑA:* $15.000\n'+
+    '• *Fecha límite:* Antes del 1 de junio\n'+
+    '• *Alias:* '+ALIAS+'\n'+
+    '• *CVU:* '+CVU+'\n'+
+    '• *Titular:* '+TITULAR+'\n\n'+
+    '⚠️ Importante: Al terminar la transferencia, guardá o sacale una captura al *comprobante completo*. Si sacás captura, verificá que se vean los datos de quien realiza la transferencia —origen del pago—.\n\n'+
+    '📌 *2. Registrá tu pago*\n'+
+    'Una vez que transfieras, subí el comprobante al portal para que confirmemos tu lugar:\n\n'+
+    'https://peregrinacionjovenes2026-commits.github.io/peregrinacion-cordoba-2026/\n\n'+
+    '• *Para ingresar:* Usá el DNI del participante y el mismo email que registraron en la inscripción.\n\n'+
+    '--- \n\n'+
+    'Una vez que verifiquemos el pago, verás el estado de la seña como *"Confirmado"* en el portal. ¡Cualquier duda con la carga me avisás y lo resolvemos! 🙌';
+}
+var ventanaWhatsappSena = null;
+
+function abrirWhatsappWebMismaPestana(wa,msg){
+  var url='https://wa.me/'+wa+'?text='+encodeURIComponent(msg);
+  try{
+    if(ventanaWhatsappSena && !ventanaWhatsappSena.closed){
+      ventanaWhatsappSena.location.href = url;
+      ventanaWhatsappSena.focus();
+      return;
+    }
+  }catch(e){}
+  ventanaWhatsappSena = window.open(url,'whatsapp_peregrinacion');
+  if(ventanaWhatsappSena) ventanaWhatsappSena.focus();
+}
+
+async function avisarSenaWA(wa,pn,dni){
+  if(!esAdminEdicion()){alert('Esta acción requiere clave de edición.');return;}
+  var msg = mensajeInfoSena(pn);
+  abrirWhatsappWebMismaPestana(wa,msg);
+  await marcarAvisoWA(dni);
+  if(inscriptosData && inscriptosData.inscriptos){
+    var x = inscriptosData.inscriptos.find(function(i){return String(i.dni).replace(/[^0-9]/g,'')===String(dni).replace(/[^0-9]/g,'');});
+    if(x){x.avisoSenaEnviado='enviado';x.fechaAvisoSena=new Date().toLocaleDateString('es-AR');}
+    renderInscriptos();
+  }
+}
+function obtenerInscriptosFiltradosParaDifusion(){
+  if(!inscriptosData || !inscriptosData.ok) return [];
+
+  var lista = inscriptosData.inscriptos.slice();
+
+  var fe = $$('ins-fe') ? $$('ins-fe').value : '';
+  var fq = $$('ins-fq') ? $$('ins-fq').value : '';
+  var fr = $$('ins-fr') ? $$('ins-fr').value : '';
+  var fp = $$('ins-fp') ? $$('ins-fp').value : '';
+  var fc = $$('ins-fc') ? $$('ins-fc').value : '';
+  var busq = ($$('ins-search') ? ($$('ins-search').value || '') : '').toLowerCase();
+
+  if(fe) lista = lista.filter(function(i){ return i.estado === fe; });
+  if(fq) lista = lista.filter(function(i){ return aplicaFiltroCuotasInscripto(i, fq); });
+  if(fr) lista = lista.filter(function(i){ return i.rol === fr; });
+  if(fp) lista = lista.filter(function(i){ return i.parroquia === fp; });
+  if(fc) lista = lista.filter(function(i){ return i.comunidad === fc; });
+
+  if(busq){
+    lista = lista.filter(function(i){
+      return (i.nombre || '').toLowerCase().includes(busq)
+        || String(i.dni || '').includes(busq)
+        || (i.parroquia || '').toLowerCase().includes(busq)
+        || (i.comunidad || '').toLowerCase().includes(busq);
+    });
+  }
+
+  return lista;
+}
+
+function obtenerInscriptosFiltradosCampana(){
+  if(!inscriptosData || !inscriptosData.ok) return [];
+
+  var lista = inscriptosData.inscriptos.slice();
+  var fq = $$('camp-fq') ? $$('camp-fq').value : '';
+  var fr = $$('camp-fr') ? $$('camp-fr').value : '';
+  var fp = $$('camp-fp') ? $$('camp-fp').value : '';
+  var fc = $$('camp-fc') ? $$('camp-fc').value : '';
+  var busq = ($$('camp-search') ? ($$('camp-search').value || '') : '').toLowerCase();
+
+  if(fq) lista = lista.filter(function(i){ return aplicaFiltroCuotasInscripto(i, fq); });
+  if(fr) lista = lista.filter(function(i){ return i.rol === fr; });
+  if(fp) lista = lista.filter(function(i){ return i.parroquia === fp; });
+  if(fc) lista = lista.filter(function(i){ return i.comunidad === fc; });
+
+  if(busq){
+    lista = lista.filter(function(i){
+      return (i.nombre || '').toLowerCase().includes(busq)
+        || String(i.dni || '').includes(busq)
+        || (i.parroquia || '').toLowerCase().includes(busq)
+        || (i.comunidad || '').toLowerCase().includes(busq);
+    });
+  }
+
+  return lista;
+}
+
+function obtenerDifusionValida(lista){
+  return (lista || []).filter(function(p){
+    return p.whatsapp && p.estadoCupo !== 'lista_espera' && p.estadoCupo !== 'baja';
+  });
+}
+
+function actualizarPreviewCampana(){
+  var el=$$('camp-preview');
+  if(!el) return;
+  if(!inscriptosData || !inscriptosData.ok){
+    el.textContent='Entrá a la vista Campañas para cargar la base de inscriptos.';
+    return;
+  }
+  var lista=obtenerDifusionValida(obtenerInscriptosFiltradosCampana());
+  var fq=$$('camp-fq') ? $$('camp-fq').value : '';
+  el.textContent=lista.length+' persona'+(lista.length===1?'':'s')+' con WhatsApp para: '+descripcionFiltroCuotas(fq)+'.';
+}
+
+async function abrirNuevaCampana(){
+  if(!esAdminEdicion()){ alert('Esta acción requiere clave de edición.'); return; }
+  // Si todavía no se cargó la base de inscriptos, la cargamos antes de armar la campaña.
+  if(!inscriptosData || !inscriptosData.ok){
+    await cargarInscriptos();
+  }
+  var base = (vistaActual === 'campanas') ? obtenerInscriptosFiltradosCampana() : obtenerInscriptosFiltradosParaDifusion();
+  campanasFiltradosCache = obtenerDifusionValida(base);
+  if(!campanasFiltradosCache.length){ alert('No hay personas con WhatsApp para ese filtro.'); return; }
+  var fq = (vistaActual === 'campanas' && $$('camp-fq')) ? $$('camp-fq').value : (($$('ins-fq') && $$('ins-fq').value) || '');
+  $$('nueva-camp-count').textContent = campanasFiltradosCache.length + ' persona' + (campanasFiltradosCache.length===1?'':'s') + ' para: ' + descripcionFiltroCuotas(fq) + '.';
+  $$('nueva-camp-nombre').value = '';
+  $$('nueva-camp-msg').value = 'Hola {nombre}, ';
+  $$('modal-nueva-campana').style.display = 'flex';
+  setTimeout(function(){ $$('nueva-camp-nombre').focus(); }, 100);
+}
+
+function cerrarModalNuevaCampana(){
+  $$('modal-nueva-campana').style.display = 'none';
+}
+
+function crearCampana(){
+  var nombre = ($$('nueva-camp-nombre').value||'').trim();
+  var msg = ($$('nueva-camp-msg').value||'').trim();
+  if(!nombre){ alert('Escribí un nombre para la campaña.'); return; }
+  if(!msg){ alert('Escribí el mensaje.'); return; }
+  var id = 'c' + Date.now();
+  var camp = {
+    id: id,
+    nombre: nombre,
+    mensaje: msg,
+    fechaCreacion: new Date().toLocaleDateString('es-AR'),
+    estado: 'activa',
+    destinatarios: campanasFiltradosCache.map(function(p){
+      return { dni: p.dni, nombre: p.nombre, whatsapp: p.whatsapp, enviado: false, fechaEnvio: '' };
+    })
+  };
+  guardarCampana(camp);
+  cerrarModalNuevaCampana();
+  actualizarBadgeCampanas();
+  cambiarVista('campanas');
+  abrirDetalleCampana(id);
+}
+
+function cargarTodasCampanas(){
+  try{
+    var raw = localStorage.getItem(CAMPANAS_KEY);
+    var arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr : [];
+  }catch(e){
+    return [];
+  }
+}
+
+function guardarTodasCampanas(campanas){
+  localStorage.setItem(CAMPANAS_KEY, JSON.stringify(campanas || []));
+}
+
+function cargarCampana(id){
+  return cargarTodasCampanas().find(function(c){ return String(c.id) === String(id); }) || null;
+}
+
+function guardarCampana(camp){
+  var campanas = cargarTodasCampanas();
+  var idx = campanas.findIndex(function(c){ return String(c.id) === String(camp.id); });
+  if(idx >= 0) campanas[idx] = camp;
+  else campanas.push(camp);
+  guardarTodasCampanas(campanas);
+}
+
+function borrarCampana(id){
+  var campanas = cargarTodasCampanas().filter(function(c){ return String(c.id) !== String(id); });
+  guardarTodasCampanas(campanas);
+}
+
+function actualizarBadgeCampanas(){
+  var camps = cargarTodasCampanas().filter(function(c){ return c.estado === 'activa'; });
+  var pendientes = camps.reduce(function(a,c){
+    return a + c.destinatarios.filter(function(d){ return !d.enviado; }).length;
+  }, 0);
+  var badge = $$('camp-badge');
+  if(badge){
+    if(pendientes > 0){ badge.textContent = pendientes; badge.style.display = 'inline-block'; }
+    else badge.style.display = 'none';
+  }
+}
+
+function renderCampanas(){
+  actualizarBadgeCampanas();
+  var camps = cargarTodasCampanas();
+  var activas = camps.filter(function(c){ return c.estado === 'activa'; });
+  var archivadas = camps.filter(function(c){ return c.estado === 'archivada'; });
+
+  // Render activas
+  var elActivas = $$('camp-activas');
+  if(!activas.length){
+    elActivas.innerHTML = '<p style="font-size:.82rem;color:var(--g4);padding:.75rem 0">No hay campañas activas. Filtrá inscriptos y creá una nueva.</p>';
+  } else {
+    elActivas.innerHTML = activas.map(function(c){
+      var total = c.destinatarios.length;
+      var enviados = c.destinatarios.filter(function(d){ return d.enviado; }).length;
+      var pct = Math.round(enviados/total*100);
+      return '<div class="camp-card activa" onclick="abrirDetalleCampana(\''+c.id+'\')">' +
+        '<div class="camp-info">' +
+          '<div class="camp-nombre">'+escHtml(c.nombre)+'</div>' +
+          '<div class="camp-meta">Creada '+c.fechaCreacion+' · '+total+' destinatarios</div>' +
+        '</div>' +
+        '<div class="camp-progreso-wrap">' +
+          '<div class="camp-progreso-bar"><div class="camp-progreso-fill" style="width:'+pct+'%"></div></div>' +
+          '<div class="camp-progreso-txt">'+enviados+'/'+total+' enviados</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:.35rem;flex-shrink:0;align-items:center">' +
+          '<button class="bgr" style="font-size:.72rem;padding:4px 10px" onclick="event.stopPropagation();archivarCampana(\''+c.id+'\')">Archivar</button>' +
+          '<button class="brd" style="font-size:.72rem;padding:4px 10px" onclick="event.stopPropagation();eliminarCampana(\''+c.id+'\')">Eliminar</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // Render archivadas
+  var elArchWrap = $$('camp-archivadas-wrap');
+  if(archivadas.length){ elArchWrap.style.display = 'block'; }
+  else elArchWrap.style.display = 'none';
+
+  var elArch = $$('camp-archivadas');
+  elArch.innerHTML = archivadas.map(function(c){
+    var total = c.destinatarios.length;
+    var enviados = c.destinatarios.filter(function(d){ return d.enviado; }).length;
+    return '<div class="camp-card archivada" onclick="abrirDetalleCampana(\''+c.id+'\')">' +
+      '<div class="camp-info">' +
+        '<div class="camp-nombre">'+escHtml(c.nombre)+'</div>' +
+        '<div class="camp-meta">'+c.fechaCreacion+' · '+enviados+'/'+total+' enviados</div>' +
+      '</div>' +
+      '<button class="bgr" style="font-size:.72rem;padding:4px 10px" onclick="event.stopPropagation();eliminarCampana(\''+c.id+'\')"  >Eliminar</button>' +
+    '</div>';
+  }).join('');
+
+  // Show list, hide detail
+  $$('camp-activas-wrap').style.display = 'block';
+  $$('camp-archivadas-wrap').style.display = archivadas.length ? 'block' : 'none';
+  $$('camp-detalle').style.display = 'none';
+}
+
+function toggleArchivadas(){
+  var el = $$('camp-archivadas');
+  var toggle = $$('camp-arch-toggle');
+  if(el.style.display === 'none'){
+    el.style.display = 'flex';
+    el.style.flexDirection = 'column';
+    toggle.textContent = '▼ ocultar';
+  } else {
+    el.style.display = 'none';
+    toggle.textContent = '▶ mostrar';
+  }
+}
+
+function abrirDetalleCampana(id){
+  var camp = cargarCampana(id);
+  if(!camp) return;
+
+  $$('camp-activas-wrap').style.display = 'none';
+  $$('camp-archivadas-wrap').style.display = 'none';
+  $$('camp-detalle').style.display = 'block';
+
+  var total = camp.destinatarios.length;
+  var enviados = camp.destinatarios.filter(function(d){ return d.enviado; }).length;
+  var pendientes = total - enviados;
+
+  $$('camp-detalle-nombre').textContent = camp.nombre;
+  $$('camp-detalle-progreso').textContent = enviados + '/' + total + ' enviados · ' + pendientes + ' pendientes';
+  $$('camp-detalle-msg').textContent = camp.mensaje;
+
+  var esEdicion = esAdminEdicion();
+  var lista = $$('camp-detalle-lista');
+
+  // Sort: pending first
+  var dests = camp.destinatarios.slice().sort(function(a,b){
+    return (a.enviado ? 1 : 0) - (b.enviado ? 1 : 0);
+  });
+
+  lista.innerHTML = dests.map(function(d){
+    var wa = d.whatsapp;
+    var msg = armarMensajeDifusionCamp(camp.mensaje, d);
+    var cid = camp.id;
+    var ddni = String(d.dni);
+    var btnWA = (esEdicion && !d.enviado && wa) ?
+      '<a class="bwa2" href="https://wa.me/'+wa+'?text='+encodeURIComponent(msg)+'" target="whatsapp_tab" data-cid="'+cid+'" data-dni="'+ddni+'" onclick="campOnclickWA(this)">Enviar WA</a>' : '';
+    var btnMarca = esEdicion ?
+      '<button class="brev2" style="font-size:.72rem;padding:4px 10px;white-space:nowrap" data-cid="'+cid+'" data-dni="'+ddni+'" onclick="campOnclickMarca(this)">'+
+        (d.enviado ? 'Desmarcar' : 'Marcar enviado') +
+      '</button>' : '';
+    var badge = d.enviado ?
+      '<span class="badge-enviado">Enviado '+(d.fechaEnvio||'')+'</span>' :
+      '<span class="badge-pendiente">Pendiente</span>';
+    return '<div class="camp-dest '+(d.enviado?'enviado':'')+'" id="dest-'+escHtml(d.dni)+'">' +
+      '<div class="camp-dest-info">' +
+        '<div class="camp-dest-nombre">'+escHtml(d.nombre)+'</div>' +
+        '<div class="camp-dest-sub">'+d.dni+(wa?' · WA '+wa:'')+'</div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;flex-shrink:0">' +
+        badge + btnWA + btnMarca +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  // Botones de campaña
+  var btnsHtml = '';
+  if(esEdicion && camp.estado === 'activa'){
+    btnsHtml += '<button class="bs bsm" style="margin-top:.75rem" onclick="archivarCampana(\''+id+'\')">Archivar campaña</button> ';
+  }
+  if(esEdicion){
+    btnsHtml += '<button class="bgr" style="margin-top:.75rem;padding:5px 12px;font-size:.76rem" onclick="eliminarCampana(\''+id+'\')">Eliminar campaña</button>';
+  }
+  lista.innerHTML += '<div style="margin-top:.5rem">'+btnsHtml+'</div>';
+}
+
+function armarMensajeDifusionCamp(template, dest){
+  var nombre = (dest.nombre||'').trim().split(' ')[0];
+  return template
+    .replace(/\{nombre\}/g, nombre)
+    .replace(/\{dni\}/g, dest.dni||'')
+    .replace(/\{portal\}/g, PORTAL_URL);
+}
+
+function marcarDestinatarioEnviado(campId, dni, linkEl){
+  var camp = cargarCampana(campId);
+  if(!camp) return;
+  var dest = camp.destinatarios.find(function(d){ return String(d.dni) === String(dni); });
+  if(!dest) return;
+  dest.enviado = !dest.enviado;
+  dest.fechaEnvio = dest.enviado ? new Date().toLocaleDateString('es-AR') : '';
+  // Check if all sent → auto-archive
+  var todosEnviados = camp.destinatarios.every(function(d){ return d.enviado; });
+  if(todosEnviados && camp.estado === 'activa'){
+    camp.estado = 'archivada';
+  }
+  guardarCampana(camp);
+  actualizarBadgeCampanas();
+  abrirDetalleCampana(campId);
+}
+
+function archivarCampana(id){
+  var camp = cargarCampana(id);
+  if(!camp) return;
+  camp.estado = 'archivada';
+  guardarCampana(camp);
+  actualizarBadgeCampanas();
+  volverListaCampanas();
+}
+
+function eliminarCampana(id){
+  if(!confirm('¿Eliminar esta campaña? No se puede recuperar.')) return;
+  borrarCampana(id);
+  actualizarBadgeCampanas();
+  volverListaCampanas();
+}
+
+function volverListaCampanas(){
+  renderCampanas();
+}
+
+
+function campOnclickWA(el){
+  var cid = el.getAttribute('data-cid');
+  var dni = el.getAttribute('data-dni');
+  marcarDestinatarioEnviado(cid, dni, el);
+}
+function campOnclickMarca(el){
+  var cid = el.getAttribute('data-cid');
+  var dni = el.getAttribute('data-dni');
+  marcarDestinatarioEnviado(cid, dni, null);
+}
+function campBtnArchivar(el){
+  archivarCampana(el.getAttribute('data-cid'));
+}
+function campBtnEliminar(el){
+  eliminarCampana(el.getAttribute('data-cid'));
+}
+
+function escHtml(txt){
+  return String(txt||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+
+function copiarResumen(){
+  var txt=$$('ins-summary-text').textContent;
+  navigator.clipboard.writeText(txt).then(function(){
+    var btn=document.querySelector('#ins-summary button');
+    if(btn){var orig=btn.textContent;btn.textContent='✓ Copiado';setTimeout(function(){btn.textContent=orig;},2000);}
+  }).catch(function(){alert(txt);});
+}
+
+async function liberarCupo(dni){
+  if(!esAdminEdicion()){alert('Esta acción requiere clave de edición.');return;}
+  if(!confirm('¿Liberar el cupo de esta persona y asignarlo al primero en lista de espera?')) return;
+  try{
+    var res=await fetch(API+'?action=liberarCupo&dni='+encodeURIComponent(dni)+'&adminToken='+encodeURIComponent(adminToken));
+    var data=await res.json();
+    if(data.ok){
+      if(data.nuevoCupo) alert('Cupo asignado a: '+data.nuevoCupo);
+      inscriptosData=null; await cargarInscriptos();
+    }
+  }catch(e){alert('Error.');}
+}
+
+// ── Alta manual: sacerdotes y cocineros ────────────────────
+function abrirModalAltaManual(){
+  if(!esAdminEdicion()){alert('Esta acción requiere clave de edición.');return;}
+  ['alta-nombre','alta-apellido','alta-dni','alta-celular','alta-email','alta-parroquia','alta-comunidad','alta-obs'].forEach(function(id){$$(id).value='';});
+  $$('alta-rol').value='Sacerdote';
+  $$('alta-msg').style.display='none';
+  actualizarInfoAltaManual();
+  $$('modal-alta-manual').style.display='flex';
+}
+function cerrarModalAltaManual(){ $$('modal-alta-manual').style.display='none'; }
+
+function actualizarInfoAltaManual(){
+  var rol=$$('alta-rol').value;
+  var info=$$('alta-info');
+  if(rol==='Cocinero') info.textContent='Cocinero: paga alojamiento ($53.000) y comidas ($65.000) por separado, en el orden que quiera, antes de viajar. Total $118.000.';
+  else info.textContent='Sacerdote: sin cargo. Solo queda registrado para contar en alojamiento, comida y colectivo.';
+}
+
+async function registrarAltaManualInscripto(){
+  var msg=$$('alta-msg');
+  var nombre=$$('alta-nombre').value.trim();
+  var apellido=$$('alta-apellido').value.trim();
+  var dni=$$('alta-dni').value.trim();
+  var rol=$$('alta-rol').value;
+  if(!nombre){showMsg(msg,'Ingresá el nombre.',false);return;}
+  if(!dni){showMsg(msg,'Ingresá el DNI.',false);return;}
+  showMsg(msg,'Agregando...',true);
+  try{
+    var url=API+'?action=altaManualInscripto&adminToken='+encodeURIComponent(adminToken)+
+      '&nombre='+encodeURIComponent(nombre)+
+      '&apellido='+encodeURIComponent(apellido)+
+      '&dni='+encodeURIComponent(dni)+
+      '&rol='+encodeURIComponent(rol)+
+      '&celular='+encodeURIComponent($$('alta-celular').value.trim())+
+      '&email='+encodeURIComponent($$('alta-email').value.trim())+
+      '&parroquia='+encodeURIComponent($$('alta-parroquia').value.trim())+
+      '&comunidad='+encodeURIComponent($$('alta-comunidad').value.trim())+
+      '&observacion='+encodeURIComponent($$('alta-obs').value.trim());
+    var res=await fetch(url);
+    var data=await res.json();
+    if(!data.ok){showMsg(msg,data.error||'No se pudo agregar.',false);return;}
+    showMsg(msg,data.mensaje||'Agregado correctamente.',true);
+    inscriptosData=null; adminData=null;
+    await cargarInscriptos();
+    setTimeout(cerrarModalAltaManual,700);
+  }catch(e){showMsg(msg,'Error de conexión.',false);}
+}
+
+function obtenerPersonasPagosFiltradas(){
+  if(!adminData||!adminData.ok) return [];
+  var pagos=adminData.pagos||[];
+  var personas=agruparPorPersona(pagos);
+  var filtradas=personas;
+  if(filtroActual==='pendiente') filtradas=personas.filter(function(p){return p.pagos.some(function(x){return x.estado==='pendiente';});});
+ else if(filtroActual==='aldia'){
+  filtradas=personas.filter(function(p){
+    return personaTieneCuotasConfirmadas(p, cuotasExigiblesHoy());
+  });
+} else if(filtroActual==='rechazados'){
+    filtradas=personas.filter(function(p){return p.pagos.some(function(x){return x.estado==='rechazado';});});
+  }
+  if(adminBusqueda){var q=adminBusqueda.toLowerCase();filtradas=filtradas.filter(function(p){return p.nombre.toLowerCase().includes(q)||String(p.dni).includes(q);});}
+  return filtradas;
+}
+
+function obtenerInscriptosFiltrados(){
+  if(!inscriptosData||!inscriptosData.ok) return [];
+  var lista=inscriptosData.inscriptos.slice();
+  var fe=$$('ins-fe').value, fr=$$('ins-fr').value;
+  var fp=$$('ins-fp').value, fc=$$('ins-fc').value;
+  var ord=$$('ins-ord').value;
+  var busq=($$('ins-search').value||'').toLowerCase();
+  if(fe) lista=lista.filter(function(i){return i.estado===fe;});
+  if(fr) lista=lista.filter(function(i){return i.rol===fr;});
+  if(fp) lista=lista.filter(function(i){return i.parroquia===fp;});
+  if(fc) lista=lista.filter(function(i){return i.comunidad===fc;});
+  if(busq) lista=lista.filter(function(i){return i.nombre.toLowerCase().includes(busq)||String(i.dni).includes(busq)||i.parroquia.toLowerCase().includes(busq)||i.comunidad.toLowerCase().includes(busq);});
+  if(ord==='nombre') lista=lista.slice().sort(function(a,b){return a.nombre.localeCompare(b.nombre);});
+  else if(ord==='reciente') lista=lista.slice().sort(function(a,b){return b.orden-a.orden;});
+  return lista;
+}
+
+function descargarCSV(rows,nombre){
+  if(!rows.length){alert('No hay datos para exportar con los filtros actuales.');return;}
+  var headers=Object.keys(rows[0]);
+  var csv='\uFEFF'+headers.join(',')+'\n'+rows.map(function(r){return headers.map(function(h){var v=r[h]||'';return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download=nombre+'_'+new Date().toLocaleDateString('es-AR').replace(/\//g,'-')+'.csv';a.click();
+  setTimeout(function(){URL.revokeObjectURL(url);},500);
+}
+
+
+var manualPlanActual=PLAN_ESTANDAR;
+
+async function abrirModalPagoManual(dni){
+  if(!esAdminEdicion()){
+    alert('Esta acción requiere clave de edición.');
+    return;
+  }
+  if(dni&&(!inscriptosData||!inscriptosData.ok)){
+    await cargarInscriptos();
+  }
+  var rol='Participante';
+  if(dni&&inscriptosData&&inscriptosData.ok){
+    var ins=inscriptosData.inscriptos.find(function(i){return String(i.dni).replace(/[^0-9]/g,'')===String(dni).replace(/[^0-9]/g,'');});
+    if(ins) rol=ins.rol;
+  }
+  manualPlanActual=planParaRol(rol);
+  $$('manual-dni').value=dni||'';
+  $$('manual-dni').oninput=function(){
+    var val=this.value;
+    var r='Participante';
+    if(inscriptosData&&inscriptosData.ok&&val){
+      var i2=inscriptosData.inscriptos.find(function(i){return String(i.dni).replace(/[^0-9]/g,'')===String(val).replace(/[^0-9]/g,'');});
+      if(i2) r=i2.rol;
+    }
+    manualPlanActual=planParaRol(r);
+    renderManualCuotasCheck();
+    actualizarTotalManual();
+  };
+  renderManualCuotasCheck();
+  $$('manual-monto').value='';
+  $$('manual-medio').value='Efectivo';
+  $$('manual-recibido').value='';
+  $$('manual-obs').value='';
+  $$('manual-msg').style.display='none';
+  $$('modal-pago-manual').style.display='flex';
+}
+
+function renderManualCuotasCheck(){
+  var cont=$$('manual-cuotas-check');
+  if(!manualPlanActual.keys.length){
+    cont.innerHTML='<p style="font-size:.78rem;color:var(--s)">Esta persona no tiene cargo (sin cuotas para registrar).</p>';
+    return;
+  }
+  cont.innerHTML=manualPlanActual.keys.map(function(k){
+    return '<label class="copt"><input type="checkbox" value="'+k+'" onchange="actualizarTotalManual()"><div class="copt-info"><div class="copt-label">'+(manualPlanActual.labels[k]||k)+'</div><div class="copt-monto">$'+(manualPlanActual.montos[k]||0).toLocaleString('es-AR')+'</div></div></label>';
+  }).join('');
+}
+
+function cerrarModalPagoManual(){
+  $$('modal-pago-manual').style.display='none';
+}
+
+function actualizarTotalManual(){
+  var total=0;
+  document.querySelectorAll('#manual-cuotas-check input').forEach(function(c){
+    if(c.checked){total+=manualPlanActual.montos[c.value]||0;c.closest('.copt').classList.add('sel');}
+    else c.closest('.copt').classList.remove('sel');
+  });
+  $$('manual-monto').value=total||'';
+}
+
+function actualizarManualMedio(){
+  var medio=$$('manual-medio').value;
+  $$('manual-recibido').placeholder = medio==='Efectivo' ? 'Nombre de quien recibió el efectivo' : 'Opcional';
+}
+
+async function registrarPagoManualAdmin(){
+  var dni=$$('manual-dni').value.trim();
+  var cuotas=Array.from(document.querySelectorAll('#manual-cuotas-check input:checked')).map(function(c){return c.value;});
+  var monto=$$('manual-monto').value.trim();
+  var medio=$$('manual-medio').value;
+  var recibido=$$('manual-recibido').value.trim();
+  var obs=$$('manual-obs').value.trim();
+  var msg=$$('manual-msg');
+
+  if(!dni){showMsg(msg,'Ingresá el DNI.',false);return;}
+  if(!cuotas.length){showMsg(msg,'Seleccioná al menos una cuota.',false);return;}
+  if(medio==='Efectivo'&&!recibido){showMsg(msg,'Indicá quién recibió el efectivo.',false);return;}
+
+  showMsg(msg,'Registrando pago...',true);
+  try{
+    var url=API+'?action=registrarPagoManual'+
+      '&adminToken='+encodeURIComponent(adminToken)+
+      '&dni='+encodeURIComponent(dni)+
+      '&cuotas='+encodeURIComponent(cuotas.join(','))+
+      '&monto='+encodeURIComponent(monto)+
+      '&medioPago='+encodeURIComponent(medio)+
+      '&recibidoPor='+encodeURIComponent(recibido)+
+      '&observacionInterna='+encodeURIComponent(obs);
+    var res=await fetch(url);
+    var data=await res.json();
+    if(!data.ok){showMsg(msg,data.error||'No se pudo registrar el pago.',false);return;}
+    showMsg(msg,'Pago registrado correctamente.',true);
+    adminData=null;
+    inscriptosData=null;
+    await cargarAdmin(true);
+    if(vistaActual==='inscriptos') await cargarInscriptos();
+  if(vistaActual==='contabilidad') await cargarContabilidad(true);
+    setTimeout(cerrarModalPagoManual,700);
+  }catch(e){
+    showMsg(msg,'Error de conexión.',false);
+  }
+}
+
+
+function fmtMoney(n){return '$'+Number(n||0).toLocaleString('es-AR');}
+function hoyISO(){var d=new Date();return d.toISOString().slice(0,10);}
+
+async function cargarContabilidad(force){
+  if(contabilidadData&&!force){renderContabilidad();return;}
+  var load=$$('cont-load'), content=$$('cont-content');
+  if(load) load.style.display='flex';
+  if(content) content.innerHTML='';
+  try{
+    var res=await fetch(API+'?action=getContabilidad&adminToken='+encodeURIComponent(adminToken));
+    var data=await res.json();
+    if(load) load.style.display='none';
+    if(!data.ok){content.innerHTML='<p style="color:var(--r);text-align:center;padding:1rem">'+(data.error||'No se pudo cargar contabilidad.')+'</p>';return;}
+    contabilidadData=data;
+    renderContabilidad();
+  }catch(e){
+    if(load) load.style.display='none';
+    if(content) content.innerHTML='<p style="color:var(--r);text-align:center;padding:1rem">Error de conexión.</p>';
+  }
+}
+
+// Agrupa compromisos + pagos de organización por categoría (case-insensitive, ignora espacios extra)
+function agruparContabilidadPorCategoria(data){
+  var compromisos=data.compromisos||[], pagos=data.pagosOrganizacion||[];
+  var map={}, orden=[];
+  function grupo(catRaw){
+    var cat=(catRaw||'Sin categoría').toString().trim()||'Sin categoría';
+    var key=cat.toLowerCase();
+    if(!map[key]){map[key]={categoria:cat,compromisos:[],pagos:[],totalEstimado:0,tieneEstimado:false,totalPagado:0};orden.push(key);}
+    return map[key];
+  }
+  compromisos.forEach(function(c){
+    var g=grupo(c.categoria);
+    g.compromisos.push(c);
+    var te=Number(c.totalEstimado);
+    if(c.totalEstimado!==''&&c.totalEstimado!==null&&c.totalEstimado!==undefined&&!isNaN(te)&&te>0){
+      g.totalEstimado+=te; g.tieneEstimado=true;
+    }
+  });
+  pagos.forEach(function(p){
+    var g=grupo(p.categoria);
+    g.pagos.push(p);
+    g.totalPagado+=Number(p.monto||0);
+  });
+  return orden.map(function(k){return map[k];}).sort(function(a,b){return b.totalPagado-a.totalPagado;});
+}
+
+function actualizarListaCategorias(grupos){
+  var dl=$$('lista-categorias'); if(!dl) return;
+  var base=['Alojamiento','Micros','Comidas','Recuerdos','Devolución','Sacerdotes'];
+  var nombres=grupos.map(function(g){return g.categoria;});
+  var todas=[...new Set(base.concat(nombres))];
+  dl.innerHTML=todas.map(function(n){return '<option value="'+esc(n)+'">';}).join('');
+}
+
+function toggleCatc(id){
+  var body=$$(id); if(!body) return;
+  var card=body.closest('.catc-card');
+  var abierto=body.style.display!=='none';
+  body.style.display=abierto?'none':'block';
+  if(card) card.classList.toggle('open',!abierto);
+}
+
+function renderContabilidad(){
+  if(!contabilidadData||!contabilidadData.ok) return;
+  var r=contabilidadData.resumen||{};
+  var html='';
+  html+='<div class="cont-grid">'+
+    '<div class="cont-card"><div class="n" style="color:var(--g)">'+fmtMoney(r.totalRecibido)+'</div><div class="l">Recibido participantes</div></div>'+ 
+    '<div class="cont-card"><div class="n" style="color:var(--r)">'+fmtMoney(r.totalPagadoOrganizacion)+'</div><div class="l">Pagado organización</div></div>'+ 
+    '<div class="cont-card"><div class="n" style="color:var(--b)">'+fmtMoney(r.saldoDisponible)+'</div><div class="l">Saldo disponible</div></div>'+ 
+    '<div class="cont-card"><div class="n" style="color:var(--a)">'+fmtMoney(r.totalComprometidoEstimado)+'</div><div class="l">Comprometido estimado</div></div>'+ 
+  '</div>';
+
+  var responsables=r.efectivoPorResponsable||{};
+  var respTxt=Object.keys(responsables).map(function(k){return k+': '+fmtMoney(responsables[k]);}).join(' · ');
+  html+='<div class="cont-section"><div class="cont-title">Ingresos confirmados</div><div class="cont-row" style="margin-top:.65rem"><div class="cont-row-info"><div class="cont-row-title">Transferencias recibidas</div><div class="cont-row-sub">Pagos confirmados desde portal o carga manual</div></div><div class="cont-row-amount">'+fmtMoney(r.transferencia)+'</div></div>'+ 
+    '<div class="cont-row" style="margin-top:.45rem"><div class="cont-row-info"><div class="cont-row-title">Efectivo recibido</div><div class="cont-row-sub">'+(respTxt||'Sin efectivo cargado')+'</div></div><div class="cont-row-amount">'+fmtMoney(r.efectivo)+'</div></div></div>';
+
+  var grupos=agruparContabilidadPorCategoria(contabilidadData);
+  actualizarListaCategorias(grupos);
+
+  html+='<div class="cont-section"><div class="cont-head"><div class="cont-title">Gastos por categoría</div><div style="display:flex;gap:.4rem;flex-wrap:wrap"><button class="bs bsm" onclick="abrirModalCompromiso()">+ Compromiso</button><button class="bs bsm" onclick="abrirModalPagoOrg()">+ Pago organización</button></div></div>';
+
+  if(!grupos.length){
+    html+='<div class="cont-empty">Todavía no hay compromisos ni pagos cargados.</div>';
+  }else{
+    grupos.forEach(function(g,idx){
+      var pct=g.tieneEstimado?Math.min(100,Math.round(g.totalPagado/g.totalEstimado*100)):null;
+      var falta=g.tieneEstimado?Math.max(0,g.totalEstimado-g.totalPagado):null;
+      var badge=!g.tieneEstimado?'<span class="catc-badge catc-badge-sin">Sin definir</span>'
+        :(pct>=100?'<span class="catc-badge catc-badge-ok">Completo</span>':'<span class="catc-badge catc-badge-parcial">Parcial</span>');
+      var cid='catc-'+idx;
+      var catAttr=g.categoria.replace(/'/g,"\\'");
+
+      var body='';
+      if(g.compromisos.length){
+        body+='<div class="catc-subhead">Compromisos</div>';
+        g.compromisos.forEach(function(c){
+          var sub=(c.tipoCosto||'')+(c.estado?' · '+c.estado:'')+(c.observacion?' · '+c.observacion:'');
+          var amount=c.totalEstimado?fmtMoney(c.totalEstimado):'Total a definir';
+          body+='<div class="cont-row"><div class="cont-row-info"><div class="cont-row-title">'+esc(c.concepto)+'</div><div class="cont-row-sub">'+esc(sub)+'</div></div><div class="cont-row-amount">'+amount+'</div></div>';
+        });
+      }
+      if(g.pagos.length){
+        body+='<div class="catc-subhead">Pagos realizados</div>';
+        g.pagos.slice().reverse().forEach(function(p){
+          var comp=p.comprobante?'<a class="clink" href="'+p.comprobante+'" target="_blank">ver comprobante →</a>':'';
+          var sub=(p.fechaPago||'')+' · '+(p.medioPago||'')+' · Pagado por '+(p.pagadoPor||'-')+' · Responsable '+(p.responsablePago||'-')+(p.observacion?' · '+p.observacion:'');
+          body+='<div class="cont-row"><div class="cont-row-info"><div class="cont-row-title">'+esc(p.concepto)+'</div><div class="cont-row-sub">'+esc(sub)+'</div>'+comp+'</div><div class="cont-row-amount">'+fmtMoney(p.monto)+'</div></div>';
+        });
+      }
+      if(!g.compromisos.length&&!g.pagos.length){body='<div class="cont-empty">Sin movimientos.</div>';}
+      body+='<div class="catc-actions"><button class="bs bsm" style="margin-top:0" onclick="event.stopPropagation();abrirModalPagoOrg(\''+catAttr+'\')">+ Registrar pago</button><button class="bs bsm" style="margin-top:0" onclick="event.stopPropagation();abrirModalCompromiso(\''+catAttr+'\')">+ Compromiso</button></div>';
+
+      html+='<div class="catc-card">'+
+        '<div class="catc-head" onclick="toggleCatc(\''+cid+'\')">'+
+          '<div class="catc-info">'+
+            '<div class="catc-titlerow"><span class="catc-name">'+esc(g.categoria)+'</span>'+badge+'</div>'+
+            '<div class="catc-bar"><div class="catc-bar-fill" style="width:'+(pct!==null?pct:0)+'%"></div></div>'+
+          '</div>'+
+          '<div class="catc-amounts"><div class="catc-amv">'+fmtMoney(g.totalPagado)+(g.tieneEstimado?' / '+fmtMoney(g.totalEstimado):'')+'</div><div class="catc-aml">'+(g.tieneEstimado?'falta '+fmtMoney(falta):'total a definir')+'</div></div>'+
+          '<span class="catc-chev">▾</span>'+
+        '</div>'+
+        '<div class="catc-body" id="'+cid+'" style="display:none">'+body+'</div>'+
+      '</div>';
+    });
+  }
+  html+='</div>';
+  $$('cont-content').innerHTML=html;
+}
+
+function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+function abrirModalCompromiso(categoria){
+  if(!esAdminEdicion()){alert('Esta acción requiere clave de edición.');return;}
+  ['comp-categoria','comp-concepto','comp-total','comp-obs'].forEach(function(id){$$(id).value='';});
+  $$('comp-tipo').value='Fijo';$$('comp-estado').value='Abierto';$$('comp-msg').style.display='none';
+  if(categoria) $$('comp-categoria').value=categoria;
+  $$('modal-compromiso').style.display='flex';
+}
+function cerrarModalCompromiso(){ $$('modal-compromiso').style.display='none'; }
+
+async function registrarCompromisoAdmin(){
+  var msg=$$('comp-msg');
+  var categoria=$$('comp-categoria').value.trim();
+  var concepto=$$('comp-concepto').value.trim();
+  if(!categoria){showMsg(msg,'Ingresá una categoría.',false);return;}
+  if(!concepto){showMsg(msg,'Ingresá un concepto.',false);return;}
+  showMsg(msg,'Registrando compromiso...',true);
+  try{
+    var url=API+'?action=registrarCompromiso&adminToken='+encodeURIComponent(adminToken)+
+      '&categoria='+encodeURIComponent(categoria)+
+      '&concepto='+encodeURIComponent(concepto)+
+      '&tipoCosto='+encodeURIComponent($$('comp-tipo').value)+
+      '&totalEstimado='+encodeURIComponent($$('comp-total').value.trim())+
+      '&estado='+encodeURIComponent($$('comp-estado').value)+
+      '&observacion='+encodeURIComponent($$('comp-obs').value.trim());
+    var res=await fetch(url);var data=await res.json();
+    if(!data.ok){showMsg(msg,data.error||'No se pudo registrar.',false);return;}
+    contabilidadData=null;await cargarContabilidad(true);showMsg(msg,'Compromiso registrado.',true);setTimeout(cerrarModalCompromiso,700);
+  }catch(e){showMsg(msg,'Error de conexión.',false);}
+}
+
+function abrirModalPagoOrg(categoria){
+  if(!esAdminEdicion()){alert('Esta acción requiere clave de edición.');return;}
+  ['org-categoria','org-concepto','org-monto','org-pagado-por','org-responsable','org-obs'].forEach(function(id){$$(id).value='';});
+  $$('org-fecha').value=hoyISO();$$('org-medio').value='Transferencia';$$('org-comp-file').value='';$$('org-comp-name').style.display='none';$$('org-msg').style.display='none';
+  if(categoria) $$('org-categoria').value=categoria;
+  $$('modal-pago-org').style.display='flex';
+}
+function cerrarModalPagoOrg(){ $$('modal-pago-org').style.display='none'; }
+function onFileChangeOrg(inp){var f=inp.files[0];var el=$$('org-comp-name');if(f){el.textContent='✓ '+f.name;el.style.display='block';}else el.style.display='none';}
+
+async function subirComprobanteOrg(file){
+  var form=new FormData();
+  form.append('file',file);form.append('upload_preset',CLD_PRESET);form.append('folder','peregrinacion/contabilidad');
+  var res=await fetch('https://api.cloudinary.com/v1_1/'+CLD_CLOUD+'/auto/upload',{method:'POST',body:form});
+  var data=await res.json();
+  if(!res.ok||!data.secure_url) throw new Error(data.error&&data.error.message?data.error.message:'No se pudo subir el comprobante.');
+  return data.secure_url;
+}
+
+async function registrarPagoOrgAdmin(){
+  var msg=$$('org-msg');
+  var fecha=$$('org-fecha').value;
+  var categoria=$$('org-categoria').value.trim();
+  var concepto=$$('org-concepto').value.trim();
+  var monto=$$('org-monto').value.trim();
+  var pagadoPor=$$('org-pagado-por').value.trim();
+  var responsable=$$('org-responsable').value.trim();
+  if(!fecha){showMsg(msg,'Ingresá la fecha de pago.',false);return;}
+  if(!categoria){showMsg(msg,'Ingresá una categoría.',false);return;}
+  if(!concepto){showMsg(msg,'Ingresá un concepto.',false);return;}
+  if(!monto){showMsg(msg,'Ingresá el monto.',false);return;}
+  if(!pagadoPor){showMsg(msg,'Indicá quién pagó.',false);return;}
+  if(!responsable){showMsg(msg,'Indicá el responsable del pago.',false);return;}
+  showMsg(msg,'Registrando pago...',true);
+  try{
+    var comp='';
+    var file=$$('org-comp-file').files[0];
+    if(file){showMsg(msg,'Subiendo comprobante...',true);comp=await subirComprobanteOrg(file);}
+    showMsg(msg,'Guardando pago...',true);
+    var url=API+'?action=registrarPagoOrganizacion&adminToken='+encodeURIComponent(adminToken)+
+      '&fechaPago='+encodeURIComponent(fecha)+
+      '&categoria='+encodeURIComponent(categoria)+
+      '&concepto='+encodeURIComponent(concepto)+
+      '&monto='+encodeURIComponent(monto)+
+      '&medioPago='+encodeURIComponent($$('org-medio').value)+
+      '&pagadoPor='+encodeURIComponent(pagadoPor)+
+      '&responsablePago='+encodeURIComponent(responsable)+
+      '&comprobante='+encodeURIComponent(comp)+
+      '&observacion='+encodeURIComponent($$('org-obs').value.trim());
+    var res=await fetch(url);var data=await res.json();
+    if(!data.ok){showMsg(msg,data.error||'No se pudo registrar el pago.',false);return;}
+    contabilidadData=null;await cargarContabilidad(true);showMsg(msg,'Pago registrado correctamente.',true);setTimeout(cerrarModalPagoOrg,700);
+  }catch(e){showMsg(msg,e.message||'Error de conexión.',false);}
+}
+
+async function exportarCSV(){
+  try{
+    if(vistaActual==='inscriptos'){
+      if(!inscriptosData) await cargarInscriptos();
+      var ins=obtenerInscriptosFiltrados().map(function(i){
+        return {
+          orden:i.orden,
+          nombre:i.nombre,
+          dni:i.dni,
+          email:i.email,
+          celular:i.celular,
+          parroquia:i.parroquia,
+          comunidad:i.comunidad,
+          rol:i.rol,
+          fechaInscripcion:(i.fechaInscripcion||'')+' '+(i.horaInscripcion||''),
+          cupo:i.estadoCupo,
+          estado:i.estado,
+          confirmado:i.resumen?i.resumen.totalPagado:0,
+          avisoSena:i.fechaAvisoSena||''
+        };
+      });
+      descargarCSV(ins,'inscriptos_filtrados_peregrinacion_2026');
+      return;
+    }
+
+    var personas=obtenerPersonasPagosFiltradas();
+    var rows=[];
+    personas.forEach(function(per){
+      var pagosVisibles=per.pagos;
+      if(filtroActual==='pendiente') pagosVisibles=per.pagos.filter(function(p){return p.estado==='pendiente';});
+      else if(filtroActual==='rechazados') pagosVisibles=per.pagos.filter(function(p){return p.estado==='rechazado';});
+      pagosVisibles.forEach(function(p){
+        rows.push({
+          dni:per.dni,
+          nombre:per.nombre,
+          cuotas:cuotasLabelPago(p,' + '),
+          monto:p.monto,
+          estado:p.estado,
+          fecha:p.fecha,
+          comprobante:p.comprobanteUrl||'',
+          whatsappEnviado:p.whatsappEnviado||'',
+          fechaWhatsapp:p.fechaWhatsapp||'',
+          tipoWhatsapp:p.tipoWhatsapp||'',
+          medioPago:p.medioPago||'Transferencia',
+          recibidoPor:p.recibidoPor||'',
+          observacionInterna:p.observacionInterna||''
+        });
+      });
+    });
+    descargarCSV(rows,'pagos_filtrados_peregrinacion_2026');
+  }catch(e){alert('Error al exportar.');}
+}
+
+function stat(val,color,label){return '<div class="astat"><div class="n" style="color:'+color+'">'+val+'</div><div class="l">'+label+'</div></div>';}
+function showMsg(el,txt,ok){el.textContent=txt;el.className='mbox '+(ok?'mok':'mer');el.style.display='block';}
+</script>
+</body>
+</html>
