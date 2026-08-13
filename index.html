@@ -285,6 +285,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--g1);min-height:100vh;colo
 @media(max-width:600px){.cont-grid{grid-template-columns:1fr 1fr}.cont-row{align-items:flex-start;flex-direction:column}.cont-row-amount{text-align:left}
 .catc-head{flex-wrap:wrap}.catc-amounts{text-align:left}}
 
+/* Analítica */
+.an-section{background:var(--w);border-radius:var(--rr);padding:1rem;margin-bottom:.8rem;box-shadow:var(--sh);border:1px solid var(--g2)}
+.an-title{font-weight:800;font-size:.95rem;margin-bottom:.7rem}
+.an-row{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem}
+.an-row:last-child{margin-bottom:0}
+.an-label{width:130px;flex-shrink:0;font-size:.78rem;color:var(--s);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.an-barwrap{flex:1;height:16px;background:var(--g2);border-radius:8px;overflow:hidden}
+.an-barfill{height:100%;background:var(--g);border-radius:8px;transition:width .3s}
+.an-val{width:56px;flex-shrink:0;text-align:right;font-size:.78rem;font-weight:700;color:var(--t)}
+.an-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:.9rem}
+@media(max-width:600px){.an-grid3{grid-template-columns:1fr}.an-label{width:90px}}
+
 @media(max-width:600px){
   .astats{grid-template-columns:1fr 1fr}
   .comprow{flex-wrap:wrap}
@@ -406,6 +418,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--g1);min-height:100vh;colo
       <button class="atab" id="tab-inscriptos" onclick="cambiarVista('inscriptos')">Inscriptos</button>
       <button class="atab" id="tab-campanas" onclick="cambiarVista('campanas')">Campañas <span id="camp-badge" style="display:none;background:var(--a);color:#fff;border-radius:20px;padding:1px 6px;font-size:.65rem;font-weight:700;margin-left:3px"></span></button>
       <button class="atab" id="tab-contabilidad" onclick="cambiarVista('contabilidad')">Contabilidad</button>
+      <button class="atab" id="tab-analitica" onclick="cambiarVista('analitica')">Analítica</button>
     </div>
 
     <!-- Vista pagos -->
@@ -559,8 +572,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--g1);min-height:100vh;colo
       <div id="cont-load" class="load" style="display:none"><div class="spin"></div><span>Cargando contabilidad...</span></div>
       <div id="cont-content"></div>
     </div>
+
+    <!-- Vista analítica -->
+    <div id="vista-analitica" style="display:none">
+      <div style="font-size:.82rem;color:var(--s);margin-bottom:.9rem">Pagos recibidos, edades, sexo, comunidades y restricciones, de un vistazo</div>
+      <div id="an-load" class="load" style="display:none"><div class="spin"></div><span>Cargando analítica...</span></div>
+      <div id="an-content"></div>
+    </div>
   </div>
 </div>
+
 
 
 
@@ -745,6 +766,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--g1);min-height:100vh;colo
     </div>
   </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 const API          = 'https://script.google.com/macros/s/AKfycbxNFRlC9tSicrNrdJc6syVrDeAzNkqmaGZfeKqaFKy0P7XZqHXEjYs7Pvdv7fRBtimGTw/exec';
 const ALIAS        = 'aixa.romero82';
@@ -773,9 +795,9 @@ const ECOLOR={sin_pagos:'var(--g4)',en_revision:'var(--a)',al_dia:'var(--g)',deb
 const EBG={sin_pagos:'var(--g2)',en_revision:'var(--al)',al_dia:'var(--gl)',debe_vencidas:'var(--rl)',pago_completo:'var(--gl)',comprobante_rechazado:'var(--rl)',lista_espera:'var(--bl)',baja:'var(--g2)',sin_cargo:'var(--bl)'};
 
 // Planes de pago por rol — deben coincidir con los del Apps Script (Code.gs)
-const PLAN_ESTANDAR={keys:CQ,labels:CL,montos:CM,total:TOTAL}; // Participante / Catequista
-const PLAN_COCINA={keys:['alojamiento','comida'],labels:{alojamiento:'Alojamiento',comida:'Comidas'},montos:{alojamiento:53000,comida:65000},total:118000};
-const PLAN_SACERDOTE={keys:[],labels:{},montos:{},total:0};
+const PLAN_ESTANDAR={tipo:'fijo',keys:CQ,labels:CL,montos:CM,total:TOTAL}; // Participante / Catequista
+const PLAN_COCINA={tipo:'libre',keys:[],labels:{},montos:{},total:118000};
+const PLAN_SACERDOTE={tipo:'libre',keys:[],labels:{},montos:{},total:null};
 function planParaRol(rol){
   if(rol==='Cocinero') return PLAN_COCINA;
   if(rol==='Sacerdote') return PLAN_SACERDOTE;
@@ -883,6 +905,23 @@ function renderEstado(){
 
   var lista=$$('lista-cuotas'); lista.innerHTML='';
   var hoy=new Date();
+
+  if(d.tipoPlan==='libre'){
+    if(!d.pagos.length){
+      lista.innerHTML='<p style="color:var(--s);text-align:center;padding:1rem 0;font-size:.85rem">Todavía no cargaste ningún pago.</p>';
+    } else {
+      d.pagos.slice().reverse().forEach(function(p){
+        var est=p.estado==='confirmado'?'ok':p.estado==='pendiente'?'pend':'rech';
+        var badge=est==='ok'?'<span class="badge bok">✓ Confirmado</span>':est==='pend'?'<span class="badge bpend">⏳ En revisión</span>':'<span class="badge brech">No validado</span>';
+        var lnk=p.comprobanteUrl&&p.comprobanteUrl!=='(adjunto pendiente)'&&/^https?:\/\//.test(p.comprobanteUrl)?'<a class="clink" href="'+p.comprobanteUrl+'" target="_blank">ver comprobante →</a>':'';
+        var rt=est==='rech'?'<div class="cdate" style="color:var(--r);margin-top:.15rem">Podés volver a cargarlo.</div>':'';
+        lista.innerHTML+='<div class="crow"><div style="flex:1"><div class="cname">'+(p.concepto||'Pago')+'</div><div class="cdate">'+(p.fecha||'')+'</div>'+lnk+rt+'</div><div style="display:flex;align-items:center;gap:.4rem;flex-shrink:0"><span style="font-size:.78rem;font-weight:600;color:var(--s)">$'+Number(p.monto||0).toLocaleString('es-AR')+'</span>'+badge+'</div></div>';
+      });
+    }
+    $$('est-load').style.display='none'; $$('est-content').style.display='block';
+    return;
+  }
+
   d.cuotas.forEach(function(c){
     var pagosc=d.pagos.filter(function(x){return (x.cuotas||'').split(',').map(function(s){return s.trim();}).includes(c.key);});
     var p=pagosc.find(function(x){return x.estado!=='rechazado';});
@@ -914,6 +953,17 @@ function renderCuota(){
   if(dt) dt.innerHTML='CVU: '+CVU+'<br>Cuenta a nombre de: '+TITULAR;
   $$('cuota-msg').style.display='none'; $$('fname').style.display='none';
   $$('cuota-file').value='';
+
+  if(d.tipoPlan==='libre'){
+    var chkL=$$('cuotas-check');
+    var totalTxt = d.total!=null ? (' El total de referencia es $'+d.total.toLocaleString('es-AR')+'.') : '';
+    chkL.innerHTML='<div class="ig" style="margin-bottom:.5rem"><label>Concepto</label><input type="text" id="libre-concepto" placeholder="Ej: Alojamiento, pago parcial..."/></div>'+
+      '<div class="ig" style="margin-bottom:0"><label>Monto</label><input type="number" id="libre-monto" placeholder="Ingresá el monto"/></div>'+
+      '<p style="font-size:.72rem;color:var(--s);margin-top:.4rem">Podés cargar el pago completo o en partes, como te resulte más cómodo.'+totalTxt+'</p>';
+    var ct=$$('cuota-total'); if(ct) ct.style.display='none';
+    return;
+  }
+
   var conf=(r.confirmadas||[]),pend=(r.pendientes||[]);
   var disp=d.cuotas.filter(function(c){return !conf.includes(c.key)&&!pend.includes(c.key);});
   var chk=$$('cuotas-check'); chk.innerHTML='';
@@ -948,17 +998,28 @@ async function subirACloudinary(file){
 }
 
 async function registrarPago(){
-  var checks=Array.from(document.querySelectorAll('#cuotas-check input:checked')).map(function(c){return c.value;});
-  var file=$$('cuota-file').files[0];
+  var d=estadoData;
+  var esLibre = d && d.tipoPlan==='libre';
+  var checks=[], concepto='', montoLibre=0;
   var msg=$$('cuota-msg');
-  if(!checks.length){showMsg(msg,'Seleccioná al menos una cuota.',false);return;}
+  if(esLibre){
+    concepto=($$('libre-concepto')?$$('libre-concepto').value.trim():'');
+    montoLibre=($$('libre-monto')?Number($$('libre-monto').value):0);
+    if(!montoLibre||montoLibre<=0){showMsg(msg,'Ingresá un monto válido.',false);return;}
+  } else {
+    checks=Array.from(document.querySelectorAll('#cuotas-check input:checked')).map(function(c){return c.value;});
+    if(!checks.length){showMsg(msg,'Seleccioná al menos una cuota.',false);return;}
+  }
+  var file=$$('cuota-file').files[0];
   if(!file){showMsg(msg,'Adjuntá el comprobante de pago.',false);return;}
   if(file.size>10*1024*1024){showMsg(msg,'El archivo es muy grande. Máximo 10 MB.',false);return;}
   var card=document.querySelector('.ccard2');
   card.innerHTML='<div style="text-align:center;padding:3rem 1rem"><div class="spin" style="margin:0 auto 1.1rem;width:32px;height:32px"></div><div style="font-family:\'DM Serif Display\',serif;font-size:1.2rem;margin-bottom:.4rem">Subiendo comprobante...</div><p style="font-size:.82rem;color:var(--s)">No cierres esta pantalla.</p></div>';
   try{
     var url=await subirACloudinary(file);
-    var apiUrl=API+'?action=registrarPago&dni='+encodeURIComponent(estadoData.dni)+'&email='+encodeURIComponent(pEmail)+'&cuotas='+encodeURIComponent(checks.join(','))+'&comprobanteUrl='+encodeURIComponent(url)+'&comprobanteNombre='+encodeURIComponent(file.name)+'&comprobanteTipo='+encodeURIComponent(file.type||'');
+    var apiUrl = esLibre
+      ? API+'?action=registrarPago&dni='+encodeURIComponent(estadoData.dni)+'&email='+encodeURIComponent(pEmail)+'&monto='+encodeURIComponent(montoLibre)+'&concepto='+encodeURIComponent(concepto||'Pago')+'&comprobanteUrl='+encodeURIComponent(url)+'&comprobanteNombre='+encodeURIComponent(file.name)+'&comprobanteTipo='+encodeURIComponent(file.type||'')
+      : API+'?action=registrarPago&dni='+encodeURIComponent(estadoData.dni)+'&email='+encodeURIComponent(pEmail)+'&cuotas='+encodeURIComponent(checks.join(','))+'&comprobanteUrl='+encodeURIComponent(url)+'&comprobanteNombre='+encodeURIComponent(file.name)+'&comprobanteTipo='+encodeURIComponent(file.type||'');
     var res=await fetch(apiUrl);var data=await res.json();
     if(data.ok){
       card.innerHTML='<div style="text-align:center;padding:3rem 1rem"><div style="font-size:2.5rem;margin-bottom:.9rem">✅</div><div style="font-family:\'DM Serif Display\',serif;font-size:1.4rem;margin-bottom:.4rem">¡Listo!</div><p style="font-size:.85rem;color:var(--s);margin-bottom:1.6rem;line-height:1.5">Tu comprobante quedó registrado. Cuando se revise vas a ver el estado actualizado.</p><button class="bp" onclick="volverEstado()">Ver mi estado →</button></div>';
@@ -985,14 +1046,17 @@ function cambiarVista(v){
   $$('tab-inscriptos').classList.toggle('active',v==='inscriptos');
   $$('tab-campanas').classList.toggle('active',v==='campanas');
   var tabCont=$$('tab-contabilidad'); if(tabCont) tabCont.classList.toggle('active',v==='contabilidad');
+  var tabAn=$$('tab-analitica'); if(tabAn) tabAn.classList.toggle('active',v==='analitica');
   $$('vista-pagos').style.display=v==='pagos'?'block':'none';
   $$('vista-inscriptos').style.display=v==='inscriptos'?'block':'none';
   $$('vista-campanas').style.display=v==='campanas'?'block':'none';
   var vistaCont=$$('vista-contabilidad'); if(vistaCont) vistaCont.style.display=v==='contabilidad'?'block':'none';
+  var vistaAn=$$('vista-analitica'); if(vistaAn) vistaAn.style.display=v==='analitica'?'block':'none';
   if(v==='inscriptos'&&!inscriptosData) cargarInscriptos();
   if(v==='campanas'&&!inscriptosData) cargarInscriptos();
   if(v==='campanas'){ renderCampanas(); actualizarPreviewCampana(); }
   if(v==='contabilidad') cargarContabilidad();
+  if(v==='analitica') cargarAnalitica();
 }
 
 // Carga con caché — solo recarga si force=true
@@ -1059,7 +1123,7 @@ async function cargarInscriptos(){
 function agruparPorPersona(pagos){
   var m={};
   pagos.forEach(function(p){
-    if(!m[p.dni]) m[p.dni]={dni:p.dni,nombre:p.nombre,whatsapp:p.whatsapp||'',fechaAvisoWhatsapp:p.fechaAvisoWhatsapp||'',rol:p.rol||'Participante',cuotasPlan:p.cuotasPlan||CQ.map(function(k){return {key:k,label:CL[k],monto:CM[k]};}),totalPlan:(p.totalPlan!=null?p.totalPlan:TOTAL),pagos:[]};
+    if(!m[p.dni]) m[p.dni]={dni:p.dni,nombre:p.nombre,whatsapp:p.whatsapp||'',fechaAvisoWhatsapp:p.fechaAvisoWhatsapp||'',rol:p.rol||'Participante',tipoPlan:p.tipoPlan||'fijo',cuotasPlan:p.cuotasPlan||CQ.map(function(k){return {key:k,label:CL[k],monto:CM[k]};}),totalPlan:(p.totalPlan!==undefined?p.totalPlan:TOTAL),pagos:[]};
     if(!m[p.dni].whatsapp&&p.whatsapp) m[p.dni].whatsapp=p.whatsapp;
     m[p.dni].pagos.push(p);
   });
@@ -1087,6 +1151,9 @@ function totalDesdeKeys(keys, montos){
 }
 
 function totalConfirmadoPersona(persona){
+  if(persona.tipoPlan==='libre'){
+    return persona.pagos.filter(function(x){return x.estado==='confirmado';}).reduce(function(a,p){return a+Number(p.monto||0);},0);
+  }
   var plan=persona.cuotasPlan||PLAN_ESTANDAR.keys.map(function(k){return {key:k,label:CL[k],monto:CM[k]};});
   var planKeys=plan.map(function(c){return c.key;});
   var montos={}; plan.forEach(function(c){montos[c.key]=c.monto;});
@@ -1100,12 +1167,11 @@ function cuotasExigiblesHoy(){
 }
 
 function personaTieneCuotasConfirmadas(persona,keys){
-  // Sacerdotes (sin cargo) siempre están al día. Cocineros: se guían por su propio plan, no por el estándar.
+  // Sacerdotes: sin cargo, siempre al día. Cocineros: plan libre, se guía por total acumulado vs total de referencia.
   if(persona.rol==='Sacerdote') return true;
   if(persona.rol==='Cocinero'){
-    var planKeys=(persona.cuotasPlan||[]).map(function(c){return c.key;});
-    var conf=cuotasKeysDesdePagos(persona.pagos.filter(function(x){return x.estado==='confirmado';}),planKeys);
-    return planKeys.every(function(k){return conf.includes(k);});
+    var total=totalConfirmadoPersona(persona);
+    return persona.totalPlan!=null ? total>=persona.totalPlan : total>0;
   }
   var conf=cuotasKeysDesdePagos(persona.pagos.filter(function(x){return x.estado==='confirmado';}));
   return keys.every(function(k){return conf.includes(k);});
@@ -1147,7 +1213,7 @@ function renderAdmin(){
   $$('admin-stats').innerHTML=
     stat(adminData.totalInscriptos,'var(--b)','Inscriptos')+
     stat(porRevisar,'var(--a)','Por revisar')+
-    stat('$'+recaudado.toLocaleString('es-AR'),'var(--g)','Recaudado')+
+    stat('$'+recaudado.toLocaleString('es-AR'),'var(--g)','Pagos recibidos')+
     stat(pendientesPago,'var(--r)','Pendientes de pago');
   var medioSummary=$$('admin-medios-summary');
   if(medioSummary){
@@ -1181,19 +1247,27 @@ else if(filtroActual==='aldia'){
 }
 
 function renderPersonaCard(persona){
+  var esLibre = persona.tipoPlan === 'libre';
   var plan=persona.cuotasPlan||PLAN_ESTANDAR.keys.map(function(k){return {key:k,label:CL[k],monto:CM[k]};});
-  var planKeys=plan.map(function(c){return c.key;});
+  var planKeys=esLibre?[]:plan.map(function(c){return c.key;});
   var planLabels={}; plan.forEach(function(c){planLabels[c.key]=c.label;});
-  var planTotal=(persona.totalPlan!=null?persona.totalPlan:TOTAL);
+  var planTotal=(persona.totalPlan!==undefined?persona.totalPlan:TOTAL);
   var pagosConf=persona.pagos.filter(function(x){return x.estado==='confirmado';});
   var pagosPend=persona.pagos.filter(function(x){return x.estado==='pendiente';});
   var pagosRech=persona.pagos.filter(function(x){return x.estado==='rechazado';});
-  var confKeys=cuotasKeysDesdePagos(pagosConf,planKeys);
-  var pendKeys=cuotasKeysDesdePagos(pagosPend,planKeys);
-  var rechKeys=cuotasKeysDesdePagos(pagosRech,planKeys);
-  var montosPlan={}; plan.forEach(function(c){montosPlan[c.key]=c.monto;});
-  var totalPag=totalDesdeKeys(confKeys,montosPlan);
-  var totalPend=totalDesdeKeys(pendKeys,montosPlan);
+  var confKeys, pendKeys, rechKeys, totalPag, totalPend;
+  if(esLibre){
+    confKeys=[]; pendKeys=[]; rechKeys=[];
+    totalPag=pagosConf.reduce(function(a,p){return a+Number(p.monto||0);},0);
+    totalPend=pagosPend.reduce(function(a,p){return a+Number(p.monto||0);},0);
+  } else {
+    confKeys=cuotasKeysDesdePagos(pagosConf,planKeys);
+    pendKeys=cuotasKeysDesdePagos(pagosPend,planKeys);
+    rechKeys=cuotasKeysDesdePagos(pagosRech,planKeys);
+    var montosPlan={}; plan.forEach(function(c){montosPlan[c.key]=c.monto;});
+    totalPag=totalDesdeKeys(confKeys,montosPlan);
+    totalPend=totalDesdeKeys(pendKeys,montosPlan);
+  }
   var pok=planTotal?Math.round(totalPag/planTotal*100):0,prv=planTotal?Math.round(totalPend/planTotal*100):0;
   var tienePend=pagosPend.length>0,tieneRech=pagosRech.length>0;
   var border=tienePend?'border-left:3px solid var(--a)':tieneRech?'border-left:3px solid var(--r)':'border-left:3px solid var(--gl)';
@@ -1203,14 +1277,23 @@ function renderPersonaCard(persona){
   var did='det-'+sd;
   var rolTag=persona.rol&&persona.rol!=='Participante'?' · '+persona.rol:'';
 
-  var chips=!planKeys.length
-    ? '<span class="chip cok">Sin cargo</span>'
-    : planKeys.map(function(c){
+  var chips;
+  if(esLibre){
+    var partes=[];
+    if(pagosConf.length) partes.push('<span class="chip cok">✓ '+pagosConf.length+' confirmado'+(pagosConf.length>1?'s':'')+'</span>');
+    if(pagosPend.length) partes.push('<span class="chip cpend">⏳ '+pagosPend.length+' en revisión</span>');
+    if(pagosRech.length) partes.push('<span class="chip crech">✕ '+pagosRech.length+' no validado'+(pagosRech.length>1?'s':'')+'</span>');
+    chips = partes.length? partes.join('') : '<span class="chip cnone">Sin pagos</span>';
+  } else if(!planKeys.length){
+    chips = '<span class="chip cok">Sin cargo</span>';
+  } else {
+    chips = planKeys.map(function(c){
         var conf=confKeys.includes(c),pend=pendKeys.includes(c),rech=rechKeys.includes(c);
         var cls=conf?'cok':pend?'cpend':rech?'crech':'cnone';
         var icon=conf?'✓ ':pend?'⏳ ':rech?'✕ ':'';
         return '<span class="chip '+cls+'">'+icon+(planLabels[c]||c).replace(' cuota','')+'</span>';
       }).join('');
+  }
 
   // Solo pendientes y rechazados expandidos por defecto
   var compActivos=persona.pagos.filter(function(p){return p.estado==='pendiente'||p.estado==='rechazado';});
@@ -1226,12 +1309,13 @@ function renderPersonaCard(persona){
   // WhatsApp footer — solo recordatorio (los de confirmación/rechazo aparecen en contexto)
   var waRec=wa?'<a class="bwa2" href="https://wa.me/'+wa+'?text='+encodeURIComponent('Hola '+pn+', te recordamos que podés ver y cargar comprobantes de tus cuotas en: '+PORTAL_URL)+'" target="whatsapp_tab">Recordar pago</a>':'';
   var waInfo=wa?'WA '+wa+(persona.fechaAvisoWhatsapp?' · avisado '+persona.fechaAvisoWhatsapp:''):'Sin WhatsApp';
+  var totalTxt = planTotal!=null ? ('de $'+planTotal.toLocaleString('es-AR')) : 'sin total definido';
 
   return '<div class="pcard3" style="'+border+'">'+
     '<div class="ph" onclick="toggleDet(\''+did+'\',\''+sd+'\')">'+
       '<div class="pav2">'+av+'</div>'+
       '<div style="flex:1;min-width:0"><div class="pn">'+persona.nombre+rolTag+(tieneDuplicadosCuota(persona)?'<span class="dup-warn">comprobantes duplicados</span>':'')+'</div><div class="ps">DNI '+persona.dni+' · '+subInfo+'</div></div>'+ 
-      '<div class="pm"><div class="pmv">$'+totalPag.toLocaleString('es-AR')+'</div><div class="pml">de $'+planTotal.toLocaleString('es-AR')+'</div></div>'+
+      '<div class="pm"><div class="pmv">$'+totalPag.toLocaleString('es-AR')+'</div><div class="pml">'+totalTxt+'</div></div>'+
     '</div>'+
     '<div class="pchips">'+chips+'</div>'+
     '<div class="pbar2"><div style="height:100%;background:var(--g);width:'+pok+'%"></div><div style="height:100%;background:var(--a);width:'+prv+'%"></div></div>'+
@@ -1251,6 +1335,9 @@ function nombreCortoPersona(nombre){
 
 function cuotasLabelPago(p, sep){
   sep = sep || ' + ';
+  if((p.cuotas||'').trim()==='libre'){
+    return p.concepto || 'Pago';
+  }
   var planLabels={};
   (p.cuotasPlan||[]).forEach(function(c){planLabels[c.key]=c.label;});
   return (p.cuotas || '').split(',').map(function(k){
@@ -1435,7 +1522,7 @@ function renderAdminStats(){
   $$('admin-stats').innerHTML=
     stat(adminData.totalInscriptos,'var(--b)','Inscriptos')+
     stat(porRevisar,'var(--a)','Por revisar')+
-    stat('$'+recaudado.toLocaleString('es-AR'),'var(--g)','Recaudado')+
+    stat('$'+recaudado.toLocaleString('es-AR'),'var(--g)','Pagos recibidos')+
     stat(pendientesPago,'var(--r)','Pendientes de pago');
   var medioSummary=$$('admin-medios-summary');
   if(medioSummary){
@@ -2174,6 +2261,16 @@ async function abrirModalPagoManual(dni){
 
 function renderManualCuotasCheck(){
   var cont=$$('manual-cuotas-check');
+  if(manualPlanActual.tipo==='libre'){
+    var totalTxt = manualPlanActual.total!=null ? (' (referencia total: $'+manualPlanActual.total.toLocaleString('es-AR')+')') : '';
+    cont.innerHTML='<div class="ig" style="margin-bottom:.5rem"><label>Concepto</label><input type="text" id="manual-concepto" placeholder="Ej: Alojamiento, seña, pago parcial..."/></div>'+
+      '<p style="font-size:.72rem;color:var(--s);margin:-.3rem 0 .3rem">Pago libre'+totalTxt+'. Se puede cargar más de uno.</p>';
+    $$('manual-monto').placeholder='Ingresá el monto';
+    $$('manual-monto').readOnly=false;
+    return;
+  }
+  $$('manual-monto').placeholder='Se completa según las cuotas';
+  $$('manual-monto').readOnly=false;
   if(!manualPlanActual.keys.length){
     cont.innerHTML='<p style="font-size:.78rem;color:var(--s)">Esta persona no tiene cargo (sin cuotas para registrar).</p>';
     return;
@@ -2188,6 +2285,7 @@ function cerrarModalPagoManual(){
 }
 
 function actualizarTotalManual(){
+  if(manualPlanActual.tipo==='libre') return;
   var total=0;
   document.querySelectorAll('#manual-cuotas-check input').forEach(function(c){
     if(c.checked){total+=manualPlanActual.montos[c.value]||0;c.closest('.copt').classList.add('sel');}
@@ -2203,7 +2301,6 @@ function actualizarManualMedio(){
 
 async function registrarPagoManualAdmin(){
   var dni=$$('manual-dni').value.trim();
-  var cuotas=Array.from(document.querySelectorAll('#manual-cuotas-check input:checked')).map(function(c){return c.value;});
   var monto=$$('manual-monto').value.trim();
   var medio=$$('manual-medio').value;
   var recibido=$$('manual-recibido').value.trim();
@@ -2211,12 +2308,24 @@ async function registrarPagoManualAdmin(){
   var msg=$$('manual-msg');
 
   if(!dni){showMsg(msg,'Ingresá el DNI.',false);return;}
-  if(!cuotas.length){showMsg(msg,'Seleccioná al menos una cuota.',false);return;}
   if(medio==='Efectivo'&&!recibido){showMsg(msg,'Indicá quién recibió el efectivo.',false);return;}
 
-  showMsg(msg,'Registrando pago...',true);
-  try{
-    var url=API+'?action=registrarPagoManual'+
+  var url;
+  if(manualPlanActual.tipo==='libre'){
+    var concepto=($$('manual-concepto')?$$('manual-concepto').value.trim():'');
+    if(!monto||Number(monto)<=0){showMsg(msg,'Ingresá un monto válido.',false);return;}
+    url=API+'?action=registrarPagoManual'+
+      '&adminToken='+encodeURIComponent(adminToken)+
+      '&dni='+encodeURIComponent(dni)+
+      '&monto='+encodeURIComponent(monto)+
+      '&concepto='+encodeURIComponent(concepto||'Pago')+
+      '&medioPago='+encodeURIComponent(medio)+
+      '&recibidoPor='+encodeURIComponent(recibido)+
+      '&observacionInterna='+encodeURIComponent(obs);
+  } else {
+    var cuotas=Array.from(document.querySelectorAll('#manual-cuotas-check input:checked')).map(function(c){return c.value;});
+    if(!cuotas.length){showMsg(msg,'Seleccioná al menos una cuota.',false);return;}
+    url=API+'?action=registrarPagoManual'+
       '&adminToken='+encodeURIComponent(adminToken)+
       '&dni='+encodeURIComponent(dni)+
       '&cuotas='+encodeURIComponent(cuotas.join(','))+
@@ -2224,6 +2333,10 @@ async function registrarPagoManualAdmin(){
       '&medioPago='+encodeURIComponent(medio)+
       '&recibidoPor='+encodeURIComponent(recibido)+
       '&observacionInterna='+encodeURIComponent(obs);
+  }
+
+  showMsg(msg,'Registrando pago...',true);
+  try{
     var res=await fetch(url);
     var data=await res.json();
     if(!data.ok){showMsg(msg,data.error||'No se pudo registrar el pago.',false);return;}
@@ -2373,6 +2486,201 @@ function renderContabilidad(){
 }
 
 function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+// ── Analítica ────────────────────────────────────────────
+async function cargarAnalitica(){
+  if(!inscriptosData||!inscriptosData.ok){
+    $$('an-load').style.display='flex';
+    await cargarInscriptos();
+    $$('an-load').style.display='none';
+  }
+  renderAnalitica();
+}
+
+var anChartInstances=[];
+function anDestruirCharts(){
+  anChartInstances.forEach(function(c){ try{ c.destroy(); }catch(e){} });
+  anChartInstances=[];
+}
+function anNuevoChart(canvasId, config){
+  var el=$$(canvasId); if(!el) return null;
+  var c=new Chart(el, config);
+  anChartInstances.push(c);
+  return c;
+}
+
+var AN_BLUE='#1a5fa8', AN_GREEN='#1a7a56', AN_AMBER='#d4820a', AN_RED='#b83232', AN_GRAY='#c8ccc8', AN_PURPLE='#6b4ea0';
+var AN_COMUNIDAD_COLORES=[AN_BLUE,AN_GREEN,AN_AMBER,AN_RED,AN_PURPLE];
+
+function anColorPorPct(pct){ return pct>=70?AN_GREEN:pct>=40?AN_AMBER:AN_RED; }
+
+function renderAnalitica(){
+  if(!inscriptosData||!inscriptosData.ok) return;
+  anDestruirCharts();
+  var activos=inscriptosData.inscriptos.filter(function(i){return i.estadoCupo!=='baja';});
+  var total=activos.length;
+
+  var conEdad=activos.filter(function(i){return i.edad!=null;});
+  var edadProm=conEdad.length?Math.round(conEdad.reduce(function(a,i){return a+i.edad;},0)/conEdad.length):0;
+
+  var globalPagado=activos.reduce(function(a,i){return a+(i.resumen?i.resumen.totalPagado:0);},0);
+  var globalEsperado=activos.reduce(function(a,i){return a+(i.totalPlan!=null?i.totalPlan:0);},0);
+  var pctPagos=globalEsperado?Math.round(globalPagado/globalEsperado*100):0;
+
+  var varones=activos.filter(function(i){return i.sexo==='Varón';}).length;
+  var mujeres=activos.filter(function(i){return i.sexo==='Mujer';}).length;
+  var sinSexo=total-varones-mujeres;
+
+  var fijos=activos.filter(function(i){return i.tipoPlan==='fijo';});
+  var cuotasDef=[
+    {key:'sena',label:'Seña'},{key:'1ra',label:'1ª cuota'},{key:'2da',label:'2ª cuota'},
+    {key:'3ra',label:'3ª cuota'},{key:'ajuste_ago',label:'Ajuste agosto'},
+    {key:'4ta',label:'4ª cuota'},{key:'ajuste_sep',label:'Ajuste sept.'}
+  ];
+  var cuotasPct=cuotasDef.map(function(c){
+    var pagaron=fijos.filter(function(i){return (i.resumen&&i.resumen.confirmadas||[]).includes(c.key);}).length;
+    return {label:c.label,pct:fijos.length?Math.round(pagaron/fijos.length*100):0};
+  });
+
+  var porParroquia={};
+  activos.forEach(function(i){
+    var p=(i.parroquia||'Sin dato').trim()||'Sin dato';
+    if(!porParroquia[p]) porParroquia[p]={};
+    var c=(i.comunidad||'Sin dato').trim()||'Sin dato';
+    porParroquia[p][c]=(porParroquia[p][c]||0)+1;
+  });
+  var parroquiasOrdenadas=Object.keys(porParroquia).sort(function(a,b){
+    var ta=Object.values(porParroquia[a]).reduce(function(x,y){return x+y;},0);
+    var tb=Object.values(porParroquia[b]).reduce(function(x,y){return x+y;},0);
+    return tb-ta;
+  });
+
+  var conRestriccion=activos.filter(function(i){return (i.restricciones||'').trim();});
+
+  var html='';
+  html+='<div style="display:flex;gap:20px;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap">'+
+    '<div style="position:relative;width:130px;height:130px;flex-shrink:0"><canvas id="anHeroDonut"></canvas>'+
+      '<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">'+
+        '<div style="font-size:26px;font-weight:800">'+pctPagos+'%</div>'+
+        '<div style="font-size:10px;color:var(--s);text-align:center;line-height:1.2">pagos<br>recibidos</div>'+
+      '</div>'+
+    '</div>'+
+    '<div style="flex:1;min-width:180px;display:flex;gap:.6rem">'+
+      '<div style="flex:1;background:var(--g1);border-radius:12px;padding:.8rem">'+
+        '<div style="font-size:1.3rem;font-weight:800">'+total+'</div><div style="font-size:.7rem;color:var(--s)">Inscriptos activos</div>'+
+      '</div>'+
+      '<div style="flex:1;background:var(--g1);border-radius:12px;padding:.8rem">'+
+        '<div style="font-size:1.3rem;font-weight:800">'+edadProm+'</div><div style="font-size:.7rem;color:var(--s)">Edad promedio</div>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+
+  html+='<div style="font-size:.78rem;color:var(--s);margin-bottom:.5rem">Sexo</div>'+
+    '<div style="height:26px;border-radius:13px;overflow:hidden;display:flex;background:var(--g2);margin-bottom:.4rem">'+
+      (varones?'<div style="width:'+(varones/total*100)+'%;background:'+AN_BLUE+';display:flex;align-items:center;justify-content:center;color:#fff;font-size:.72rem;font-weight:700">'+varones+'</div>':'')+
+      (mujeres?'<div style="width:'+(mujeres/total*100)+'%;background:'+AN_AMBER+';display:flex;align-items:center;justify-content:center;color:#fff;font-size:.72rem;font-weight:700">'+mujeres+'</div>':'')+
+      (sinSexo?'<div style="width:'+(sinSexo/total*100)+'%;background:'+AN_GRAY+'"></div>':'')+
+    '</div>'+
+    '<div style="display:flex;gap:14px;margin-bottom:1.5rem;font-size:.72rem;color:var(--s)">'+
+      '<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:'+AN_BLUE+';margin-right:4px"></span>Varón</span>'+
+      '<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:'+AN_AMBER+';margin-right:4px"></span>Mujer</span>'+
+      '<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:'+AN_GRAY+';margin-right:4px"></span>Sin dato</span>'+
+    '</div>';
+
+  html+='<div style="font-size:.78rem;color:var(--s);margin-bottom:.6rem">Quién ya pagó cada cuota <span style="color:var(--g4);font-size:.66rem">(jóvenes y catequistas, '+fijos.length+' personas)</span></div>'+
+    '<div id="anMiniCuotas" style="display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:1.5rem"></div>';
+
+  html+='<div style="font-size:.78rem;color:var(--s);margin-bottom:.6rem">Comunidades por parroquia</div>'+
+    '<div id="anChipsParroquia" style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.8rem"></div>'+
+    '<div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1.5rem">'+
+      '<div style="position:relative;width:130px;height:130px;flex-shrink:0"><canvas id="anDonutComunidad"></canvas></div>'+
+      '<div id="anLegendComunidad" style="flex:1;min-width:140px;font-size:.76rem;color:var(--s);display:flex;flex-direction:column;gap:.35rem"></div>'+
+    '</div>';
+
+  html+='<div style="font-size:.78rem;color:var(--s);margin-bottom:.6rem">Restricciones alimentarias o de salud</div>'+
+    '<div style="background:var(--g1);border-radius:12px;padding:1rem">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" id="anRestrToggle">'+
+        '<div><div style="font-size:1.3rem;font-weight:800">'+conRestriccion.length+'</div><div style="font-size:.72rem;color:var(--s)">de '+total+' con alguna restricción cargada</div></div>'+
+        '<span id="anRestrChev" style="font-size:.8rem;color:var(--g4);transition:transform .15s">▾</span>'+
+      '</div>'+
+      '<div id="anRestrLista" style="display:none;margin-top:.7rem;padding-top:.7rem;border-top:1px solid var(--g2);display:flex;flex-direction:column;gap:.4rem"></div>'+
+    '</div>';
+
+  $$('an-content').innerHTML=html;
+
+  anNuevoChart('anHeroDonut', {
+    type:'doughnut',
+    data:{ datasets:[{ data:[pctPagos,100-pctPagos], backgroundColor:[AN_GREEN,AN_GRAY], borderWidth:0 }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'78%', plugins:{legend:{display:false},tooltip:{enabled:false}} }
+  });
+
+  var contCuotas=$$('anMiniCuotas');
+  cuotasPct.forEach(function(c,i){
+    var col=anColorPorPct(c.pct);
+    var id='anMini'+i;
+    var wrap=document.createElement('div');
+    wrap.style.cssText='background:var(--g1);border-radius:12px;padding:.6rem;text-align:center';
+    wrap.innerHTML='<div style="position:relative;width:48px;height:48px;margin:0 auto"><canvas id="'+id+'"></canvas><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700">'+c.pct+'%</div></div><div style="font-size:.68rem;color:var(--s);margin-top:.4rem">'+c.label+'</div>';
+    contCuotas.appendChild(wrap);
+    anNuevoChart(id, {
+      type:'doughnut',
+      data:{ datasets:[{ data:[c.pct,100-c.pct], backgroundColor:[col,AN_GRAY], borderWidth:0 }] },
+      options:{ responsive:true, maintainAspectRatio:false, cutout:'74%', plugins:{legend:{display:false},tooltip:{enabled:false}} }
+    });
+  });
+
+  var chipsWrap=$$('anChipsParroquia');
+  var chipEls={};
+  parroquiasOrdenadas.forEach(function(p){
+    var chip=document.createElement('button');
+    chip.type='button';
+    chip.textContent=p;
+    chip.className='bs bsm';
+    chip.style.marginTop='0';
+    chip.onclick=function(){ anSeleccionarParroquia(p); };
+    chipsWrap.appendChild(chip);
+    chipEls[p]=chip;
+  });
+
+  var donutCom=anNuevoChart('anDonutComunidad', {
+    type:'doughnut',
+    data:{ labels:[], datasets:[{ data:[], backgroundColor:AN_COMUNIDAD_COLORES, borderWidth:0 }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'62%', plugins:{legend:{display:false}} }
+  });
+  var legendEl=$$('anLegendComunidad');
+
+  window.anSeleccionarParroquia=function(p){
+    Object.keys(chipEls).forEach(function(k){
+      var activo=k===p;
+      chipEls[k].style.background=activo?'var(--g)':'var(--w)';
+      chipEls[k].style.color=activo?'#fff':'var(--g)';
+      chipEls[k].style.borderColor=activo?'var(--g)':'var(--gl)';
+    });
+    var mapa=porParroquia[p]||{};
+    var labels=Object.keys(mapa).sort(function(a,b){return mapa[b]-mapa[a];});
+    var datos=labels.map(function(l){return mapa[l];});
+    donutCom.data.labels=labels;
+    donutCom.data.datasets[0].data=datos;
+    donutCom.update();
+    legendEl.innerHTML=labels.map(function(l,i){
+      return '<span style="display:flex;align-items:center;gap:.4rem"><span style="width:9px;height:9px;border-radius:2px;background:'+AN_COMUNIDAD_COLORES[i%AN_COMUNIDAD_COLORES.length]+';flex-shrink:0"></span>'+esc(l)+' <span style="color:var(--g4);margin-left:auto">'+datos[i]+'</span></span>';
+    }).join('');
+  };
+  if(parroquiasOrdenadas.length) anSeleccionarParroquia(parroquiasOrdenadas[0]);
+
+  var restrLista=$$('anRestrLista');
+  restrLista.innerHTML=conRestriccion.length
+    ? conRestriccion.map(function(i){
+        return '<div style="display:flex;justify-content:space-between;gap:.6rem;font-size:.74rem"><span>'+esc(i.nombre)+'</span><span style="color:var(--s);text-align:right">'+esc(i.restricciones)+'</span></div>';
+      }).join('')
+    : '<p style="font-size:.76rem;color:var(--g4)">Nadie cargó restricciones todavía.</p>';
+  var restrAbierto=false;
+  $$('anRestrToggle').onclick=function(){
+    restrAbierto=!restrAbierto;
+    restrLista.style.display=restrAbierto?'flex':'none';
+    $$('anRestrChev').style.transform=restrAbierto?'rotate(180deg)':'rotate(0deg)';
+  };
+}
 
 function abrirModalCompromiso(categoria){
   if(!esAdminEdicion()){alert('Esta acción requiere clave de edición.');return;}
