@@ -575,8 +575,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--g1);min-height:100vh;colo
 
     <!-- Vista analítica -->
     <div id="vista-analitica" style="display:none">
-      <div style="font-size:.82rem;color:var(--s);margin-bottom:.9rem">Pagos recibidos, edades, sexo, comunidades y restricciones, de un vistazo</div>
-      <div id="an-load" class="load" style="display:none"><div class="spin"></div><span>Cargando analítica...</span></div>
+      <div style="font-size:.82rem;color:var(--s);margin-bottom:.75rem">Datos de inscriptos, pagos y logística</div>
+      <div class="atabs" id="an-tabs" style="margin-bottom:.75rem">
+        <button class="atab active" id="an-tab-jovenes" onclick="anCambiarVista('jovenes')">Jóvenes</button>
+        <button class="atab" id="an-tab-otros" onclick="anCambiarVista('otros')">Catequistas · Cocineros · Sacerdotes</button>
+      </div>
+      <div id="an-load" class="load" style="display:none"><div class="spin"></div><span>Cargando...</span></div>
       <div id="an-content"></div>
     </div>
   </div>
@@ -2522,10 +2526,33 @@ var AN_COMUNIDAD_COLORES=[AN_BLUE,AN_GREEN,AN_AMBER,AN_RED,AN_PURPLE];
 
 function anColorPorPct(pct){ return pct>=70?AN_GREEN:pct>=40?AN_AMBER:AN_RED; }
 
-function renderAnalitica(){
+var AN_VISTA_ACTUAL='jovenes';
+
+function anCambiarVista(v){
+  AN_VISTA_ACTUAL=v;
+  $$('an-tab-jovenes').classList.toggle('active',v==='jovenes');
+  $$('an-tab-otros').classList.toggle('active',v==='otros');
+  anDestruirCharts();
+  if(v==='jovenes') renderAnaliticaJovenes();
+  else renderAnaliticaOtros();
+}
+
+async function cargarAnalitica(){
+  if(!inscriptosData||!inscriptosData.ok){
+    $$('an-load').style.display='flex';
+    await cargarInscriptos();
+    $$('an-load').style.display='none';
+  }
+  anCambiarVista(AN_VISTA_ACTUAL);
+}
+
+function renderAnalitica(){ anCambiarVista(AN_VISTA_ACTUAL); }
+
+function renderAnaliticaJovenes(){
   if(!inscriptosData||!inscriptosData.ok) return;
   anDestruirCharts();
-  var activos=inscriptosData.inscriptos.filter(function(i){return i.estadoCupo!=='baja';});
+  // Solo jóvenes (Participante) activos
+  var activos=inscriptosData.inscriptos.filter(function(i){return i.estadoCupo!=='baja'&&i.rol==='Participante';});
   var total=activos.length;
 
   var conEdad=activos.filter(function(i){return i.edad!=null;});
@@ -2539,22 +2566,22 @@ function renderAnalitica(){
   var mujeres=activos.filter(function(i){return i.sexo==='Mujer';}).length;
   var sinSexo=total-varones-mujeres;
 
-  var fijos=activos.filter(function(i){return i.tipoPlan==='fijo';});
   var cuotasDef=[
     {key:'sena',label:'Seña'},{key:'1ra',label:'1ª cuota'},{key:'2da',label:'2ª cuota'},
     {key:'3ra',label:'3ª cuota'},{key:'ajuste_ago',label:'Ajuste agosto'},
     {key:'4ta',label:'4ª cuota'},{key:'ajuste_sep',label:'Ajuste sept.'}
   ];
   var cuotasPct=cuotasDef.map(function(c){
-    var pagaron=fijos.filter(function(i){return (i.resumen&&i.resumen.confirmadas||[]).includes(c.key);}).length;
-    return {label:c.label,pct:fijos.length?Math.round(pagaron/fijos.length*100):0};
+    var pagaron=activos.filter(function(i){return (i.resumen&&i.resumen.confirmadas||[]).includes(c.key);}).length;
+    return {label:c.label,pct:activos.length?Math.round(pagaron/activos.length*100):0};
   });
 
+  // Comunidades: solo jóvenes
   var porParroquia={};
   activos.forEach(function(i){
-    var p=(i.parroquia||'Sin dato').trim()||'Sin dato';
+    var p=(i.parroquia||'Sin parroquia').trim()||'Sin parroquia';
     if(!porParroquia[p]) porParroquia[p]={};
-    var c=(i.comunidad||'Sin dato').trim()||'Sin dato';
+    var c=(i.comunidad||'Sin comunidad').trim()||'Sin comunidad';
     porParroquia[p][c]=(porParroquia[p][c]||0)+1;
   });
   var parroquiasOrdenadas=Object.keys(porParroquia).sort(function(a,b){
@@ -2571,11 +2598,10 @@ function renderAnalitica(){
       '<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">'+
         '<div style="font-size:26px;font-weight:800">'+pctPagos+'%</div>'+
         '<div style="font-size:10px;color:var(--s);text-align:center;line-height:1.2">pagos<br>recibidos</div>'+
-      '</div>'+
-    '</div>'+
+      '</div></div>'+
     '<div style="flex:1;min-width:180px;display:flex;gap:.6rem">'+
       '<div style="flex:1;background:var(--g1);border-radius:12px;padding:.8rem">'+
-        '<div style="font-size:1.3rem;font-weight:800">'+total+'</div><div style="font-size:.7rem;color:var(--s)">Inscriptos activos</div>'+
+        '<div style="font-size:1.3rem;font-weight:800">'+total+'</div><div style="font-size:.7rem;color:var(--s)">Jóvenes activos</div>'+
       '</div>'+
       '<div style="flex:1;background:var(--g1);border-radius:12px;padding:.8rem">'+
         '<div style="font-size:1.3rem;font-weight:800">'+edadProm+'</div><div style="font-size:.7rem;color:var(--s)">Edad promedio</div>'+
@@ -2583,6 +2609,7 @@ function renderAnalitica(){
     '</div>'+
   '</div>';
 
+  // Sexo
   html+='<div style="font-size:.78rem;color:var(--s);margin-bottom:.5rem">Sexo</div>'+
     '<div style="height:26px;border-radius:13px;overflow:hidden;display:flex;background:var(--g2);margin-bottom:.4rem">'+
       (varones?'<div style="width:'+(varones/total*100)+'%;background:'+AN_BLUE+';display:flex;align-items:center;justify-content:center;color:#fff;font-size:.72rem;font-weight:700">'+varones+'</div>':'')+
@@ -2590,47 +2617,64 @@ function renderAnalitica(){
       (sinSexo?'<div style="width:'+(sinSexo/total*100)+'%;background:'+AN_GRAY+'"></div>':'')+
     '</div>'+
     '<div style="display:flex;gap:14px;margin-bottom:1.5rem;font-size:.72rem;color:var(--s)">'+
-      '<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:'+AN_BLUE+';margin-right:4px"></span>Varón</span>'+
-      '<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:'+AN_AMBER+';margin-right:4px"></span>Mujer</span>'+
-      '<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:'+AN_GRAY+';margin-right:4px"></span>Sin dato</span>'+
+      '<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:'+AN_BLUE+';margin-right:4px"></span>Varón ('+varones+')</span>'+
+      '<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:'+AN_AMBER+';margin-right:4px"></span>Mujer ('+mujeres+')</span>'+
+      (sinSexo?'<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:'+AN_GRAY+';margin-right:4px"></span>Sin dato ('+sinSexo+')</span>':'')+
     '</div>';
 
-  html+='<div style="font-size:.78rem;color:var(--s);margin-bottom:.6rem">Quién ya pagó cada cuota <span style="color:var(--g4);font-size:.66rem">(jóvenes y catequistas, '+fijos.length+' personas)</span></div>'+
+  // Mini donas cuotas
+  html+='<div style="font-size:.78rem;color:var(--s);margin-bottom:.6rem">Quién ya pagó cada cuota <span style="color:var(--g4);font-size:.66rem">('+total+' jóvenes)</span></div>'+
     '<div id="anMiniCuotas" style="display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-bottom:1.5rem"></div>';
 
-  html+='<div style="font-size:.78rem;color:var(--s);margin-bottom:.6rem">Distribución por edad <span style="color:var(--g4);font-size:.66rem">'+(conEdad.length<total?'('+(total-conEdad.length)+' sin fecha de nacimiento)':'')+'</span></div>'+
+  // Gráfico edad
+  var ordenEdad=['Hasta 12','13 a 15','16 a 17','18 a 25','26 a 40','41 o más'];
+  var porEdadMap={},personasPorEdad={};
+  ordenEdad.forEach(function(b){porEdadMap[b]=0;personasPorEdad[b]=[];});
+  activos.forEach(function(i){
+    if(i.edad==null) return;
+    var b=i.edad<=12?'Hasta 12':i.edad<=15?'13 a 15':i.edad<=17?'16 a 17':i.edad<=25?'18 a 25':i.edad<=40?'26 a 40':'41 o más';
+    porEdadMap[b]=(porEdadMap[b]||0)+1;
+    if(!personasPorEdad[b]) personasPorEdad[b]=[];
+    personasPorEdad[b].push(i);
+  });
+  var edadLabels=ordenEdad.filter(function(b){return porEdadMap[b]>0;});
+  var edadData=edadLabels.map(function(b){return porEdadMap[b];});
+  var sinEdad=activos.filter(function(i){return i.edad==null;}).length;
+
+  html+='<div style="font-size:.78rem;color:var(--s);margin-bottom:.6rem">Distribución por edad '+(sinEdad?'<span style="color:var(--g4);font-size:.66rem">('+sinEdad+' sin fecha de nacimiento)</span>':'')+'</div>'+
     '<div style="background:var(--g1);border-radius:12px;padding:.9rem;margin-bottom:1.5rem">'+
       '<div style="position:relative;height:180px"><canvas id="anBarEdad"></canvas></div>'+
-      '<div id="anEdadDetalle" style="margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--g2);display:none;flex-direction:column;gap:.3rem;font-size:.74rem;color:var(--s)"></div>'+
+      '<div id="anEdadDetalle" style="margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--g2);display:none;flex-wrap:wrap;gap:.3rem;font-size:.74rem;color:var(--s)"></div>'+
     '</div>';
 
-  html+='<div style="font-size:.78rem;color:var(--s);margin-bottom:.6rem">Paneo por comunidad</div>'+
-    '<div id="anTablaComunidad" style="margin-bottom:1.5rem"></div>';
-
-  html+='<div style="font-size:.78rem;color:var(--s);margin-bottom:.6rem">Comunidades por parroquia</div>'+
+  // Paneo comunidades
+  html+='<div style="font-size:.78rem;color:var(--s);margin-bottom:.6rem">Comunidades por parroquia <span style="color:var(--g4);font-size:.66rem">(solo jóvenes)</span></div>'+
     '<div id="anChipsParroquia" style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.8rem"></div>'+
     '<div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1.5rem">'+
       '<div style="position:relative;width:130px;height:130px;flex-shrink:0"><canvas id="anDonutComunidad"></canvas></div>'+
       '<div id="anLegendComunidad" style="flex:1;min-width:140px;font-size:.76rem;color:var(--s);display:flex;flex-direction:column;gap:.35rem"></div>'+
     '</div>';
 
+  // Restricciones
   html+='<div style="font-size:.78rem;color:var(--s);margin-bottom:.6rem">Restricciones alimentarias o de salud</div>'+
     '<div style="background:var(--g1);border-radius:12px;padding:1rem">'+
       '<div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" id="anRestrToggle">'+
         '<div><div style="font-size:1.3rem;font-weight:800">'+conRestriccion.length+'</div><div style="font-size:.72rem;color:var(--s)">de '+total+' con alguna restricción cargada</div></div>'+
         '<span id="anRestrChev" style="font-size:.8rem;color:var(--g4);transition:transform .15s">▾</span>'+
       '</div>'+
-      '<div id="anRestrLista" style="display:none;margin-top:.7rem;padding-top:.7rem;border-top:1px solid var(--g2);display:flex;flex-direction:column;gap:.4rem"></div>'+
+      '<div id="anRestrLista" style="display:none;margin-top:.7rem;padding-top:.7rem;border-top:1px solid var(--g2);flex-direction:column;gap:.4rem"></div>'+
     '</div>';
 
   $$('an-content').innerHTML=html;
 
-  anNuevoChart('anHeroDonut', {
+  // Hero donut
+  anNuevoChart('anHeroDonut',{
     type:'doughnut',
-    data:{ datasets:[{ data:[pctPagos,100-pctPagos], backgroundColor:[AN_GREEN,AN_GRAY], borderWidth:0 }] },
-    options:{ responsive:true, maintainAspectRatio:false, cutout:'78%', plugins:{legend:{display:false},tooltip:{enabled:false}} }
+    data:{datasets:[{data:[pctPagos,100-pctPagos],backgroundColor:[AN_GREEN,AN_GRAY],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'78%',plugins:{legend:{display:false},tooltip:{enabled:false}}}
   });
 
+  // Mini donas cuotas
   var contCuotas=$$('anMiniCuotas');
   cuotasPct.forEach(function(c,i){
     var col=anColorPorPct(c.pct);
@@ -2639,104 +2683,45 @@ function renderAnalitica(){
     wrap.style.cssText='background:var(--g1);border-radius:12px;padding:.6rem;text-align:center';
     wrap.innerHTML='<div style="position:relative;width:72px;height:72px;margin:0 auto"><canvas id="'+id+'"></canvas><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:800">'+c.pct+'%</div></div><div style="font-size:.76rem;font-weight:600;color:var(--s);margin-top:.45rem;line-height:1.25">'+c.label+'</div>';
     contCuotas.appendChild(wrap);
-    anNuevoChart(id, {
-      type:'doughnut',
-      data:{ datasets:[{ data:[c.pct,100-c.pct], backgroundColor:[col,AN_GRAY], borderWidth:0 }] },
-      options:{ responsive:true, maintainAspectRatio:false, cutout:'74%', plugins:{legend:{display:false},tooltip:{enabled:false}} }
-    });
+    anNuevoChart(id,{type:'doughnut',data:{datasets:[{data:[c.pct,100-c.pct],backgroundColor:[col,AN_GRAY],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'74%',plugins:{legend:{display:false},tooltip:{enabled:false}}}});
   });
 
-  // Gráfico de barras: edades
-  var ordenEdad=['Hasta 12','13 a 15','16 a 17','18 a 25','26 a 40','41 o más'];
-  var porEdadMap={};
-  var personasPorEdad={};
-  ordenEdad.forEach(function(b){porEdadMap[b]=0;personasPorEdad[b]=[];});
-  activos.forEach(function(i){
-    if(i.edad==null) return;
-    var b = i.edad<=12?'Hasta 12':i.edad<=15?'13 a 15':i.edad<=17?'16 a 17':i.edad<=25?'18 a 25':i.edad<=40?'26 a 40':'41 o más';
-    porEdadMap[b]=(porEdadMap[b]||0)+1;
-    if(!personasPorEdad[b]) personasPorEdad[b]=[];
-    personasPorEdad[b].push(i);
-  });
-  var edadLabels=ordenEdad.filter(function(b){return porEdadMap[b]>0;});
-  var edadData=edadLabels.map(function(b){return porEdadMap[b];});
+  // Barras edad
   var edadDetalle=$$('anEdadDetalle');
-
   anNuevoChart('anBarEdad',{
     type:'bar',
-    data:{
-      labels:edadLabels,
-      datasets:[{data:edadData,backgroundColor:AN_BLUE,borderRadius:6,hoverBackgroundColor:AN_GREEN}]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.raw+' personas';}}}},
-      scales:{y:{beginAtZero:true,ticks:{precision:0,font:{size:11}},grid:{color:'rgba(0,0,0,.05)'}},x:{ticks:{font:{size:12,weight:'600'}},grid:{display:false}}},
-      onClick:function(evt,els){
-        if(!els.length){edadDetalle.style.display='none';return;}
-        var bucket=edadLabels[els[0].index];
-        var personas=personasPorEdad[bucket]||[];
-        edadDetalle.innerHTML='<div style="font-weight:700;font-size:.76rem;color:var(--t);margin-bottom:.3rem">'+bucket+' años — '+personas.length+' personas</div>'+
-          personas.map(function(p){return '<span style="display:inline-block;background:var(--w);border:1px solid var(--g2);border-radius:6px;padding:2px 8px;margin:2px;font-size:.72rem">'+esc(p.nombre)+' ('+p.edad+')</span>';}).join('');
-        edadDetalle.style.display='flex';
-        edadDetalle.style.flexWrap='wrap';
-      }
-    }
+    data:{labels:edadLabels,datasets:[{data:edadData,backgroundColor:AN_BLUE,borderRadius:6,hoverBackgroundColor:AN_GREEN}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.raw+' jóvenes';}}}},scales:{y:{beginAtZero:true,ticks:{precision:0,font:{size:11}},grid:{color:'rgba(0,0,0,.05)'}},x:{ticks:{font:{size:12,weight:'600'}},grid:{display:false}}},
+    onClick:function(evt,els){
+      if(!els.length){edadDetalle.style.display='none';return;}
+      var bucket=edadLabels[els[0].index];
+      var personas=personasPorEdad[bucket]||[];
+      edadDetalle.innerHTML='<div style="width:100%;font-weight:700;font-size:.76rem;color:var(--t);margin-bottom:.3rem">'+bucket+' años — '+personas.length+' personas</div>'+
+        personas.map(function(p){return '<span style="display:inline-block;background:var(--w);border:1px solid var(--g2);border-radius:6px;padding:2px 8px;margin:2px;font-size:.72rem">'+esc(p.nombre)+' ('+p.edad+')</span>';}).join('');
+      edadDetalle.style.display='flex';
+      edadDetalle.style.flexWrap='wrap';
+    }}
   });
 
-  // Tabla de comunidades
-  var tablaCont=$$('anTablaComunidad');
-  var comunidadMap={};
-  activos.forEach(function(i){
-    var c=(i.comunidad||'Sin dato').trim()||'Sin dato';
-    var p=(i.parroquia||'Sin dato').trim()||'Sin dato';
-    if(!comunidadMap[c]) comunidadMap[c]={nombre:c,parroquia:p,total:0,varones:0,mujeres:0,edades:[],conRestriccion:0};
-    comunidadMap[c].total++;
-    if(i.sexo==='Varón') comunidadMap[c].varones++;
-    else if(i.sexo==='Mujer') comunidadMap[c].mujeres++;
-    if(i.edad!=null) comunidadMap[c].edades.push(i.edad);
-    if((i.restricciones||'').trim()) comunidadMap[c].conRestriccion++;
-  });
-  var comunidades=Object.values(comunidadMap).sort(function(a,b){return b.total-a.total;});
-  tablaCont.innerHTML='<div style="overflow-x:auto"><table class="itable">'+
-    '<thead><tr>'+
-      '<th>Comunidad</th><th>Parroquia</th>'+
-      '<th style="text-align:center">Total</th>'+
-      '<th style="text-align:center">Varones</th>'+
-      '<th style="text-align:center">Mujeres</th>'+
-      '<th style="text-align:center">Edad prom.</th>'+
-      '<th style="text-align:center">Restricciones</th>'+
-    '</tr></thead>'+
-    '<tbody>'+
-    comunidades.map(function(c){
-      var prom=c.edades.length?Math.round(c.edades.reduce(function(a,b){return a+b;},0)/c.edades.length):'-';
-      return '<tr>'+
-        '<td style="font-weight:600">'+esc(c.nombre)+'</td>'+
-        '<td style="font-size:.76rem;color:var(--s)">'+esc(c.parroquia)+'</td>'+
-        '<td style="text-align:center;font-weight:700">'+c.total+'</td>'+
-        '<td style="text-align:center;color:'+AN_BLUE+'">'+c.varones+'</td>'+
-        '<td style="text-align:center;color:'+AN_AMBER+'">'+c.mujeres+'</td>'+
-        '<td style="text-align:center">'+prom+'</td>'+
-        '<td style="text-align:center">'+(c.conRestriccion?'<span style="background:var(--rl);color:var(--r);border-radius:20px;padding:1px 8px;font-size:.72rem;font-weight:700">'+c.conRestriccion+'</span>':'-')+'</td>'+
-      '</tr>';
-    }).join('')+
-    '</tbody></table></div>';
+  // Chips parroquia → comunidad
+  var chipsWrap=$$('anChipsParroquia');
   var chipEls={};
   parroquiasOrdenadas.forEach(function(p){
+    var total=Object.values(porParroquia[p]).reduce(function(a,b){return a+b;},0);
     var chip=document.createElement('button');
     chip.type='button';
-    chip.textContent=p;
+    chip.textContent=p+' ('+total+')';
     chip.className='bs bsm';
     chip.style.marginTop='0';
-    chip.onclick=function(){ anSeleccionarParroquia(p); };
+    chip.onclick=function(){anSeleccionarParroquia(p);};
     chipsWrap.appendChild(chip);
     chipEls[p]=chip;
   });
 
-  var donutCom=anNuevoChart('anDonutComunidad', {
+  var donutCom=anNuevoChart('anDonutComunidad',{
     type:'doughnut',
-    data:{ labels:[], datasets:[{ data:[], backgroundColor:AN_COMUNIDAD_COLORES, borderWidth:0 }] },
-    options:{ responsive:true, maintainAspectRatio:false, cutout:'62%', plugins:{legend:{display:false}} }
+    data:{labels:[],datasets:[{data:[],backgroundColor:AN_COMUNIDAD_COLORES,borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false}}}
   });
   var legendEl=$$('anLegendComunidad');
 
@@ -2759,18 +2744,77 @@ function renderAnalitica(){
   };
   if(parroquiasOrdenadas.length) anSeleccionarParroquia(parroquiasOrdenadas[0]);
 
+  // Restricciones
   var restrLista=$$('anRestrLista');
   restrLista.innerHTML=conRestriccion.length
-    ? conRestriccion.map(function(i){
-        return '<div style="display:flex;justify-content:space-between;gap:.6rem;font-size:.74rem"><span>'+esc(i.nombre)+'</span><span style="color:var(--s);text-align:right">'+esc(i.restricciones)+'</span></div>';
-      }).join('')
-    : '<p style="font-size:.76rem;color:var(--g4)">Nadie cargó restricciones todavía.</p>';
+    ?conRestriccion.map(function(i){return '<div style="display:flex;justify-content:space-between;gap:.6rem;font-size:.74rem"><span>'+esc(i.nombre)+'</span><span style="color:var(--s);text-align:right">'+esc(i.restricciones)+'</span></div>';}).join('')
+    :'<p style="font-size:.76rem;color:var(--g4)">Nadie cargó restricciones todavía.</p>';
   var restrAbierto=false;
   $$('anRestrToggle').onclick=function(){
     restrAbierto=!restrAbierto;
     restrLista.style.display=restrAbierto?'flex':'none';
     $$('anRestrChev').style.transform=restrAbierto?'rotate(180deg)':'rotate(0deg)';
   };
+}
+
+function renderAnaliticaOtros(){
+  if(!inscriptosData||!inscriptosData.ok) return;
+  anDestruirCharts();
+  var todos=inscriptosData.inscriptos.filter(function(i){return i.estadoCupo!=='baja';});
+  var catequistas=todos.filter(function(i){return i.rol==='Catequista';});
+  var cocineros  =todos.filter(function(i){return i.rol==='Cocinero';});
+  var sacerdotes =todos.filter(function(i){return i.rol==='Sacerdote';});
+
+  function tarjetaRol(lista,titulo,color,canvasId){
+    if(!lista.length) return '<div style="background:var(--g1);border-radius:12px;padding:1rem;margin-bottom:1rem"><div style="font-size:.85rem;font-weight:700;color:'+color+';margin-bottom:.4rem">'+titulo+'</div><p style="font-size:.78rem;color:var(--g4)">Sin inscriptos todavía.</p></div>';
+    var varones=lista.filter(function(i){return i.sexo==='Varón';}).length;
+    var mujeres=lista.filter(function(i){return i.sexo==='Mujer';}).length;
+    var globalPagado=lista.reduce(function(a,i){return a+(i.resumen?i.resumen.totalPagado:0);},0);
+    var globalEsperado=lista.reduce(function(a,i){return a+(i.totalPlan!=null&&i.totalPlan>0?i.totalPlan:0);},0);
+    var pctPagos=globalEsperado?Math.round(globalPagado/globalEsperado*100):0;
+    var sexoBarra='';
+    if(lista.length){
+      var pctV=Math.round(varones/lista.length*100),pctM=Math.round(mujeres/lista.length*100);
+      sexoBarra='<div style="height:18px;border-radius:9px;overflow:hidden;display:flex;background:var(--g2);margin:.4rem 0">'+
+        (varones?'<div style="width:'+pctV+'%;background:'+AN_BLUE+';display:flex;align-items:center;justify-content:center;color:#fff;font-size:.68rem;font-weight:700">'+varones+'</div>':'')+
+        (mujeres?'<div style="width:'+pctM+'%;background:'+AN_AMBER+';display:flex;align-items:center;justify-content:center;color:#fff;font-size:.68rem;font-weight:700">'+mujeres+'</div>':'')+
+      '</div>'+
+      '<div style="font-size:.68rem;color:var(--s);margin-bottom:.5rem">'+
+        (varones?'<span style="margin-right:8px">♂ Varones: '+varones+'</span>':'')+
+        (mujeres?'<span>♀ Mujeres: '+mujeres+'</span>':'')+
+      '</div>';
+    }
+    var pagosBloque='';
+    if(globalEsperado>0){
+      pagosBloque='<div style="display:flex;align-items:center;gap:.75rem;margin-top:.5rem">'+
+        '<div style="position:relative;width:60px;height:60px;flex-shrink:0"><canvas id="'+canvasId+'"></canvas>'+
+          '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800">'+pctPagos+'%</div>'+
+        '</div>'+
+        '<div style="font-size:.74rem;color:var(--s)">Pagos recibidos sobre el total esperado</div>'+
+      '</div>';
+    }
+    return '<div style="background:var(--g1);border-radius:12px;padding:1rem;margin-bottom:1rem">'+
+      '<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">'+
+        '<div style="font-size:.88rem;font-weight:700;color:'+color+'">'+titulo+'</div>'+
+        '<span style="font-size:.72rem;color:var(--s)">'+lista.length+' personas</span>'+
+      '</div>'+
+      sexoBarra+pagosBloque+
+    '</div>';
+  }
+
+  var html=tarjetaRol(catequistas,'Catequistas','#1a7a56','anDonutCat')+
+           tarjetaRol(cocineros,'Cocineros','#d4820a','anDonutCoc')+
+           tarjetaRol(sacerdotes,'Sacerdotes','#b83232','anDonutSac');
+  $$('an-content').innerHTML=html;
+
+  // Renderizar donas de pagos si corresponde
+  [{lista:catequistas,id:'anDonutCat'},{lista:cocineros,id:'anDonutCoc'},{lista:sacerdotes,id:'anDonutSac'}].forEach(function(x){
+    var globalPagado=x.lista.reduce(function(a,i){return a+(i.resumen?i.resumen.totalPagado:0);},0);
+    var globalEsperado=x.lista.reduce(function(a,i){return a+(i.totalPlan!=null&&i.totalPlan>0?i.totalPlan:0);},0);
+    if(!globalEsperado) return;
+    var pct=Math.round(globalPagado/globalEsperado*100);
+    anNuevoChart(x.id,{type:'doughnut',data:{datasets:[{data:[pct,100-pct],backgroundColor:[AN_GREEN,AN_GRAY],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false},tooltip:{enabled:false}}}});
+  });
 }
 
 function abrirModalCompromiso(categoria){
