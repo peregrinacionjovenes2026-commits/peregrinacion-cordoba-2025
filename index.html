@@ -2882,9 +2882,29 @@ function renderAnaliticaOtros(){
     if(!lista.length) return '<div style="background:var(--g1);border-radius:12px;padding:1rem;margin-bottom:1rem"><div style="font-size:.85rem;font-weight:700;color:'+color+';margin-bottom:.4rem">'+titulo+'</div><p style="font-size:.78rem;color:var(--g4)">Sin inscriptos todavía.</p></div>';
     var varones=lista.filter(function(i){return i.sexo==='Varón';}).length;
     var mujeres=lista.filter(function(i){return i.sexo==='Mujer';}).length;
-    var globalPagado=lista.reduce(function(a,i){var t=i.pagoCompletoManual?(i.totalPlan||0):(i.resumen?i.resumen.totalPagado:0);var lib=(i.pagos||[]).filter(function(p){return p.estado==='confirmado'&&(p.cuotas||'').trim()==='libre';}).reduce(function(x,p){return x+Number(p.monto||0);},0);return a+t+lib;},0);
-    var globalEsperado=lista.reduce(function(a,i){return a+(i.totalPlan!=null&&i.totalPlan>0?i.totalPlan:0);},0);
-    var pctPagos=globalEsperado?Math.round(globalPagado/globalEsperado*100):0;
+    var globalPagado, globalEsperado, pctPagos;
+    if(titulo==='Catequistas'||titulo==='Cocineros'){
+      // % por personas que completaron el pago
+      var completaron=lista.filter(function(i){
+        if(i.pagoCompletoManual) return true;
+        if(i.tipoPlan==='libre'){
+          var lib=(i.pagos||[]).filter(function(p){return p.estado==='confirmado';}).reduce(function(x,p){return x+Number(p.monto||0);},0);
+          return i.totalPlan!=null?lib>=i.totalPlan:lib>0;
+        }
+        return i.estado==='pago_completo';
+      }).length;
+      pctPagos=lista.length?Math.round(completaron/lista.length*100):0;
+    } else {
+      globalPagado=lista.reduce(function(a,i){
+        var lib=(i.pagos||[]).filter(function(p){return p.estado==='confirmado'&&(p.cuotas||'').trim()==='libre';}).reduce(function(x,p){return x+Number(p.monto||0);},0);
+        return a+(i.resumen?i.resumen.totalPagado:0)+lib;
+      },0);
+      globalEsperado=lista.reduce(function(a,i){
+        if(i.pagoCompletoManual){var lib=(i.pagos||[]).filter(function(p){return p.estado==='confirmado'&&(p.cuotas||'').trim()==='libre';}).reduce(function(x,p){return x+Number(p.monto||0);},0);return a+(i.resumen?i.resumen.totalPagado:0)+lib;}
+        return a+(i.totalPlan!=null&&i.totalPlan>0?i.totalPlan:TOTAL);
+      },0);
+      pctPagos=globalEsperado?Math.round(globalPagado/globalEsperado*100):0;
+    }
     var sexoBarra='';
     if(lista.length){
       var pctV=Math.round(varones/lista.length*100),pctM=Math.round(mujeres/lista.length*100);
@@ -2903,7 +2923,7 @@ function renderAnaliticaOtros(){
         '<div style="position:relative;width:60px;height:60px;flex-shrink:0"><canvas id="'+canvasId+'"></canvas>'+
           '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800">'+pctPagos+'%</div>'+
         '</div>'+
-        '<div style="font-size:.74rem;color:var(--s)">Pagos recibidos sobre el total esperado</div>'+
+        '<div style="font-size:.74rem;color:var(--s)">'+(titulo==='Catequistas'||titulo==='Cocineros'?'Personas con pago completo':'Pagos recibidos sobre el total esperado')+'</div>'+
       '</div>';
     }
     return '<div style="background:var(--g1);border-radius:12px;padding:1rem;margin-bottom:1rem">'+
