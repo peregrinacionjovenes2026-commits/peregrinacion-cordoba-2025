@@ -116,7 +116,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--g1);min-height:100vh;colo
 .ahead-r{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
 .anew-badge{background:var(--al);color:var(--a);padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700}
 .arole-badge{background:var(--g2);color:var(--s);padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700}
-.astats{display:grid;grid-template-columns:repeat(6,1fr);gap:.5rem;margin-bottom:.9rem}
+.astats{display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem;margin-bottom:.9rem}
 .astat{background:var(--w);border-radius:var(--rs);padding:.8rem .9rem;text-align:center;box-shadow:var(--sh);border:1px solid var(--g2)}
 .astat .n{font-size:1.25rem;font-weight:700;margin-bottom:.08rem}
 .astat .l{font-size:.66rem;color:var(--s);font-weight:500}
@@ -1107,6 +1107,8 @@ async function cargarAdmin(force){
     adminData=data;
     renderAdmin();
     actualizarBadgeCampanas();
+    // Cargar inscriptos en segundo plano para que los contadores de rol estén siempre correctos
+    if(!inscriptosData) cargarInscriptos();
   }catch(e){$$('admin-load').style.display='none';$$('admin-content').innerHTML='<p style="color:var(--r);text-align:center;padding:1rem">Error al cargar.</p>';}
 }
 
@@ -1145,6 +1147,8 @@ async function cargarInscriptos(){
     }
 
     renderInscriptos();
+    // Actualizar contadores de roles en la barra de stats
+    if(adminData&&adminData.ok) renderAdminStats();
   }catch(e){$$('ins-load').style.display='none';}
 }
 
@@ -1239,13 +1243,12 @@ function renderAdmin(){
   });
   var pendientesPago=pendientesDePagoCantidad(personas);
   var cntJovenes=0,cntCatSac=0,cntCocineros=0;
-  if(inscriptosData&&inscriptosData.ok){var activos=inscriptosData.inscriptos.filter(function(i){return i.estadoCupo!=='baja';});cntJovenes=activos.filter(function(i){return i.rol==='Participante';}).length;cntCatSac=activos.filter(function(i){return i.rol==='Catequista'||i.rol==='Sacerdote';}).length;cntCocineros=activos.filter(function(i){return i.rol==='Cocinero';}).length;}else{cntJovenes=adminData.totalInscriptos;}
+  if(inscriptosData&&inscriptosData.ok){var activos=inscriptosData.inscriptos.filter(function(i){return i.estadoCupo!=='baja';});cntJovenes=activos.filter(function(i){return i.rol==='Participante';}).length;cntCatSac=activos.filter(function(i){return i.rol==='Catequista';}).length;cntCocineros=activos.filter(function(i){return i.rol==='Cocinero';}).length;}else{cntJovenes=adminData.totalInscriptos;}
   $$('admin-stats').innerHTML=
-    stat(cntJovenes,'var(--b)','Jóvenes')+
-    stat(cntCatSac,'var(--b)','Catequistas y sacerdotes')+
-    stat(cntCocineros,'var(--b)','Cocineros')+
+    stat(cntJovenes,'var(--b)','Jóvenes inscriptos')+
+    stat(cntCatSac,'var(--b)','Catequistas inscriptos')+
+    stat(cntCocineros,'var(--b)','Cocineros inscriptos')+
     stat(porRevisar,'var(--a)','Por revisar')+
-    stat('$'+recaudado.toLocaleString('es-AR'),'var(--g)','Pagos recibidos')+
     stat(pendientesPago,'var(--r)','Pendientes de pago');
   var medioSummary=$$('admin-medios-summary');
   if(medioSummary){
@@ -1552,13 +1555,12 @@ function renderAdminStats(){
   });
   var pendientesPago=pendientesDePagoCantidad(personas);
   var cntJovenes=0,cntCatSac=0,cntCocineros=0;
-  if(inscriptosData&&inscriptosData.ok){var activos=inscriptosData.inscriptos.filter(function(i){return i.estadoCupo!=='baja';});cntJovenes=activos.filter(function(i){return i.rol==='Participante';}).length;cntCatSac=activos.filter(function(i){return i.rol==='Catequista'||i.rol==='Sacerdote';}).length;cntCocineros=activos.filter(function(i){return i.rol==='Cocinero';}).length;}else{cntJovenes=adminData.totalInscriptos;}
+  if(inscriptosData&&inscriptosData.ok){var activos=inscriptosData.inscriptos.filter(function(i){return i.estadoCupo!=='baja';});cntJovenes=activos.filter(function(i){return i.rol==='Participante';}).length;cntCatSac=activos.filter(function(i){return i.rol==='Catequista';}).length;cntCocineros=activos.filter(function(i){return i.rol==='Cocinero';}).length;}else{cntJovenes=adminData.totalInscriptos;}
   $$('admin-stats').innerHTML=
-    stat(cntJovenes,'var(--b)','Jóvenes')+
-    stat(cntCatSac,'var(--b)','Catequistas y sacerdotes')+
-    stat(cntCocineros,'var(--b)','Cocineros')+
+    stat(cntJovenes,'var(--b)','Jóvenes inscriptos')+
+    stat(cntCatSac,'var(--b)','Catequistas inscriptos')+
+    stat(cntCocineros,'var(--b)','Cocineros inscriptos')+
     stat(porRevisar,'var(--a)','Por revisar')+
-    stat('$'+recaudado.toLocaleString('es-AR'),'var(--g)','Pagos recibidos')+
     stat(pendientesPago,'var(--r)','Pendientes de pago');
   var medioSummary=$$('admin-medios-summary');
   if(medioSummary){
