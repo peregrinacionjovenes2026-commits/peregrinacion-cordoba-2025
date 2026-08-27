@@ -1246,10 +1246,10 @@ function renderAdmin(){
   });
   var pendientesPago=pendientesDePagoCantidad(personas);
   var cntJovenes=0,cntCatSac=0,cntCocineros=0;
-  if(inscriptosData&&inscriptosData.ok){var activos=inscriptosData.inscriptos.filter(function(i){return i.estadoCupo!=='baja';});cntJovenes=activos.filter(function(i){return i.rol==='Participante';}).length;cntCatSac=activos.filter(function(i){return i.rol==='Catequista';}).length;cntCocineros=activos.filter(function(i){return i.rol==='Cocinero';}).length;}else{cntJovenes=adminData.totalInscriptos;}
+  if(inscriptosData&&inscriptosData.ok){var activos=inscriptosData.inscriptos.filter(function(i){return i.estadoCupo!=='baja';});cntJovenes=activos.filter(function(i){return i.rol==='Participante';}).length;cntCatSac=activos.filter(function(i){return i.rol==='Catequista'||i.rol==='Sacerdote';}).length;cntCocineros=activos.filter(function(i){return i.rol==='Cocinero';}).length;}else{cntJovenes=adminData.totalInscriptos;}
   $$('admin-stats').innerHTML=
     stat(cntJovenes,'var(--b)','Jóvenes inscriptos')+
-    stat(cntCatSac,'var(--b)','Catequistas inscriptos')+
+    stat(cntCatSac,'var(--b)','Catequistas y sacerdotes')+
     stat(cntCocineros,'var(--b)','Cocineros inscriptos')+
     stat(porRevisar,'var(--a)','Por revisar')+
     stat(pendientesPago,'var(--r)','Pendientes de pago');
@@ -1558,10 +1558,10 @@ function renderAdminStats(){
   });
   var pendientesPago=pendientesDePagoCantidad(personas);
   var cntJovenes=0,cntCatSac=0,cntCocineros=0;
-  if(inscriptosData&&inscriptosData.ok){var activos=inscriptosData.inscriptos.filter(function(i){return i.estadoCupo!=='baja';});cntJovenes=activos.filter(function(i){return i.rol==='Participante';}).length;cntCatSac=activos.filter(function(i){return i.rol==='Catequista';}).length;cntCocineros=activos.filter(function(i){return i.rol==='Cocinero';}).length;}else{cntJovenes=adminData.totalInscriptos;}
+  if(inscriptosData&&inscriptosData.ok){var activos=inscriptosData.inscriptos.filter(function(i){return i.estadoCupo!=='baja';});cntJovenes=activos.filter(function(i){return i.rol==='Participante';}).length;cntCatSac=activos.filter(function(i){return i.rol==='Catequista'||i.rol==='Sacerdote';}).length;cntCocineros=activos.filter(function(i){return i.rol==='Cocinero';}).length;}else{cntJovenes=adminData.totalInscriptos;}
   $$('admin-stats').innerHTML=
     stat(cntJovenes,'var(--b)','Jóvenes inscriptos')+
-    stat(cntCatSac,'var(--b)','Catequistas inscriptos')+
+    stat(cntCatSac,'var(--b)','Catequistas y sacerdotes')+
     stat(cntCocineros,'var(--b)','Cocineros inscriptos')+
     stat(porRevisar,'var(--a)','Por revisar')+
     stat(pendientesPago,'var(--r)','Pendientes de pago');
