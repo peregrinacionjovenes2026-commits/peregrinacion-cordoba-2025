@@ -1094,11 +1094,16 @@ async function cargarAdmin(force){
   $$('admin-content').innerHTML='';
   $$('admin-stats').innerHTML='';
   try{
-    var res=await fetch(API+'?action=getAdmin&adminToken='+encodeURIComponent(adminToken));
-    var data=await res.json();
+    // Cargamos admin e inscriptos en paralelo para que los contadores de rol estén siempre correctos
+    var resPromises=[
+      fetch(API+'?action=getAdmin&adminToken='+encodeURIComponent(adminToken)),
+      inscriptosData?Promise.resolve(null):fetch(API+'?action=getInscriptos&adminToken='+encodeURIComponent(adminToken))
+    ];
+    var results=await Promise.all(resPromises);
+    var data=await results[0].json();
+    if(results[1]) inscriptosData=await results[1].json();
     $$('admin-load').style.display='none';
     if(!data.ok){$$('admin-content').innerHTML='<p style="color:var(--r);text-align:center;padding:1rem">'+(data.error||'No autorizado.')+'</p>';return;}
-    // Badge "nuevos hoy"
     if(adminUltimaVisita&&data.pagos){
       var hoy=new Date().toLocaleDateString('es-AR');
       var nuevosHoy=data.pagos.filter(function(p){return p.fecha===hoy&&p.estado==='pendiente';}).length;
@@ -1107,8 +1112,6 @@ async function cargarAdmin(force){
     adminData=data;
     renderAdmin();
     actualizarBadgeCampanas();
-    // Cargar inscriptos en segundo plano para que los contadores de rol estén siempre correctos
-    if(!inscriptosData) cargarInscriptos();
   }catch(e){$$('admin-load').style.display='none';$$('admin-content').innerHTML='<p style="color:var(--r);text-align:center;padding:1rem">Error al cargar.</p>';}
 }
 
