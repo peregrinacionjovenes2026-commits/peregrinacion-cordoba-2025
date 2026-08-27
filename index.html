@@ -696,6 +696,30 @@ body{font-family:'DM Sans',sans-serif;background:var(--g1);min-height:100vh;colo
   </div>
 </div>
 
+<!-- MODAL PAGO LIBRE -->
+<div class="overlay" id="modal-pago-libre" style="display:none" onclick="if(event.target===this)cerrarModalPagoLibre()">
+  <div class="modal" style="max-width:440px">
+    <h3>Registrar pago libre</h3>
+    <p style="font-size:.82rem;color:var(--s);margin-bottom:.75rem">Para casos especiales: ingresá el concepto y el monto. No requiere seleccionar cuotas.</p>
+    <div class="ig"><label>DNI</label><input type="text" id="libre-dni" readonly style="background:var(--g1)"/></div>
+    <div class="ig"><label>Concepto</label><input type="text" id="libre-concepto-modal" placeholder="Ej: Descuento alojamiento, aporte especial..."/></div>
+    <div class="ig"><label>Monto</label><input type="number" id="libre-monto-modal" placeholder="Ej: 53000"/></div>
+    <div class="ig"><label>Medio de pago</label>
+      <select id="libre-medio">
+        <option value="Efectivo">Efectivo</option>
+        <option value="Transferencia">Transferencia</option>
+      </select>
+    </div>
+    <div class="ig" id="libre-recibido-wrap"><label>Recibido por</label><input type="text" id="libre-recibido" placeholder="Nombre de quien recibió"/></div>
+    <div class="ig"><label>Observación (opcional)</label><textarea id="libre-obs" rows="2" placeholder="Opcional"></textarea></div>
+    <div class="mbox" id="libre-msg"></div>
+    <div class="modal-btns">
+      <button class="bp" style="width:auto;margin-top:0" onclick="registrarPagoLibreAdmin()">Registrar pago</button>
+      <button class="bgr" onclick="cerrarModalPagoLibre()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL ALTA MANUAL (SACERDOTE / COCINERO) -->
 <div class="overlay" id="modal-alta-manual" style="display:none" onclick="if(event.target===this)cerrarModalAltaManual()">
   <div class="modal" style="max-width:480px">
@@ -1683,6 +1707,8 @@ function renderInscriptos(){
     if(esAdminEdicion() && ins.whatsapp) menuItems += '<button class="menu-item" onclick="avisarSenaWA(\'' + ins.whatsapp + '\',\'' + primerNombre.replace(/'/g,"\\'") + '\',\'' + safeDni + '\');cerrarMenus()">Avisar seña</button>';
     if(esAdminEdicion() && ins.whatsapp) menuItems += '<button class="menu-item" onclick="abrirWA(\'' + ins.whatsapp + '\',\'' + primerNombre.replace(/'/g,"\\'") + '\');cerrarMenus()">WhatsApp libre</button>';
     if(esAdminEdicion()) menuItems += '<button class="menu-item" onclick="abrirModalPagoManual(\''+safeDni+'\');cerrarMenus()">Registrar pago recibido</button>';
+    if(esAdminEdicion()) menuItems += '<button class="menu-item" onclick="abrirModalPagoLibre(\''+safeDni+'\');cerrarMenus()">Registrar pago libre</button>';
+    if(esAdminEdicion()) menuItems += '<button class="menu-item" onclick="togglePagoCompleto(\''+safeDni+'\','+!!ins.pagoCompletoManual+');cerrarMenus()">'+(ins.pagoCompletoManual?'✓ Pago completo — quitar':'Marcar como pago completo')+'</button>';
     if(esAdminEdicion() && ins.estadoCupo==='con_cupo') menuItems+='<button class="menu-item danger" onclick="liberarCupo(\''+safeDni+'\');cerrarMenus()">Liberar cupo</button>';
     if(esAdminEdicion() && ins.estadoCupo!=='baja') menuItems+='<button class="menu-item danger" onclick="abrirModalB(\''+safeDni+'\');cerrarMenus()">Dar de baja</button>';
     return '<tr>'+
@@ -2151,6 +2177,72 @@ function abrirModalAltaManual(){
   $$('modal-alta-manual').style.display='flex';
 }
 function cerrarModalAltaManual(){ $$('modal-alta-manual').style.display='none'; }
+
+// ── Pago libre ─────────────────────────────────────────────
+function abrirModalPagoLibre(dni){
+  if(!esAdminEdicion()){alert('Esta acción requiere clave de edición.');return;}
+  $$('libre-dni').value=dni||'';
+  $$('libre-concepto-modal').value='';
+  $$('libre-monto-modal').value='';
+  $$('libre-medio').value='Efectivo';
+  $$('libre-recibido').value='';
+  $$('libre-obs').value='';
+  $$('libre-msg').style.display='none';
+  $$('modal-pago-libre').style.display='flex';
+}
+function cerrarModalPagoLibre(){ $$('modal-pago-libre').style.display='none'; }
+
+async function registrarPagoLibreAdmin(){
+  var msg=$$('libre-msg');
+  var dni=$$('libre-dni').value.trim();
+  var concepto=$$('libre-concepto-modal').value.trim();
+  var monto=$$('libre-monto-modal').value.trim();
+  var medio=$$('libre-medio').value;
+  var recibido=$$('libre-recibido').value.trim();
+  var obs=$$('libre-obs').value.trim();
+  if(!concepto){showMsg(msg,'Ingresá un concepto.',false);return;}
+  if(!monto||Number(monto)<=0){showMsg(msg,'Ingresá un monto válido.',false);return;}
+  if(medio==='Efectivo'&&!recibido){showMsg(msg,'Indicá quién recibió el efectivo.',false);return;}
+  showMsg(msg,'Registrando pago...',true);
+  try{
+    var url=API+'?action=registrarPagoManual'+
+      '&adminToken='+encodeURIComponent(adminToken)+
+      '&dni='+encodeURIComponent(dni)+
+      '&esLibre=true'+
+      '&concepto='+encodeURIComponent(concepto)+
+      '&monto='+encodeURIComponent(monto)+
+      '&medioPago='+encodeURIComponent(medio)+
+      '&recibidoPor='+encodeURIComponent(recibido)+
+      '&observacionInterna='+encodeURIComponent(obs);
+    var res=await fetch(url);
+    var data=await res.json();
+    if(!data.ok){showMsg(msg,data.error||'No se pudo registrar.',false);return;}
+    showMsg(msg,'Pago registrado correctamente.',true);
+    adminData=null; inscriptosData=null;
+    await cargarAdmin(true);
+    if(inscriptosData) await cargarInscriptos();
+    setTimeout(cerrarModalPagoLibre,700);
+  }catch(e){showMsg(msg,'Error de conexión.',false);}
+}
+
+// ── Marcar pago completo ────────────────────────────────────
+async function togglePagoCompleto(dni, estaActivo){
+  if(!esAdminEdicion()){alert('Esta acción requiere clave de edición.');return;}
+  var nuevoValor = !estaActivo;
+  var msg = nuevoValor
+    ? '¿Marcar a esta persona como pago completo? El sistema la mostrará como "Pago completo" aunque no haya cuotas suficientes.'
+    : '¿Quitar la marca de pago completo? El sistema volverá a calcular el estado según las cuotas.';
+  if(!confirm(msg)) return;
+  try{
+    var url=API+'?action=marcarPagoCompleto&adminToken='+encodeURIComponent(adminToken)+'&dni='+encodeURIComponent(dni)+'&valor='+nuevoValor;
+    var res=await fetch(url);
+    var data=await res.json();
+    if(!data.ok){alert('Error: '+(data.error||'sin detalle'));return;}
+    adminData=null; inscriptosData=null;
+    await cargarAdmin(true);
+    if(vistaActual==='inscriptos') await cargarInscriptos();
+  }catch(e){alert('Error de conexión.');}
+}
 
 function actualizarInfoAltaManual(){
   var rol=$$('alta-rol').value;
