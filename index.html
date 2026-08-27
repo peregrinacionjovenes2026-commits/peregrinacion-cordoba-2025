@@ -1186,13 +1186,19 @@ function totalDesdeKeys(keys, montos){
 }
 
 function totalConfirmadoPersona(persona){
+  // Si tiene el flag de pago completo manual, devolvemos el total del plan directamente
+  if(persona.pagoCompletoManual) return persona.totalPlan||0;
+  var pagosConf=persona.pagos.filter(function(x){return x.estado==='confirmado';});
   if(persona.tipoPlan==='libre'){
-    return persona.pagos.filter(function(x){return x.estado==='confirmado';}).reduce(function(a,p){return a+Number(p.monto||0);},0);
+    return pagosConf.reduce(function(a,p){return a+Number(p.monto||0);},0);
   }
+  // Plan fijo: sumar cuotas reconocidas + pagos libres acumulados
   var plan=persona.cuotasPlan||PLAN_ESTANDAR.keys.map(function(k){return {key:k,label:CL[k],monto:CM[k]};});
   var planKeys=plan.map(function(c){return c.key;});
   var montos={}; plan.forEach(function(c){montos[c.key]=c.monto;});
-  return totalDesdeKeys(cuotasKeysDesdePagos(persona.pagos.filter(function(x){return x.estado==='confirmado';}),planKeys),montos);
+  var totalCuotas=totalDesdeKeys(cuotasKeysDesdePagos(pagosConf.filter(function(x){return (x.cuotas||'').trim()!=='libre';}),planKeys),montos);
+  var totalLibres=pagosConf.filter(function(x){return (x.cuotas||'').trim()==='libre';}).reduce(function(a,p){return a+Number(p.monto||0);},0);
+  return totalCuotas+totalLibres;
 }
 
 function cuotasExigiblesHoy(){
@@ -1294,17 +1300,25 @@ function renderPersonaCard(persona){
   var pagosPend=persona.pagos.filter(function(x){return x.estado==='pendiente';});
   var pagosRech=persona.pagos.filter(function(x){return x.estado==='rechazado';});
   var confKeys, pendKeys, rechKeys, totalPag, totalPend;
-  if(esLibre){
+
+  // Si está marcado como pago completo manual, mostramos el total directamente
+  if(persona.pagoCompletoManual){
+    confKeys=[]; pendKeys=[]; rechKeys=[];
+    totalPag=planTotal||pagosConf.reduce(function(a,p){return a+Number(p.monto||0);},0);
+    totalPend=0;
+  } else if(esLibre){
     confKeys=[]; pendKeys=[]; rechKeys=[];
     totalPag=pagosConf.reduce(function(a,p){return a+Number(p.monto||0);},0);
     totalPend=pagosPend.reduce(function(a,p){return a+Number(p.monto||0);},0);
   } else {
-    confKeys=cuotasKeysDesdePagos(pagosConf,planKeys);
-    pendKeys=cuotasKeysDesdePagos(pagosPend,planKeys);
-    rechKeys=cuotasKeysDesdePagos(pagosRech,planKeys);
+    confKeys=cuotasKeysDesdePagos(pagosConf.filter(function(x){return (x.cuotas||'').trim()!=='libre';}),planKeys);
+    pendKeys=cuotasKeysDesdePagos(pagosPend.filter(function(x){return (x.cuotas||'').trim()!=='libre';}),planKeys);
+    rechKeys=cuotasKeysDesdePagos(pagosRech.filter(function(x){return (x.cuotas||'').trim()!=='libre';}),planKeys);
     var montosPlan={}; plan.forEach(function(c){montosPlan[c.key]=c.monto;});
-    totalPag=totalDesdeKeys(confKeys,montosPlan);
-    totalPend=totalDesdeKeys(pendKeys,montosPlan);
+    var totalLibresConf=pagosConf.filter(function(x){return (x.cuotas||'').trim()==='libre';}).reduce(function(a,p){return a+Number(p.monto||0);},0);
+    var totalLibresPend=pagosPend.filter(function(x){return (x.cuotas||'').trim()==='libre';}).reduce(function(a,p){return a+Number(p.monto||0);},0);
+    totalPag=totalDesdeKeys(confKeys,montosPlan)+totalLibresConf;
+    totalPend=totalDesdeKeys(pendKeys,montosPlan)+totalLibresPend;
   }
   var pok=planTotal?Math.round(totalPag/planTotal*100):0,prv=planTotal?Math.round(totalPend/planTotal*100):0;
   var tienePend=pagosPend.length>0,tieneRech=pagosRech.length>0;
@@ -1316,7 +1330,9 @@ function renderPersonaCard(persona){
   var rolTag=persona.rol&&persona.rol!=='Participante'?' · '+persona.rol:'';
 
   var chips;
-  if(esLibre){
+  if(persona.pagoCompletoManual){
+    chips='<span class="chip cok">✓ Pago completo (marcado manualmente)</span>';
+  } else if(esLibre){
     var partes=[];
     if(pagosConf.length) partes.push('<span class="chip cok">✓ '+pagosConf.length+' confirmado'+(pagosConf.length>1?'s':'')+'</span>');
     if(pagosPend.length) partes.push('<span class="chip cpend">⏳ '+pagosPend.length+' en revisión</span>');
