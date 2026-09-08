@@ -1101,7 +1101,7 @@ async function cargarAdmin(force){
     ];
     var results=await Promise.all(resPromises);
     var data=await results[0].json();
-    if(results[1]){ inscriptosData=await results[1].json(); poblarFiltrosParroquiaComunidad(); }
+    if(results[1]) inscriptosData=await results[1].json();
     $$('admin-load').style.display='none';
     if(!data.ok){$$('admin-content').innerHTML='<p style="color:var(--r);text-align:center;padding:1rem">'+(data.error||'No autorizado.')+'</p>';return;}
     if(adminUltimaVisita&&data.pagos){
@@ -1130,35 +1130,29 @@ async function cargarInscriptos(){
     inscriptosData=await res.json();
     $$('ins-load').style.display='none';
     if(!inscriptosData.ok){$$('ins-tbody').innerHTML='<tr><td colspan="11" style="text-align:center;color:var(--r);padding:1rem">Error al cargar</td></tr>';return;}
-    poblarFiltrosParroquiaComunidad();
-    renderInscriptos();
-    // Actualizar contadores de roles en la barra de stats
-    if(adminData&&adminData.ok) renderAdminStats();
-  }catch(e){$$('ins-load').style.display='none';}
-}
-
-// Puebla los <select> de Parroquia y Comunidad (Inscriptos y Campañas) a partir de inscriptosData.
-// Se llama tanto desde cargarInscriptos() como desde cargarAdmin(), porque inscriptosData puede
-// llegar precargado desde cargarAdmin() sin pasar nunca por cargarInscriptos().
-function poblarFiltrosParroquiaComunidad(){
-  if(!inscriptosData||!inscriptosData.ok) return;
-  var parroquias=[...new Set(inscriptosData.inscriptos.map(function(i){return i.parroquia;}).filter(Boolean))].sort();
-  var comunidades=[...new Set(inscriptosData.inscriptos.map(function(i){return i.comunidad;}).filter(Boolean))].sort();
-  var fp=$$('ins-fp'),fc=$$('ins-fc');
-  if(fp && fc){
+    // Poblar filtros de parroquia y comunidad
+    var parroquias=[...new Set(inscriptosData.inscriptos.map(function(i){return i.parroquia;}).filter(Boolean))].sort();
+    var comunidades=[...new Set(inscriptosData.inscriptos.map(function(i){return i.comunidad;}).filter(Boolean))].sort();
+    var fp=$$('ins-fp'),fc=$$('ins-fc');
     fp.innerHTML='<option value="">Todas las parroquias</option>';
     fc.innerHTML='<option value="">Todas las comunidades</option>';
     parroquias.forEach(function(p){var o=document.createElement('option');o.value=p;o.textContent=p;fp.appendChild(o);});
     comunidades.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;fc.appendChild(o);});
-  }
-  var cfp=$$('camp-fp'), cfc=$$('camp-fc');
-  if(cfp && cfc){
-    cfp.innerHTML='<option value="">Todas las parroquias</option>';
-    cfc.innerHTML='<option value="">Todas las comunidades</option>';
-    parroquias.forEach(function(p){var o=document.createElement('option');o.value=p;o.textContent=p;cfp.appendChild(o);});
-    comunidades.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;cfc.appendChild(o);});
-    actualizarPreviewCampana();
-  }
+
+    // También poblar filtros de la vista Campañas, si existen
+    var cfp=$$('camp-fp'), cfc=$$('camp-fc');
+    if(cfp && cfc){
+      cfp.innerHTML='<option value="">Todas las parroquias</option>';
+      cfc.innerHTML='<option value="">Todas las comunidades</option>';
+      parroquias.forEach(function(p){var o=document.createElement('option');o.value=p;o.textContent=p;cfp.appendChild(o);});
+      comunidades.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;cfc.appendChild(o);});
+      actualizarPreviewCampana();
+    }
+
+    renderInscriptos();
+    // Actualizar contadores de roles en la barra de stats
+    if(adminData&&adminData.ok) renderAdminStats();
+  }catch(e){$$('ins-load').style.display='none';}
 }
 
 function agruparPorPersona(pagos){
@@ -1738,11 +1732,6 @@ function renderInscriptos(){
     if(esAdminEdicion()) menuItems += '<button class="menu-item" onclick="togglePagoCompleto(\''+safeDni+'\','+!!ins.pagoCompletoManual+');cerrarMenus()">'+(ins.pagoCompletoManual?'✓ Pago completo — quitar':'Marcar como pago completo')+'</button>';
     if(esAdminEdicion() && ins.estadoCupo==='con_cupo') menuItems+='<button class="menu-item danger" onclick="liberarCupo(\''+safeDni+'\');cerrarMenus()">Liberar cupo</button>';
     if(esAdminEdicion() && ins.estadoCupo!=='baja') menuItems+='<button class="menu-item danger" onclick="abrirModalB(\''+safeDni+'\');cerrarMenus()">Dar de baja</button>';
-    // Los pagos "libres" (concepto especial, ej. traslado/comidas) no están atados a
-    // ninguna cuota del plan fijo y por eso resumen.totalPagado los ignora. Se suman
-    // aparte acá para que el monto mostrado coincida con lo que la persona pagó de verdad.
-    var libreConfirmado=(ins.pagos||[]).filter(function(p){return p.estado==='confirmado'&&(p.cuotas||'').trim()==='libre';}).reduce(function(a,p){return a+Number(p.monto||0);},0);
-    var totalMostrado=(ins.resumen?ins.resumen.totalPagado:0)+libreConfirmado;
     return '<tr>'+
       '<td style="color:var(--s)">'+ins.orden+'</td>'+
       '<td style="font-weight:600">'+ins.nombre+avisoSena+'</td>'+
@@ -1753,7 +1742,7 @@ function renderInscriptos(){
       '<td style="color:var(--s);white-space:nowrap;font-size:.72rem">'+ins.fechaInscripcion+' '+ins.horaInscripcion+'</td>'+
       '<td>'+cupo+'</td>'+
       '<td><span class="epill" style="background:'+eb+';color:'+ec+'">'+el+'</span></td>'+
-      '<td style="font-weight:600;color:var(--g)">$'+totalMostrado.toLocaleString('es-AR')+'</td>'+
+      '<td style="font-weight:600;color:var(--g)">$'+ins.resumen.totalPagado.toLocaleString('es-AR')+'</td>'+
       '<td>'+(menuItems?'<div class="menu-wrap"><button class="menu-btn" onclick="toggleMenu(\''+menuId+'\')">···</button><div class="menu-drop" id="'+menuId+'">'+menuItems+'</div></div>':'<span style="color:var(--g4)">—</span>')+'</td>'+
     '</tr>';
   }).join('');
@@ -2765,20 +2754,6 @@ function renderAnaliticaJovenes(){
   var edadData=edadLabels.map(function(b){return porEdadMap[b];});
   var sinEdad=activos.filter(function(i){return i.edad==null;}).length;
 
-  // Edad por comunidad (para la tabla cruzada más abajo)
-  var comunidadEdad={};
-  activos.forEach(function(i){
-    var p=(i.parroquia||'Sin parroquia').trim()||'Sin parroquia';
-    var c=(i.comunidad||'Sin comunidad').trim()||'Sin comunidad';
-    var key=p+'|'+c;
-    if(!comunidadEdad[key]) comunidadEdad[key]={parroquia:p,comunidad:c,buckets:{},total:0,sinEdad:0};
-    comunidadEdad[key].total++;
-    if(i.edad==null){ comunidadEdad[key].sinEdad++; return; }
-    var b=i.edad<=12?'Hasta 12':i.edad<=15?'13 a 15':i.edad<=17?'16 a 17':i.edad<=25?'18 a 25':i.edad<=40?'26 a 40':'41 o más';
-    comunidadEdad[key].buckets[b]=(comunidadEdad[key].buckets[b]||0)+1;
-  });
-  var filasComunidadEdad=Object.values(comunidadEdad).sort(function(a,b){return b.total-a.total;});
-
   html+='<div style="font-size:.78rem;color:var(--s);margin-bottom:.6rem">Distribución por edad '+(sinEdad?'<span style="color:var(--g4);font-size:.66rem">('+sinEdad+' sin fecha de nacimiento)</span>':'')+'</div>'+
     '<div style="background:var(--g1);border-radius:12px;padding:.9rem;margin-bottom:1.5rem">'+
       '<div style="position:relative;height:180px"><canvas id="anBarEdad"></canvas></div>'+
@@ -2792,27 +2767,6 @@ function renderAnaliticaJovenes(){
       '<div style="position:relative;width:130px;height:130px;flex-shrink:0"><canvas id="anDonutComunidad"></canvas></div>'+
       '<div id="anLegendComunidad" style="flex:1;min-width:140px;font-size:.76rem;color:var(--s);display:flex;flex-direction:column;gap:.35rem"></div>'+
     '</div>';
-
-  // Tabla: edad por comunidad
-  html+='<div style="font-size:.78rem;color:var(--s);margin-bottom:.6rem">Edad por comunidad <span style="color:var(--g4);font-size:.66rem">(solo jóvenes)</span></div>'+
-    '<div style="overflow-x:auto;margin-bottom:1.5rem"><table style="width:100%;border-collapse:collapse;font-size:.74rem;white-space:nowrap">'+
-    '<thead><tr style="border-bottom:2px solid var(--g2)">'+
-      '<th style="text-align:left;padding:.4rem .6rem;color:var(--s)">Comunidad</th>'+
-      '<th style="text-align:left;padding:.4rem .6rem;color:var(--s)">Parroquia</th>'+
-      edadLabels.map(function(b){return '<th style="text-align:center;padding:.4rem .6rem;color:var(--s)">'+b+'</th>';}).join('')+
-      (sinEdad?'<th style="text-align:center;padding:.4rem .6rem;color:var(--s)">Sin dato</th>':'')+
-      '<th style="text-align:center;padding:.4rem .6rem;color:var(--s);font-weight:800">Total</th>'+
-    '</tr></thead><tbody>'+
-    filasComunidadEdad.map(function(f){
-      return '<tr style="border-bottom:1px solid var(--g2)">'+
-        '<td style="padding:.4rem .6rem;font-weight:600">'+esc(f.comunidad)+'</td>'+
-        '<td style="padding:.4rem .6rem;color:var(--s)">'+esc(f.parroquia)+'</td>'+
-        edadLabels.map(function(b){var n=f.buckets[b]||0;return '<td style="text-align:center;padding:.4rem .6rem'+(n?'':';color:var(--g4)')+'">'+(n||'—')+'</td>';}).join('')+
-        (sinEdad?'<td style="text-align:center;padding:.4rem .6rem'+(f.sinEdad?'':';color:var(--g4)')+'">'+(f.sinEdad||'—')+'</td>':'')+
-        '<td style="text-align:center;padding:.4rem .6rem;font-weight:800">'+f.total+'</td>'+
-      '</tr>';
-    }).join('')+
-    '</tbody></table></div>';
 
   // Restricciones
   html+='<div style="font-size:.78rem;color:var(--s);margin-bottom:.6rem">Restricciones alimentarias o de salud</div>'+
@@ -2923,10 +2877,6 @@ function renderAnaliticaOtros(){
   var catequistas=todos.filter(function(i){return i.rol==='Catequista';});
   var cocineros  =todos.filter(function(i){return i.rol==='Cocinero';});
   var sacerdotes =todos.filter(function(i){return i.rol==='Sacerdote';});
-  // Guarda el % que cada tarjeta calcula para su etiqueta, así el dibujo de la dona
-  // usa el mismo número en vez de recalcularlo con otra fórmula (esa era la causa
-  // de que dijera "100%" pero no se coloreara del todo).
-  var pctPorCanvas={};
 
   function tarjetaRol(lista,titulo,color,canvasId){
     if(!lista.length) return '<div style="background:var(--g1);border-radius:12px;padding:1rem;margin-bottom:1rem"><div style="font-size:.85rem;font-weight:700;color:'+color+';margin-bottom:.4rem">'+titulo+'</div><p style="font-size:.78rem;color:var(--g4)">Sin inscriptos todavía.</p></div>';
@@ -2956,7 +2906,6 @@ function renderAnaliticaOtros(){
       },0);
       pctPagos=globalEsperado?Math.round(globalPagado/globalEsperado*100):0;
     }
-    pctPorCanvas[canvasId]=pctPagos;
     var sexoBarra='';
     if(lista.length){
       var pctV=Math.round(varones/lista.length*100),pctM=Math.round(mujeres/lista.length*100);
@@ -2992,11 +2941,13 @@ function renderAnaliticaOtros(){
            tarjetaRol(sacerdotes,'Sacerdotes','#b83232','anDonutSac');
   $$('an-content').innerHTML=html;
 
-  // Renderizar donas de pagos si corresponde (mismo % que ya se calculó para la etiqueta de cada tarjeta)
-  ['anDonutCat','anDonutCoc','anDonutSac'].forEach(function(id){
-    if(!(id in pctPorCanvas)) return;
-    var pct=pctPorCanvas[id];
-    anNuevoChart(id,{type:'doughnut',data:{datasets:[{data:[pct,100-pct],backgroundColor:[AN_GREEN,AN_GRAY],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false},tooltip:{enabled:false}}}});
+  // Renderizar donas de pagos si corresponde
+  [{lista:catequistas,id:'anDonutCat'},{lista:cocineros,id:'anDonutCoc'},{lista:sacerdotes,id:'anDonutSac'}].forEach(function(x){
+    var globalPagado=x.lista.reduce(function(a,i){return a+(i.resumen?i.resumen.totalPagado:0);},0);
+    var globalEsperado=x.lista.reduce(function(a,i){return a+(i.totalPlan!=null&&i.totalPlan>0?i.totalPlan:0);},0);
+    if(!globalEsperado) return;
+    var pct=Math.round(globalPagado/globalEsperado*100);
+    anNuevoChart(x.id,{type:'doughnut',data:{datasets:[{data:[pct,100-pct],backgroundColor:[AN_GREEN,AN_GRAY],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false},tooltip:{enabled:false}}}});
   });
 }
 
