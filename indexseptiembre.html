@@ -1760,26 +1760,8 @@ function renderInscriptos(){
 }
 
 function toggleMenu(id){
-  var m=$$(id); if(!m) return;
-  var yaAbierto=m.classList.contains('open');
   cerrarMenus();
-  if(yaAbierto) return;
-  m.classList.add('open');
-  // El menú se posiciona con fixed calculado acá (no con el position:absolute del CSS),
-  // porque el contenedor de la tabla tiene overflow-x:auto y eso recorta también el
-  // overflow vertical del menú cuando quedan pocas filas visibles (ej. al filtrar).
-  var btn=m.previousElementSibling;
-  if(btn && btn.getBoundingClientRect){
-    var r=btn.getBoundingClientRect();
-    m.style.position='fixed';
-    m.style.left='auto';
-    m.style.right=(window.innerWidth-r.right)+'px';
-    m.style.top=(r.bottom+4)+'px';
-    var mh=m.offsetHeight;
-    if(r.bottom+mh+4>window.innerHeight){
-      m.style.top=Math.max(4,r.top-mh-4)+'px';
-    }
-  }
+  var m=$$(id); if(m) m.classList.toggle('open');
 }
 function cerrarMenus(){document.querySelectorAll('.menu-drop.open').forEach(function(m){m.classList.remove('open');});}
 document.addEventListener('click',function(e){if(!e.target.closest('.menu-wrap')) cerrarMenus();});
