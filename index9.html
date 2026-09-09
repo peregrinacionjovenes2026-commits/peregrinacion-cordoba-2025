@@ -1519,14 +1519,12 @@ function abrirModalB(dni){if(!esAdminEdicion()){alert('Esta acción requiere cla
 function cerrarModalB(){$$('modal-baja').style.display='none';bajaDni=null;}
 async function confirmarBaja(){
   if(!esAdminEdicion()){alert('Esta acción requiere clave de edición.');return;}
-  var nota=$$('baja-nota').value, rep=$$('baja-dni').value, dniBaja=bajaDni;
+  var nota=$$('baja-nota').value, rep=$$('baja-dni').value;
   cerrarModalB();
   try{
-    var res=await fetch(API+'?action=marcarBaja&dni='+encodeURIComponent(dniBaja)+'&nota='+encodeURIComponent(nota)+'&reemplazo='+encodeURIComponent(rep)+'&adminToken='+encodeURIComponent(adminToken));
-    var data=await res.json();
-    if(!data.ok){ alert('No se pudo dar de baja: '+(data.error||'error desconocido')+(data.error==='No autorizado.'?'\n\nProbablemente tu sesión de admin venció. Salí y volvé a entrar con la clave de edición.':'')); return; }
+    await fetch(API+'?action=marcarBaja&dni='+encodeURIComponent(bajaDni)+'&nota='+encodeURIComponent(nota)+'&reemplazo='+encodeURIComponent(rep)+'&adminToken='+encodeURIComponent(adminToken));
     bajaDni=null; adminData=null; inscriptosData=null; contabilidadData=null; await cargarAdmin(true);
-  }catch(e){alert('Error al dar de baja. Revisá tu conexión e intentá de nuevo.');}
+  }catch(e){alert('Error al dar de baja.');}
 }
 
 function pagoPorId(id){
@@ -2215,8 +2213,6 @@ async function liberarCupo(dni){
     if(data.ok){
       if(data.nuevoCupo) alert('Cupo asignado a: '+data.nuevoCupo);
       inscriptosData=null; await cargarInscriptos();
-    }else{
-      alert('No se pudo liberar el cupo: '+(data.error||'error desconocido'));
     }
   }catch(e){alert('Error.');}
 }
